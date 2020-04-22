@@ -3,11 +3,12 @@
 Top level Excel XLM macro emulator interface.
 """
 
+from __future__ import print_function
 import subprocess
 import sys
 import re
 
-import color_print
+import XLM.color_print
 
 ## Check installation prerequisites.
 
@@ -15,7 +16,7 @@ import color_print
 try:
     subprocess.check_output(["olevba", "-h"])
 except Exception as e:
-    print "ERROR: It looks like olevba is not installed. " + str(e) + "\n"
+    print("ERROR: It looks like olevba is not installed. " + str(e) + "\n")
     sys.exit(101)
 
 ####################################################################
@@ -40,12 +41,26 @@ def _extract_xlm(maldoc):
         return None
 
     # Pull out all the XLM lines.
-    r = ""
-    xlm_pat = r"' \d\d\d\d     [ \d]{2} [^\n]+\n"
+    r = b""
+    xlm_pat = br"' \d\d\d\d     [ \d]{2} [^\n]+\n"
     for line in re.findall(xlm_pat, olevba_out):
         r += line
     return r
-    
+
+####################################################################
+def _extract_xlm_objects(xlm_code):
+    """
+    Parse the given olevba XLM code into an internal object representation 
+    that can be emulated.
+
+    @param xlm_code (str) The olevba XLM code to parse.
+
+    @return (XLM_Object) An object that can emulate the parsed XLM, or None on
+    error
+    """
+
+    return None
+
 ####################################################################
 def emulate(maldoc):
     """
@@ -63,7 +78,15 @@ def emulate(maldoc):
     if (xlm_code is None):
         return []
 
-    print xlm_code
+    # Parse the XLM text and get XLM objects that can be emulated.
+    print(xlm_code.decode())
+    xlm_object = _extract_xlm_objects(xlm_code)
+    if (xlm_object is None):
+        color_print.output('r', "Parsing of XLM failed. Emulation aborted.")
+        return []
+    
+    # Emulate the XLM.
+    #r = xlm_object.eval()
     
     # Done.
     return []
