@@ -10,6 +10,7 @@ cell: "R" NUMBER "C" NUMBER
 stack_item: stack_int | stack_func | stack_concat
             | stack_cell_ref | stack_formula | stack_str
             | stack_bool | stack_attr | stack_add
+            | stack_sub
 stack_int: "ptgInt " NUMBER
 stack_func: "ptgFuncV " NAME " (" HEX_NUMBER ")"
 stack_concat: "ptgConcat"
@@ -19,6 +20,7 @@ stack_str: "ptgStr \"" NON_QUOTE_STRING "\""
 stack_bool: "ptgBool " BOOLEAN
 stack_attr: "ptgAttr"
 stack_add: "ptgAdd"
+stack_sub: "ptgSub"
 
 NUMBER: ("0".."9")+
 HEX_NUMBER: "0x" ("0".."9"|"a".."f")+
