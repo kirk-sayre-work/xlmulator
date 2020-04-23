@@ -31,14 +31,15 @@ stack_item: stack_int | stack_funcv | stack_concat
             | stack_sub | stack_exp | stack_name
             | stack_num | stack_missing_arg | stack_func
             | stack_func_var | stack_namev | stack_area
-            | stack_less_than | stack_namex
+            | stack_less_than | stack_namex | stack_not_equal
+            | stack_mul | stack_paren
 
-unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " STRING
+unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " (DOUBLE_QUOTE_STRING|SINGLE_QUOTE_STRING)
 stack_int: "ptgInt " NUMBER
 stack_funcv: "ptgFuncV " NAME " (" HEX_NUMBER ")"
 stack_concat: "ptgConcat"
 stack_cell_ref: "ptgRef" "3d"? "V"? " " (cell|cell_area)
-stack_str: "ptgStr " NON_QUOTE_STRING
+stack_str: "ptgStr " DOUBLE_QUOTE_STRING
 stack_bool: "ptgBool " BOOLEAN
 stack_attr: "ptgAttr"
 stack_add: "ptgAdd"
@@ -48,18 +49,22 @@ stack_name: "ptgName " HEX_NUMBER
 stack_num: "ptgNum " NAME
 stack_missing_arg: "ptgMissArg"
 stack_func: "ptgFunc " NAME
-stack_func_var: "ptgFuncVar" "V"? " args " NUMBER " func " (USER_DEFINED|NAME) " (" HEX_NUMBER ")"
+stack_func_var: "ptgFuncVar" "A"? "V"? " args " NUMBER " func " (USER_DEFINED|NAME) " (" HEX_NUMBER ")"
 stack_namev: "ptgNameV"
 stack_area: "ptgArea " cell_area
 stack_less_than: "ptgLT"
 stack_namex: "ptgNameX" " "+ NAME " " NUMBER
+stack_not_equal: "ptgNE"
+stack_mul: "ptgMul"
+stack_paren: "ptgParen"
 
 // Literal definitions.
 NUMBER: ("0".."9")+
 HEX_NUMBER: "0x" ("0".."9"|"a".."f")+
 LINE_TYPE: "BOUNDSHEET" | "LABEL" | "FORMULA" | "STRING"
 STRING: /[^\n]+/
-NON_QUOTE_STRING: /"[^"]*"/
+DOUBLE_QUOTE_STRING: /"[^"]*"/
+SINGLE_QUOTE_STRING: /'[^']*'/
 NAME: /[\w\.]+/
 USER_DEFINED.2: "User Defined Function"
 BOOLEAN: "TRUE" | "FALSE"
