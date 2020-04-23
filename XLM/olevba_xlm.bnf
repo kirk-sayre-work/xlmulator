@@ -1,31 +1,66 @@
+// olevba XLM output has multiple lines.
 lines: ("\n"? line "\n")+
-line: "' " NUMBER " "~3..6 NUMBER " " TYPE " : " data
+line: "' " NUMBER " "~3..6 NUMBER " " LINE_TYPE " : " data
+
+// The main types of XLM lines are basic info about sheets, cell values, cells with
+// XLM formulas, and string value calls.
 data: sheet_info | cell_value | cell_formula | string_value
+
+// Just pull off the info string from sheet info lines.
 sheet_info: "Sheet Information - " STRING
+// Just pull off the info string from cell value lines.
 cell_value: "Cell Value, " STRING
+// Just pull off the info string from string value lines.
 string_value: "String Value of a " STRING
 
-cell_formula: "Cell Formula - " cell " len=" NUMBER (" " stack_item)+ " "?
+// XLM formula lines are what we are interested. XLM operates as a stack machine,
+// so what we get from the olevba output is a list of items that are pushed
+// onto the XLM stack when the cell is initially executed.
+//
+// When parsing this we are parsing out each XLM stack item as a seperate nonterminal.
+cell_formula: "Cell Formula - " cell " len=" NUMBER (" " stack_item)+ unparsed? " "?
+
+// Parse out the row and column of a cell identifier.
 cell: "R" NUMBER "C" NUMBER
-stack_item: stack_int | stack_func | stack_concat
-            | stack_cell_ref | stack_formula | stack_str
+cell_area: "R" NUMBER? "~" NUMBER? "C" NUMBER? "~" NUMBER?
+
+// These are all the items that can be pushed onto the XLM stack.
+stack_item: stack_int | stack_funcv | stack_concat
+            | stack_cell_ref | stack_str
             | stack_bool | stack_attr | stack_add
-            | stack_sub
+            | stack_sub | stack_exp | stack_name
+            | stack_num | stack_missing_arg | stack_func
+            | stack_func_var | stack_namev | stack_area
+            | stack_less_than | stack_namex
+
+unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " STRING
 stack_int: "ptgInt " NUMBER
-stack_func: "ptgFuncV " NAME " (" HEX_NUMBER ")"
+stack_funcv: "ptgFuncV " NAME " (" HEX_NUMBER ")"
 stack_concat: "ptgConcat"
-stack_cell_ref: "ptgRef" "V"? " " cell
-stack_formula: "ptgFuncVarV args " NUMBER " func " NAME " (" HEX_NUMBER ")"
-stack_str: "ptgStr \"" NON_QUOTE_STRING "\""
+stack_cell_ref: "ptgRef" "3d"? "V"? " " (cell|cell_area)
+stack_str: "ptgStr " NON_QUOTE_STRING
 stack_bool: "ptgBool " BOOLEAN
 stack_attr: "ptgAttr"
 stack_add: "ptgAdd"
 stack_sub: "ptgSub"
+stack_exp: "ptgExp " cell
+stack_name: "ptgName " HEX_NUMBER
+stack_num: "ptgNum " NAME
+stack_missing_arg: "ptgMissArg"
+stack_func: "ptgFunc " NAME
+stack_func_var: "ptgFuncVar" "V"? " args " NUMBER " func " (USER_DEFINED|NAME) " (" HEX_NUMBER ")"
+stack_namev: "ptgNameV"
+stack_area: "ptgArea " cell_area
+stack_less_than: "ptgLT"
+stack_namex: "ptgNameX" " "+ NAME " " NUMBER
 
+// Literal definitions.
 NUMBER: ("0".."9")+
 HEX_NUMBER: "0x" ("0".."9"|"a".."f")+
-TYPE: "BOUNDSHEET" | "LABEL" | "FORMULA" | "STRING"
+LINE_TYPE: "BOUNDSHEET" | "LABEL" | "FORMULA" | "STRING"
 STRING: /[^\n]+/
-NON_QUOTE_STRING: /[^"]+/
+NON_QUOTE_STRING: /"[^"]*"/
 NAME: /[\w\.]+/
+USER_DEFINED.2: "User Defined Function"
 BOOLEAN: "TRUE" | "FALSE"
+
