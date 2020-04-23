@@ -44,6 +44,16 @@ def _extract_xlm(maldoc):
     r = b""
     xlm_pat = br"' \d\d\d\d     [ \d]{2} [^\n]+\n"
     for line in re.findall(xlm_pat, olevba_out):
+
+        # plugin_biff does not escape double quotes in strings. Try to find them
+        # and fix them.
+        #
+        # ' 0006     72 FORMULA : Cell Formula - R9C1 len=50 ptgRefV R7C49153 ptgStr "Set wsh = CreateObject("WScript.Shell")" ptgFuncV FWRITELN (0x0089) 
+        str_pat = r"ptgStr \"(.*)\" ptg"
+        for old_str in re.findall(str_pat, line):
+            if ('"' in old_str):
+                new_str = old_str.replace('"', "'")
+                line = line.replace(old_str, new_str)        
         r += line
     return r
 

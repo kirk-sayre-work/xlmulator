@@ -22,7 +22,9 @@ cell_formula: "Cell Formula - " cell " len=" NUMBER (" " stack_item)+ unparsed? 
 
 // Parse out the row and column of a cell identifier.
 cell: "R" NUMBER "C" NUMBER
-cell_area: "R" NUMBER? "~" NUMBER? "C" NUMBER? "~" NUMBER?
+cell_area: ("R" NUMBER? "~" NUMBER? "C" NUMBER? "~" NUMBER?)
+           | ("R" NUMBER "C" NUMBER? "~" NUMBER?)
+           | ("R" NUMBER? "~" NUMBER? "C" NUMBER)
 
 // These are all the items that can be pushed onto the XLM stack.
 stack_item: stack_int | stack_funcv | stack_concat
@@ -32,9 +34,15 @@ stack_item: stack_int | stack_funcv | stack_concat
             | stack_num | stack_missing_arg | stack_func
             | stack_func_var | stack_namev | stack_area
             | stack_less_than | stack_namex | stack_not_equal
-            | stack_mul | stack_paren
+            | stack_mul | stack_paren | unknown_token
+            | stack_array | stack_equal | stack_greater_than
+            | stack_mem_func | stack_power | stack_ref_error
+            | stack_mem_no_mem | stack_area_error | stack_div
+            | stack_uminus | stack_greater_equal | stack_area_3d
+            | stack_end_sheet | stack_mem_error
 
 unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " (DOUBLE_QUOTE_STRING|SINGLE_QUOTE_STRING)
+unknown_token: "*UNKNOWN TOKEN* " HEX_NUMBER
 stack_int: "ptgInt " NUMBER
 stack_funcv: "ptgFuncV " NAME " (" HEX_NUMBER ")"
 stack_concat: "ptgConcat"
@@ -48,7 +56,7 @@ stack_exp: "ptgExp " cell
 stack_name: "ptgName " HEX_NUMBER
 stack_num: "ptgNum " NAME
 stack_missing_arg: "ptgMissArg"
-stack_func: "ptgFunc " NAME
+stack_func: "ptgFunc " (NAME|UNKNOWN_FUNC)
 stack_func_var: "ptgFuncVar" "A"? "V"? " args " NUMBER " func " (USER_DEFINED|NAME) " (" HEX_NUMBER ")"
 stack_namev: "ptgNameV"
 stack_area: "ptgArea " cell_area
@@ -57,6 +65,20 @@ stack_namex: "ptgNameX" " "+ NAME " " NUMBER
 stack_not_equal: "ptgNE"
 stack_mul: "ptgMul"
 stack_paren: "ptgParen"
+stack_array: "ptgArray"
+stack_equal: "ptgEQ"
+stack_greater_than: "ptgGT"
+stack_greater_equal: "ptgGE"
+stack_mem_func: "ptgMemFunc"
+stack_power: "ptgPower"
+stack_ref_error: "ptgRefErr" "3d"? "A"? "V"?
+stack_mem_no_mem: "ptgMemNoMem" "A"? "V"?
+stack_area_error: "ptgAreaErrV" "A"? "V"?
+stack_div: "ptgDiv"
+stack_uminus: "ptgUminus"
+stack_area_3d: "ptgArea3d"
+stack_end_sheet: "ptgEndSheet"
+stack_mem_error: "ptgMemErr"
 
 // Literal definitions.
 NUMBER: ("0".."9")+
@@ -67,5 +89,6 @@ DOUBLE_QUOTE_STRING: /"[^"]*"/
 SINGLE_QUOTE_STRING: /'[^']*'/
 NAME: /[\w\.]+/
 USER_DEFINED.2: "User Defined Function"
+UNKNOWN_FUNC.2: "*UNKNOWN FUNCTION*"
 BOOLEAN: "TRUE" | "FALSE"
 
