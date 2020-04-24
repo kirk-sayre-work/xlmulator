@@ -30,14 +30,35 @@ class StackTransformer(Transformer):
         tmp = str(items)
         return tmp[1:-1]
 
-    def stack_item(self, items):
-        return items[0]
+    def LINE_TYPE(self, items):
+        return str(items)
 
-    def cell_formula(self, items):
+    def STRING(self, items):
+        return str(items)
+
+    def string_value(self, items):
+        return str(items[0])
+
+    def sheet_info(self, items):
+        return str(items[0])
+
+    def cell_value(self, items):
+        return str(items[0])
+    
+    def line(self, items):
         print items
+        return items
+
+    def data(self, items):
+        return items[0]
+    
+    def cell_formula(self, items):
         # Skip length.        
         r = [items[0]] + items[2:]
         return r
+
+    def stack_item(self, items):
+        return items[0]
     
     def cell(self, items):
         return (items[0], items[1])
