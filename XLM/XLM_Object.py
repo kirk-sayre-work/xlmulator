@@ -3,6 +3,59 @@
 Class for representing a single XLM formula (1 cell).
 """
 
+from stack_item import *
+
+####################################################################
+def _get_str(stack):
+    """
+    Evaluate the string for a single function on the top of the stack.
+
+    @param stack (list) The current stack
+        
+    @return (tuple) A 2 element tuple with the 1st element being the 
+    string representation of the topmost stack item and the 2nd item being 
+    the remaining stack.
+    """
+
+    # Sanity check.
+    if (len(stack) == 0):
+        raise ValueError("The stack is empty.")
+
+    # Get the current stack item.
+    tmp_stack = list(stack)
+    curr_item = tmp_stack.pop()
+        
+    # If this is not a function there is nothing to do.
+    if (not curr_item.is_function()):
+        r = str(curr_item)
+        return (r, tmp_stack)
+
+    # We have a function.
+
+    # Infix function? These always have 2 arguments.
+    if (curr_item.is_infix_function()):
+        if (len(tmp_stack) < 2):
+            raise ValueError("Infix operator '" + str(curr_item) + "' requires 2 arguments.")
+        arg2, tmp_stack = _get_str(tmp_stack)
+        arg1, tmp_stack = _get_str(tmp_stack)
+        r = str(arg1) + str(curr_item) + str(arg2)
+        return (r, tmp_stack)
+
+    # Non-infix function. These have a variable # of arguments.
+    num_args = curr_item.get_num_args()
+    if (len(tmp_stack) < num_args):
+        raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
+    first = True
+    args = ""
+    for i in range(0,num_args):
+        if (not first):
+            args = "," + args
+        first = False
+        arg, tmp_stack = _get_str(tmp_stack)
+        args = str(arg) + args
+    r = str(curr_item) + "(" + args + ")"
+    return (r, tmp_stack)
+
 ####################################################################
 class XLM_Object(object):
     """
@@ -23,8 +76,35 @@ class XLM_Object(object):
         """
         self.row = row
         self.col = col
-        self.stack = list(stack)
+        self.stack = []
+        for item in stack:
+            if (isinstance(item, stack_attr)):
+                continue
+            self.stack.append(item)
+        self.gloss = None
+        
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this XLM formula.
+        """
+
+        # Have we already computed the string version?
+        if (self.gloss is not None):
+            return self.gloss
+
+        # Work through the stack to compute the human readable string.
+        self.gloss, _ = _get_str(self.stack)
+        self.gloss = "$R" + str(self.row) + "$C" + str(self.col) + ":\t=" + self.gloss
+        return self.gloss
 
     ####################################################################
-    def __repr__(self):
+    def raw_str(self):
+        """
+        A debug version of this XLM formula.
+        """
         return "$R" + str(self.row) + "$C" + str(self.col) + ":\t" + str(self.stack)
+        
+    ####################################################################
+    def __repr__(self):
+        return self.full_str()

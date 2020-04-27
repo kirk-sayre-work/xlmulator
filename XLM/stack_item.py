@@ -192,7 +192,7 @@ class stack_str(stack_item):
         """
         A human readable version of this stack item.
         """
-        return self.value
+        return '"' + self.value + '"'
 
 ####################################################################
 class stack_bool(stack_item):
