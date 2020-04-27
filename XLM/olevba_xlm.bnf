@@ -2,8 +2,8 @@
 // CFG is written for the Python lark parser.
 
 // olevba XLM output has multiple lines.
-lines: ("\n"? line "\n")+
-line: "' " NUMBER " "~3..6 NUMBER " " LINE_TYPE " : " data
+lines: ("\n"? xlm_line "\n")+
+xlm_line: "' " NUMBER " "~3..6 NUMBER " " LINE_TYPE " : " data
 
 // The main types of XLM lines are basic info about sheets, cell values, cells with
 // XLM formulas, and string value calls.

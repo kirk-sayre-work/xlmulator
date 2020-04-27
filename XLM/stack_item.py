@@ -57,6 +57,16 @@ class stack_item(object):
         if (self.is_function()):
             return self.num_args
         return 0
+
+    ####################################################################
+    def is_infix_function(self):
+        """
+        Tests this stack item to see if it should be represented as an infix function in
+        a human readable string.
+
+        @return (boolean) True if this is an infix function, False if not.
+        """
+        return ((hasattr(self, "is_infix_func")) and self.is_infix_func)
     
 ####################################################################    
 ## Implementation of specific stack items.
@@ -125,6 +135,7 @@ class stack_concat(stack_item):
         Constructor.
         """
         self.num_args = 2
+        self.is_infix_func = True
     
     ####################################################################
     def full_str(self):
@@ -213,6 +224,7 @@ class stack_sub(stack_item):
         Constructor.
         """
         self.num_args = 2
+        self.is_infix_func = True
     
     ####################################################################
     def full_str(self):

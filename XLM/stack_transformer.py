@@ -6,36 +6,36 @@ Lark AST transformer to generate XLM_Objects from an AST.
 from lark import Transformer
 
 from stack_item import *
+from XLM_Object import *
 
 ####################################################################
 class StackTransformer(Transformer):
     """
     Lark AST transformer to generate XLM_Objects from an AST.
     """
+
+    ##########################################################
+    ## Non-terminal Transformers
+    ##########################################################
+
+    def lines(self, items):
+        r = {}
+        for line in items:
+            line_type = line[2]            
+            if (line_type != "FORMULA"):
+                continue
+            curr_info = line[3]
+            row = curr_info[0][0]
+            col = curr_info[0][1]
+            curr_cell = XLM_Object(row, col, curr_info[1:])
+            if (row not in r.keys()):
+                r[row] = {}
+            r[row][col] = curr_cell
+        return r
+
+    def xlm_line(self, items):
+        return items
     
-    def NUMBER(self, items):
-        return int(str(items))
-
-    def NAME(self, items):
-        return str(items)
-
-    def HEX_NUMBER(self, items):
-        return str(items)
-
-    def DOUBLE_QUOTE_STRING(self, items):
-        tmp = str(items)
-        return tmp[1:-1]
-
-    def SINGLE_QUOTE_STRING(self, items):
-        tmp = str(items)
-        return tmp[1:-1]
-
-    def LINE_TYPE(self, items):
-        return str(items)
-
-    def STRING(self, items):
-        return str(items)
-
     def string_value(self, items):
         return str(items[0])
 
@@ -173,3 +173,29 @@ class StackTransformer(Transformer):
     def stack_mem_error(self, items):
         return stack_mem_error()
     
+    ##########################################################
+    ## Terminal Transformers
+    ##########################################################
+
+    def NUMBER(self, items):
+        return int(str(items))
+
+    def NAME(self, items):
+        return str(items)
+
+    def HEX_NUMBER(self, items):
+        return str(items)
+
+    def DOUBLE_QUOTE_STRING(self, items):
+        tmp = str(items)
+        return tmp[1:-1]
+
+    def SINGLE_QUOTE_STRING(self, items):
+        tmp = str(items)
+        return tmp[1:-1]
+
+    def LINE_TYPE(self, items):
+        return str(items)
+
+    def STRING(self, items):
+        return str(items)
