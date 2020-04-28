@@ -127,7 +127,7 @@ class StackTransformer(Transformer):
         return stack_less_than()
     
     def stack_namex(self, items):
-        return stack_namex()
+        return stack_namex(items[0], items[1])
     
     def stack_not_equal(self, items):
         return stack_not_equal()

@@ -529,7 +529,7 @@ class stack_namex(stack_item):
         Constructor.
         """
         self.name = str(name)
-        if (instanceof(number, str)):
+        if (isinstance(number, str)):
             number = int(number)
         self.number = number
     
