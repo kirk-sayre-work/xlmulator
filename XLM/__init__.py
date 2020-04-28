@@ -65,11 +65,13 @@ def _extract_xlm(maldoc):
         # and fix them.
         #
         # ' 0006     72 FORMULA : Cell Formula - R9C1 len=50 ptgRefV R7C49153 ptgStr "Set wsh = CreateObject("WScript.Shell")" ptgFuncV FWRITELN (0x0089) 
-        str_pat = b"ptgStr \"(.*)\" ptg"
+        str_pat = r"Str \".*?\" ptg"
+        str_pat1 = r"Str \"(.*?)\" ptg"
         for old_str in re.findall(str_pat, line):
-            if (b'"' in old_str):
-                new_str = old_str.replace('"', "'")
-                line = line.replace(old_str, new_str)        
+            tmp_str = re.findall(str_pat1, old_str)[0]
+            if ('"' in tmp_str):
+                new_str = "Str '" + old_str[5:-5] + "' ptg"
+                line = line.replace(old_str, new_str)
         r += line
     return r
 

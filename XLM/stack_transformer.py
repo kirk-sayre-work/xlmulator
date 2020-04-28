@@ -4,6 +4,7 @@ Lark AST transformer to generate XLM_Objects from an AST.
 """
 
 from __future__ import print_function
+import string
 
 from lark import Transformer
 
@@ -64,6 +65,10 @@ class StackTransformer(Transformer):
     
     def cell(self, items):
         return (items[0], items[1])
+
+    def cell_area(self, items):
+        # TODO: Need to handle "~" in cell areas.
+        return (items[0], items[1])
     
     def stack_int(self, items):
         return stack_int(items[0])
@@ -82,7 +87,7 @@ class StackTransformer(Transformer):
         return stack_str(items[0])
     
     def stack_bool(self, items):
-        return stack_bool()
+        return stack_bool(items[0])
     
     def stack_attr(self, items):
         return stack_attr()
@@ -94,19 +99,19 @@ class StackTransformer(Transformer):
         return stack_sub()
     
     def stack_exp(self, items):
-        return stack_exp()
+        return stack_exp(items[0][0], items[0][1])
     
     def stack_name(self, items):
-        return stack_name()
+        return stack_name(items[0])
     
     def stack_num(self, items):
-        return stack_num()
+        return stack_num(items[0])
     
     def stack_missing_arg(self, items):
         return stack_missing_arg()
     
     def stack_func(self, items):
-        return stack_func()
+        return stack_func(items[0])
     
     def stack_func_var(self, items):
         # [1, 'RUN', '0x8011']
@@ -116,7 +121,7 @@ class StackTransformer(Transformer):
         return stack_namev()
     
     def stack_area(self, items):
-        return stack_area()
+        return stack_area(items[0][0], items[0][1])
     
     def stack_less_than(self, items):
         return stack_less_than()
@@ -174,6 +179,9 @@ class StackTransformer(Transformer):
     
     def stack_mem_error(self, items):
         return stack_mem_error()
+
+    def unparsed(self, items):
+        return unparsed()
     
     ##########################################################
     ## Terminal Transformers
@@ -189,15 +197,28 @@ class StackTransformer(Transformer):
         return str(items)
 
     def DOUBLE_QUOTE_STRING(self, items):
-        tmp = str(items)
+        tmp = None
+        try:
+            tmp = str(items)
+        except UnicodeEncodeError:
+            tmp = ''.join(filter(lambda x:x in string.printable, items))
         return tmp[1:-1]
 
     def SINGLE_QUOTE_STRING(self, items):
-        tmp = str(items)
+        tmp = None
+        try:
+            tmp = str(items)
+        except UnicodeEncodeError:
+            tmp = ''.join(filter(lambda x:x in string.printable, items))
         return tmp[1:-1]
 
     def LINE_TYPE(self, items):
         return str(items)
 
     def STRING(self, items):
-        return str(items)
+        tmp = None
+        try:
+            tmp = str(items)
+        except UnicodeEncodeError:
+            tmp = ''.join(filter(lambda x:x in string.printable, items))
+        return tmp

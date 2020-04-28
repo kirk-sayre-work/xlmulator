@@ -3,6 +3,8 @@
 Class for representing a single item on the XLM stack machine.
 """
 
+import color_print
+
 ####################################################################
 class stack_item(object):
     """
@@ -73,6 +75,26 @@ class stack_item(object):
 ####################################################################
 
 ####################################################################
+class unparsed(stack_item):
+    """
+    Unparsed bytes.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        pass
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "...UNPARSED..."
+
+####################################################################
 class stack_int(stack_item):
     """
     Integer constant on the stack.
@@ -99,6 +121,22 @@ class stack_int(stack_item):
         return str(self.value)
 
 ####################################################################
+## Number of arguments required by functions referenced with ptgFuncV.
+num_funcv_args = {"CHAR" : (1),
+                  "END.IF" : (0),
+                  "FCLOSE" : (1),
+                  "FREAD" : (2,3),
+                  "FWRITELN" : (2),
+                  "GET.WORKSPACE" : (1),
+                  "GOTO" : (1),
+                  "ISERROR" : (1),
+                  "ISNUMBER" : (1),
+                  "LOWER" : (1),
+                  "NEXT" : (0),
+                  "NOW" : (1),
+                  "WHILE" : (1) }
+    
+####################################################################
 class stack_funcv(stack_item):
     """
     Name of called funtion on stack.
@@ -114,7 +152,16 @@ class stack_funcv(stack_item):
         """
         self.name = str(name)
         self.hexcode = str(hexcode)
-        self.num_args = 1
+
+        # Figure out how many args the function takes.
+        if (self.name in num_funcv_args.keys()):
+            self.num_args = num_funcv_args[self.name]
+            # TODO: Handle functions that can take a variable # of arguments.
+            if (isinstance(self.num_args, tuple)):
+                self.num_args = self.num_args[0]
+        else:
+            color_print.output('y', "WARNING: # of arguments for '" + self.name + "' unknown. Defaulting to 1.")
+            self.num_args = 1
     
     ####################################################################
     def full_str(self):
@@ -196,7 +243,32 @@ class stack_str(stack_item):
 
 ####################################################################
 class stack_bool(stack_item):
-    pass
+    """
+    Boolean constant on the stack.
+    """
+
+    ####################################################################
+    def __init__(self, value):
+        """
+        Constructor.
+
+        @param value (str or int) The value of the stack item.
+        """
+
+        # Convert strings.
+        if (isinstance(value, str)):
+            if (value.lower() == "true"):
+                value = True
+            else:
+                value = False
+        self.value = value
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return str(self.value).upper()
 
 ####################################################################
 class stack_attr(stack_item):
@@ -210,7 +282,24 @@ class stack_attr(stack_item):
 
 ####################################################################
 class stack_add(stack_item):
-    pass
+    """
+    Addition operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "+"    
 
 ####################################################################
 class stack_sub(stack_item):
@@ -235,23 +324,112 @@ class stack_sub(stack_item):
 
 ####################################################################
 class stack_exp(stack_item):
-    pass
+    """
+    Exp on stack.
+    """
 
+    ####################################################################
+    def __init__(self, row, column):
+        """
+        Constructor.
+
+        @param row (str or int) The row number of the cell.
+        @param column (str or int) The column number of the cell.
+        """
+        if (isinstance(row, str)):
+            row = int(row)
+        self.row = row
+        if (isinstance(column, str)):
+            column = int(column)
+        self.column = column
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        # TODO: Figure out proper representation.
+        return "EXP?? $R" + str(self.row) + "$C" + str(self.column)
+    
 ####################################################################
 class stack_name(stack_item):
-    pass
+    """
+    Name?? of called funtion on stack.
+    """
+    
+    ####################################################################
+    def __init__(self, hexcode):
+        """
+        Constructor.
+
+        @param hexcode (str) The hex associated with this item by olevba.
+        """
+        self.hexcode = str(hexcode)
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        # TODO: Figure out the actual representation.
+        return "NAME?? " + self.hexcode
 
 ####################################################################
 class stack_num(stack_item):
-    pass
+    """
+    ptgNum on stack.
+    """
+    
+    ####################################################################
+    def __init__(self, name):
+        """
+        Constructor.
+
+        @param name (str) The name of the function.
+        """
+        self.name = str(name)
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return self.name
 
 ####################################################################
 class stack_missing_arg(stack_item):
-    pass
+    """
+    Missing argument on stack.
+    """
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "...MISSING_ARG..."
 
 ####################################################################
 class stack_func(stack_item):
-    pass
+    """
+    ptgFunc on stack.
+    """
+    
+    ####################################################################
+    def __init__(self, name):
+        """
+        Constructor.
+
+        @param name (str) The name of the function.
+        """
+        self.name = str(name)
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return self.name
 
 ####################################################################
 class stack_func_var(stack_item):
@@ -281,88 +459,336 @@ class stack_func_var(stack_item):
 
 ####################################################################
 class stack_namev(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return ""
 
 ####################################################################
 class stack_area(stack_item):
-    pass
+    """
+    Area on stack.
+    """
+
+    ####################################################################
+    def __init__(self, row, column):
+        """
+        Constructor.
+
+        @param row (str or int) The row number of the cell.
+        @param column (str or int) The column number of the cell.
+        """
+        if (isinstance(row, str)):
+            row = int(row)
+        self.row = row
+        if (isinstance(column, str)):
+            column = int(column)
+        self.column = column
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        # TODO: Figure out proper representation.
+        return "AREA?? $R" + str(self.row) + "$C" + str(self.column)    
 
 ####################################################################
 class stack_less_than(stack_item):
-    pass
+    """
+    Less than operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "<"
 
 ####################################################################
 class stack_namex(stack_item):
-    pass
+    """
+    ptgNamex on stack.
+    """
+    
+    ####################################################################
+    def __init__(self, name, number):
+        """
+        Constructor.
+        """
+        self.name = str(name)
+        if (instanceof(number, str)):
+            number = int(number)
+        self.number = number
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        # TODO: Figure out the proper representation for this.
+        return "ptgNameX " + self.name + " " + str(self.number)
 
 ####################################################################
 class stack_not_equal(stack_item):
-    pass
+    """
+    Not equal operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "!="    
 
 ####################################################################
 class stack_mul(stack_item):
-    pass
+    """
+    Multiplication than operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "*"
 
 ####################################################################
 class stack_paren(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "("
 
 ####################################################################
-class unknown_token(stack_item):
+class unknown_token(unparsed):
     pass
 
 ####################################################################
 class stack_array(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "ARRAY"
 
 ####################################################################
 class stack_equal(stack_item):
-    pass
+    """
+    Equal operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "=="
 
 ####################################################################
 class stack_greater_than(stack_item):
-    pass
+    """
+    Greater than operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return ">"
 
 ####################################################################
 class stack_mem_func(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "MEMFUNC"
 
 ####################################################################
 class stack_power(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "POWER"
 
 ####################################################################
 class stack_ref_error(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "REFERROR"
 
 ####################################################################
 class stack_mem_no_mem(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "NOMEM"
 
 ####################################################################
 class stack_area_error(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "AREAERROR"
 
 ####################################################################
 class stack_div(stack_item):
-    pass
+    """
+    Division operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "/"
 
 ####################################################################
 class stack_uminus(stack_item):
-    pass
+    """
+    Unsigned minus operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "-u"
 
 ####################################################################
 class stack_greater_equal(stack_item):
-    pass
+    """
+    Greater than or equal operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return ">="
 
 ####################################################################
 class stack_area_3d(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "AREA3D"
 
 ####################################################################
 class stack_end_sheet(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "ENDSHEET"
 
 ####################################################################
 class stack_mem_error(stack_item):
-    pass
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "MEMERROR"
+    

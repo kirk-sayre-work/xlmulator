@@ -8,7 +8,7 @@ from stack_item import *
 ####################################################################
 def _get_str(stack):
     """
-    Evaluate the string for a single function on the top of the stack.
+    Get the string representation for a single function on the top of the stack.
 
     @param stack (list) The current stack
         
@@ -23,12 +23,14 @@ def _get_str(stack):
     if (len(stack) == 0):
         raise ValueError("The stack is empty.")
 
-    # Get the current stack item.
+    # Get the current stack item. Make sure the original stack is not modified.
     tmp_stack = list(stack)
     curr_item = tmp_stack.pop()
         
     # If this is not a function there is nothing to do.
     if (not curr_item.is_function()):
+
+        # Just convert the top stack item to a string and we are done.
         r = str(curr_item)
         return (r, tmp_stack)
 
@@ -36,17 +38,28 @@ def _get_str(stack):
 
     # Infix function? These always have 2 arguments.
     if (curr_item.is_infix_function()):
+
+        # Sanity check.
         if (len(tmp_stack) < 2):
             raise ValueError("Infix operator '" + str(curr_item) + "' requires 2 arguments.")
+
+        # Resolve the strings for the 2 function arguments.
         arg2, tmp_stack = _get_str(tmp_stack)
         arg1, tmp_stack = _get_str(tmp_stack)
+
+        # Return the string for the function now that we have the arguments.
         r = str(arg1) + str(curr_item) + str(arg2)
         return (r, tmp_stack)
 
     # Non-infix function. These have a variable # of arguments.
     num_args = curr_item.get_num_args()
+
+    # Sanity check.
     if (len(tmp_stack) < num_args):
+        print(tmp_stack)
         raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
+
+    # Resolve the strings for all the arguments.
     first = True
     args = ""
     for i in range(0,num_args):
@@ -55,6 +68,8 @@ def _get_str(stack):
         first = False
         arg, tmp_stack = _get_str(tmp_stack)
         args = str(arg) + args
+
+    # Return the string for the function.
     r = str(curr_item) + "(" + args + ")"
     return (r, tmp_stack)
 
@@ -80,8 +95,6 @@ class XLM_Object(object):
         self.col = col
         self.stack = []
         for item in stack:
-            if (isinstance(item, stack_attr)):
-                continue
             self.stack.append(item)
         self.gloss = None
         
@@ -97,7 +110,7 @@ class XLM_Object(object):
 
         # Work through the stack to compute the human readable string.
         self.gloss, _ = _get_str(self.stack)
-        self.gloss = "$R" + str(self.row) + "$C" + str(self.col) + ":\t=" + self.gloss
+        self.gloss = "$R" + str(self.row) + "$C" + str(self.col) + ":\t\t=" + self.gloss
         return self.gloss
 
     ####################################################################
@@ -105,7 +118,7 @@ class XLM_Object(object):
         """
         A debug version of this XLM formula.
         """
-        return "$R" + str(self.row) + "$C" + str(self.col) + ":\t" + str(self.stack)
+        return "$R" + str(self.row) + "$C" + str(self.col) + ":\t\t" + str(self.stack)
         
     ####################################################################
     def __repr__(self):

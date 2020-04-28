@@ -50,7 +50,7 @@ stack_int: "ptgInt " NUMBER
 stack_funcv: "ptgFuncV " NAME " (" HEX_NUMBER ")"
 stack_concat: "ptgConcat"
 stack_cell_ref: "ptgRef" "3d"? "V"? " " (cell|cell_area)
-stack_str: "ptgStr " DOUBLE_QUOTE_STRING
+stack_str: "ptgStr " (DOUBLE_QUOTE_STRING|SINGLE_QUOTE_STRING)
 stack_bool: "ptgBool " BOOLEAN
 stack_attr: "ptgAttr"
 stack_add: "ptgAdd"
