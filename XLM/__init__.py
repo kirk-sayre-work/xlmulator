@@ -14,6 +14,7 @@ from lark import Lark
 from lark import UnexpectedInput
 
 import XLM.color_print
+from XLM.stack_transformer import StackTransformer 
 
 ## Check installation prerequisites.
 
@@ -65,11 +66,11 @@ def _extract_xlm(maldoc):
         # and fix them.
         #
         # ' 0006     72 FORMULA : Cell Formula - R9C1 len=50 ptgRefV R7C49153 ptgStr "Set wsh = CreateObject("WScript.Shell")" ptgFuncV FWRITELN (0x0089) 
-        str_pat = r"Str \".*?\" ptg"
-        str_pat1 = r"Str \"(.*?)\" ptg"
+        str_pat = b"Str \".*?\" ptg"
+        str_pat1 = b"Str \"(.*?)\" ptg"
         for old_str in re.findall(str_pat, line):
             tmp_str = re.findall(str_pat1, old_str)[0]
-            if ('"' in tmp_str):
+            if (b'"' in tmp_str):
                 new_str = "Str '" + old_str[5:-5] + "' ptg"
                 line = line.replace(old_str, new_str)
         r += line
@@ -83,8 +84,8 @@ def _extract_xlm_objects(xlm_code):
 
     @param xlm_code (str) The olevba XLM code to parse.
 
-    @return (XLM_Object) An object that can emulate the parsed XLM, or None on
-    error
+    @return (dict) A dict of XLM formula objects (XLM_Object objects) where
+    dict[ROW][COL] gives the XLM cell at (ROW, COL).
     """
 
     # Parse the olevba XLM.
@@ -97,9 +98,34 @@ def _extract_xlm_objects(xlm_code):
         return None
 
     # Transform the AST into XLM_Object objects.
-    print(xlm_ast.pretty())
+    formula_cells = StackTransformer().transform(xlm_ast)
+    return formula_cells
+
+####################################################################
+def _merge_XLM_cells(maldoc, xlm_cells):
+    """
+    Merge the given XLM cells into the value cells read from the
+    given Excel file.
+
+    @param maldoc (str) The fully qualified name of the Excel file to
+    analyze.
+
+    @param xlm_cells (dict) A dict of XLM formula objects (XLM_Object objects) where
+    dict[ROW][COL] gives the XLM cell at (ROW, COL).
+
+    @return (excel object) An excel workbook object on success, None on error.
+    """
+
+    rows = list(xlm_cells.keys())
+    rows.sort()
+    for row in rows:
+        cols = list(xlm_cells[row].keys())
+        cols.sort()
+        for col in cols:
+            print(xlm_cells[row][col])
+
     return None
-     
+            
 ####################################################################
 def emulate(maldoc):
     """
@@ -118,13 +144,20 @@ def emulate(maldoc):
         return []
 
     # Parse the XLM text and get XLM objects that can be emulated.
-    xlm_object = _extract_xlm_objects(xlm_code)
-    if (xlm_object is None):
-        color_print.output('r', "Parsing of XLM failed. Emulation aborted.")
+    xlm_cells = _extract_xlm_objects(xlm_code)
+    if (xlm_cells is None):
+        color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")
+        return []
+
+    # Merge the XLM cells with the value cells into a single unified spereadsheet
+    # object.
+    workbook = _merge_XLM_cells(maldoc, xlm_cells)
+    if (workbook is None):
+        color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
         return []
     
     # Emulate the XLM.
-    #r = xlm_object.eval()
+    #r = workbook.trace()
     
     # Done.
     return []

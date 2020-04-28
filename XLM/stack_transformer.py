@@ -8,8 +8,8 @@ import string
 
 from lark import Transformer
 
-from stack_item import *
-from XLM_Object import *
+from XLM.stack_item import *
+from XLM.XLM_Object import *
 
 ####################################################################
 class StackTransformer(Transformer):

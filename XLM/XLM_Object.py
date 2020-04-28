@@ -3,7 +3,7 @@
 Class for representing a single XLM formula (1 cell).
 """
 
-from stack_item import *
+from XLM.stack_item import *
 
 ####################################################################
 def _get_str(stack):
@@ -110,7 +110,8 @@ class XLM_Object(object):
 
         # Work through the stack to compute the human readable string.
         self.gloss, _ = _get_str(self.stack)
-        self.gloss = "$R" + str(self.row) + "$C" + str(self.col) + ":\t\t=" + self.gloss
+        cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
+        self.gloss = cell_id + " " * (30 - len(cell_id)) + "=" + self.gloss
         return self.gloss
 
     ####################################################################

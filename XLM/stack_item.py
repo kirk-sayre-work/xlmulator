@@ -3,7 +3,7 @@
 Class for representing a single item on the XLM stack machine.
 """
 
-import color_print
+import XLM.color_print
 
 ####################################################################
 class stack_item(object):
@@ -124,6 +124,7 @@ class stack_int(stack_item):
 ## Number of arguments required by functions referenced with ptgFuncV.
 num_funcv_args = {"CHAR" : (1),
                   "END.IF" : (0),
+                  "ERROR.TYPE" : (1),
                   "FCLOSE" : (1),
                   "FREAD" : (2,3),
                   "FWRITELN" : (2),
