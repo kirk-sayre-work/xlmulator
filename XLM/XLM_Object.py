@@ -17,7 +17,9 @@ def _get_str(stack):
     the remaining stack.
     """
 
-    # Sanity check.
+    # Sanity check. Explicit checks used to differentiate error cases.
+    if (stack is None):
+        raise ValueError("The stack is None.")
     if (len(stack) == 0):
         raise ValueError("The stack is empty.")
 

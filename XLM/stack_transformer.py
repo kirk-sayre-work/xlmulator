@@ -3,6 +3,8 @@
 Lark AST transformer to generate XLM_Objects from an AST.
 """
 
+from __future__ import print_function
+
 from lark import Transformer
 
 from stack_item import *
@@ -46,7 +48,7 @@ class StackTransformer(Transformer):
         return str(items[0])
     
     def line(self, items):
-        print items
+        print(items)
         return items
 
     def data(self, items):
