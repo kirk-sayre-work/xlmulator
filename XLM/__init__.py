@@ -12,6 +12,8 @@ import os
 # sudo pip install lark-parser
 from lark import Lark
 from lark import UnexpectedInput
+# https://github.com/kirk-sayre-work/office_dumper.git
+import excel
 
 import XLM.color_print
 from XLM.stack_transformer import StackTransformer 
@@ -35,6 +37,9 @@ try:
 except IOError as e:
     color_print.output('r', "ERROR: Cannot read XLM grammar file " + xlm_grammar_file + ". " + str(e))
     sys.exit(102)
+
+# Debugging flag.
+debug = True
     
 ####################################################################
 def _extract_xlm(maldoc):
@@ -102,6 +107,39 @@ def _extract_xlm_objects(xlm_code):
     return formula_cells
 
 ####################################################################
+def _guess_xlm_sheet(workbook):
+    """
+    Guess the sheet containing the XLM macros by finding the sheet with the
+    most unresolved "#NAME" cells.
+
+    @param workbook (ExcelSheet object) The Excel spreadsheet to check.
+
+    @return (str) The name of the sheet that might contain the XLM macros.
+    """
+
+    # TODO: If plugin_biff.py used by olevba to dump XLM includes sheet names this
+    # function will no longer be needed.
+
+    # Look at each sheet.
+    xlm_sheet = None
+    unresolved_count = -1
+    for curr_sheet_name in workbook.sheet_names():
+        curr_sheet = workbook.sheet_by_name(curr_sheet_name)
+        curr_unresolved_count = 0
+        for cell_value in list(curr_sheet.cells.values()):
+            cell_value = cell_value.strip()
+            if (len(cell_value) == 0):
+                continue
+            if (cell_value.strip() == "#NAME?"):
+                curr_unresolved_count += 1
+        if (curr_unresolved_count > unresolved_count):
+            unresolved_count = curr_unresolved_count
+            xlm_sheet = curr_sheet_name
+
+    # Return the sheet with the most '#NAME' cells.
+    return xlm_sheet                
+    
+####################################################################
 def _merge_XLM_cells(maldoc, xlm_cells):
     """
     Merge the given XLM cells into the value cells read from the
@@ -116,13 +154,27 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     @return (excel object) An excel workbook object on success, None on error.
     """
 
-    rows = list(xlm_cells.keys())
-    rows.sort()
-    for row in rows:
-        cols = list(xlm_cells[row].keys())
-        cols.sort()
-        for col in cols:
-            print(xlm_cells[row][col])
+    # Debug.
+    if debug:
+        rows = list(xlm_cells.keys())
+        rows.sort()
+        for row in rows:
+            cols = list(xlm_cells[row].keys())
+            cols.sort()
+            for col in cols:
+                print(xlm_cells[row][col])
+
+    # Read in the Excel workbook data.
+    workbook = excel.read_excel_sheets(maldoc)
+    if (workbook is None):
+        color_print.output('r', "ERROR: Reading in Excel file " + str(maldoc) + " failed.")
+        return None
+
+    # Guess the name of the sheet containing the XLM macros.
+    xlm_sheet_name = _guess_xlm_sheet(workbook)
+    if debug:
+        print("XLM Sheet:")
+        print(xlm_sheet_name)
 
     return None
             
