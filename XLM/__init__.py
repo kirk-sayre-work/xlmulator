@@ -151,32 +151,43 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     @param xlm_cells (dict) A dict of XLM formula objects (XLM_Object objects) where
     dict[ROW][COL] gives the XLM cell at (ROW, COL).
 
-    @return (excel object) An excel workbook object on success, None on error.
+    @return (tuple) A 2 element tuple where the 1st element is the updated ExcelWorkbook and 
+    2nd element is a list of 2 element tuples containing the XLM cell indices on success, 
+    (None, None) on error.
     """
-
-    # Debug.
-    if debug:
-        rows = list(xlm_cells.keys())
-        rows.sort()
-        for row in rows:
-            cols = list(xlm_cells[row].keys())
-            cols.sort()
-            for col in cols:
-                print(xlm_cells[row][col])
 
     # Read in the Excel workbook data.
     workbook = excel.read_excel_sheets(maldoc)
     if (workbook is None):
         color_print.output('r', "ERROR: Reading in Excel file " + str(maldoc) + " failed.")
-        return None
+        return (None, None)
 
     # Guess the name of the sheet containing the XLM macros.
     xlm_sheet_name = _guess_xlm_sheet(workbook)
     if debug:
         print("XLM Sheet:")
         print(xlm_sheet_name)
+        print("")
 
-    return None
+    # Insert the XLM macros into the XLM sheet.
+    xlm_sheet = workbook.sheet_by_name(xlm_sheet_name)
+    xlm_cell_indices = []
+    rows = xlm_cells.keys()
+    for row in rows:
+        cols = xlm_cells[row].keys()
+        for col in cols:
+            xlm_cell = xlm_cells[row][col]
+            cell_index = (row, col)
+            xlm_sheet.cells[cell_index] = xlm_cell
+            xlm_cell_indices.append(cell_index)
+
+    # Debug.
+    if debug:
+        print(workbook)
+            
+    # Done. Return the indices of the added XLM cells and the updated
+    # workbook.
+    return (workbook, xlm_cell_indices)
             
 ####################################################################
 def emulate(maldoc):
@@ -203,7 +214,7 @@ def emulate(maldoc):
 
     # Merge the XLM cells with the value cells into a single unified spereadsheet
     # object.
-    workbook = _merge_XLM_cells(maldoc, xlm_cells)
+    workbook, xlm_cell_indices = _merge_XLM_cells(maldoc, xlm_cells)
     if (workbook is None):
         color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
         return []

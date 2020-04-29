@@ -94,6 +94,7 @@ class XLM_Object(object):
         self.row = row
         self.col = col
         self.stack = []
+        self.cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
         for item in stack:
             self.stack.append(item)
         self.gloss = None
@@ -109,9 +110,7 @@ class XLM_Object(object):
             return self.gloss
 
         # Work through the stack to compute the human readable string.
-        self.gloss, _ = _get_str(self.stack)
-        cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
-        self.gloss = cell_id + " " * (30 - len(cell_id)) + "=" + self.gloss
+        self.gloss, _ = _get_str(self.stack)        
         return self.gloss
 
     ####################################################################
