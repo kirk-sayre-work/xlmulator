@@ -228,6 +228,7 @@ def eval(sheet):
         done_cells.add(str(xlm_cell))
     
     # Cycle through each remaining XLM cell.
+    result_sheet.xlm_cell_indices.sort()
     for cell_index in result_sheet.xlm_cell_indices:
 
         # Get the XLM cell (XLM_Object) to emulate.

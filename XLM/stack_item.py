@@ -21,7 +21,7 @@ class stack_item(object):
 
         @return The result of emualting this stack item.
         """
-        raise NotImplementedError
+        raise NotImplementedError("eval() not implemented in " + str(type(self)))
 
     ####################################################################
     def full_str(self):
@@ -217,6 +217,8 @@ class stack_cell_ref(stack_item):
         if (isinstance(column, str)):
             column = int(column)
         self.column = column
+        if (self.column > 49152):
+            self.column -= 49152
     
     ####################################################################
     def full_str(self):
@@ -284,6 +286,10 @@ class stack_bool(stack_item):
         """
         return str(self.value).upper()
 
+    ####################################################################
+    def eval(self, sheet):
+        return self.value
+    
 ####################################################################
 class stack_attr(stack_item):
 
@@ -363,6 +369,8 @@ class stack_exp(stack_item):
         if (isinstance(column, str)):
             column = int(column)
         self.column = column
+        if (self.column > 49152):
+            self.column -= 49152
     
     ####################################################################
     def full_str(self):
@@ -508,6 +516,8 @@ class stack_area(stack_item):
         if (isinstance(column, str)):
             column = int(column)
         self.column = column
+        if (self.column > 49152):
+            self.column -= 49152
     
     ####################################################################
     def full_str(self):

