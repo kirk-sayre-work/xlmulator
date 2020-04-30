@@ -210,11 +210,14 @@ def eval(sheet):
 
     # Evaluate all the FORMULA() cells first since they can modify cell values.
     done_cells = set()
+    xlm_code = ""
+    result_sheet.xlm_cell_indices.sort()
     for cell_index in result_sheet.xlm_cell_indices:
 
         # Get the XLM cell (XLM_Object) to emulate.
         xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
-
+        xlm_code += xlm_cell.cell_id + " ---> " + str(xlm_cell) + "\n"
+        
         # Is this a FORMULA() cell?
         if ("FORMULA(" not in str(xlm_cell)):
             continue
@@ -246,7 +249,7 @@ def eval(sheet):
     r = _pull_actions(result_sheet)
 
     # Done.
-    return r
+    return (r, xlm_code)
         
 ####################################################################
 def _get_str(stack):

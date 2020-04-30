@@ -2,6 +2,8 @@
 
 import argparse
 
+import prettytable
+
 import XLM
 
 """@package xlmulator
@@ -23,6 +25,27 @@ def emulate_XLM(maldoc):
     r = XLM.emulate(maldoc)
     return r
 
+###########################################################################
+def dump_actions(actions):
+    """
+    return a table of all actions recorded by trace(), as a prettytable object
+    that can be printed or reused.
+    """
+    t = prettytable.PrettyTable(('Action', 'Parameters', 'Description'))
+    t.align = 'l'
+    t.max_width['Action'] = 20
+    t.max_width['Parameters'] = 65
+    t.max_width['Description'] = 25
+    for action in actions:
+        # Cut insanely large results down to size.
+        str_action = str(action)
+        if (len(str_action) > 50000):
+            new_params = str(action[1])
+            if (len(new_params) > 50000):
+                new_params = new_params[:25000] + "... <SNIP> ..." + new_params[-25000:]
+            action = (action[0], new_params, action[2])
+        t.add_row(action)
+    return t
 
 ###########################################################################
 # Main Program
@@ -36,8 +59,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Emulate the XLM macros.
-    actions = emulate_XLM(args.maldocs)
-    for a in actions:
-        print(a)
+    actions, xlm_code = emulate_XLM(args.maldocs)
+
+    # Display results.
+
+    # XLM Macros.
+    print('-'*79)
+    print('XLM MACRO %s ' % args.maldocs)
+    print('- '*39)
+    print(xlm_code)
     
+    print('\nRecorded Actions:')
+    print(dump_actions(actions))
     
