@@ -40,7 +40,7 @@ except IOError as e:
     sys.exit(102)
 
 # Debugging flag.
-debug = True
+debug = False
 XLM.XLM_Object.debug = debug
 
 ####################################################################
@@ -247,4 +247,4 @@ def emulate(maldoc):
     r = XLM_Object.eval(xlm_sheet)
     
     # Done.
-    return []
+    return r

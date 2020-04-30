@@ -3,6 +3,8 @@
 Class for representing a single XLM formula (1 cell).
 """
 
+import json
+
 # https://github.com/kirk-sayre-work/office_dumper.git
 import excel
 
@@ -122,6 +124,60 @@ def _eval_cell(xlm_cell, sheet):
 
     # Done.
     return str(final_val)
+
+####################################################################
+def _pull_actions(sheet):
+    """
+    Pull the actions from the given sheet of resolved XLM.
+
+    @param sheet (ExcelSheet object) The resolved Excel sheet.
+
+    @return (list) A list of 3 element tuples where the 1st element is the general 
+    action type, the 2nd element is details of the action, and the 3rd element is a 
+    general note.
+    """
+
+    # Cycle through the XLM cells in numeric order.
+    indices = sheet.xlm_cell_indices
+    indices.sort()
+    r = []
+    for index in indices:
+
+        # Get the current cell value.
+        curr_val = str(sheet.cell(index[0], index[1]))
+
+        # Is this an action?
+        # 'ACTION: CALL(['URLDownloadToFileA', 0, 'foo', 0, 'http:/bar.com', 'C:\\ProgramData\\junk', 0, 0])'
+        if (curr_val.startswith("ACTION: ")):
+
+            # Break out the action.
+            curr_val = curr_val.replace("ACTION: ", "")
+
+            # Function call?
+            if (curr_val.startswith("CALL(")):
+
+                # Pull out the call name and args.
+                tmp = curr_val.replace("CALL(", "")[:-1].replace("'", '"')
+                fields = json.loads(tmp)
+                func_name = fields[0]
+                call = func_name + "("
+                first = True
+                for arg in fields[1:]:
+                    if (not first):
+                        call += ", "
+                    first = False
+                    call += str(arg)
+                call += ")"
+
+                # Save the action.
+                r.append(("CALL", call, func_name))
+
+            # Halt?
+            if (curr_val.startswith("HALT")):
+                r.append(("HALT", "HALT()", "Done."))
+
+    # Done.
+    return r
     
 ####################################################################
 def eval(sheet):
@@ -181,11 +237,16 @@ def eval(sheet):
             print(xlm_cell)
             print(resolved_cell)
         result_sheet.cells[cell_index] = resolved_cell
-
+        
     if debug:
         print("------- FINAL SHEET --------")
         print(result_sheet)
-    return None
+
+    # Pull the actions from the resolved XLM cells.
+    r = _pull_actions(result_sheet)
+
+    # Done.
+    return r
         
 ####################################################################
 def _get_str(stack):

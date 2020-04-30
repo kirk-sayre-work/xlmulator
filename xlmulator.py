@@ -21,8 +21,7 @@ def emulate_XLM(maldoc):
 
     # Emulate the XLM macros.
     r = XLM.emulate(maldoc)
-
-    return True
+    return r
 
 
 ###########################################################################
@@ -37,5 +36,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Emulate the XLM macros.
-    emulate_XLM(args.maldocs)
+    actions = emulate_XLM(args.maldocs)
+    for a in actions:
+        print(a)
+    
     
