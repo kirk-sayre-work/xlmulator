@@ -213,8 +213,8 @@ def emulate(maldoc):
     @param maldoc (str) The fully qualified name of the Excel file to
     analyze.
 
-    @return (list) A list of 3 element tuples containing the actions performed
-    by the Excel file.
+    @return (tuple) 1st element is a list of 3 element tuples containing the actions performed
+    by the sheet, 2nd element is the human readable XLM code.
     """
 
     # Run olevba on the file and extract the XLM macro code lines.

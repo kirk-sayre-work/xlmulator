@@ -186,8 +186,8 @@ def eval(sheet):
 
     @param sheet (ExcelSheet object) The workbook to emulate.
 
-    @return (list) A list of 3 element tuples containing the actions performed
-    by the sheet.
+    @return (tuple) 1st element is a list of 3 element tuples containing the actions performed
+    by the sheet, 2nd element is the human readable XLM code.
     """
 
     # Sanity check.
