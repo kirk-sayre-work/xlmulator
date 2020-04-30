@@ -17,6 +17,7 @@ import excel
 
 import XLM.color_print
 from XLM.stack_transformer import StackTransformer 
+import XLM.XLM_Object
 
 ## Check installation prerequisites.
 
@@ -39,8 +40,9 @@ except IOError as e:
     sys.exit(102)
 
 # Debugging flag.
-debug = True
-    
+debug = False
+XLM.XLM_Object.debug = debug
+
 ####################################################################
 def _extract_xlm(maldoc):
     """
@@ -64,7 +66,7 @@ def _extract_xlm(maldoc):
 
     # Pull out all the XLM lines.
     r = b""
-    xlm_pat = br"' \d\d\d\d     [ \d]{2} [^\n]+\n"
+    xlm_pat = br"' \d\d\d\d {1,10}\d{1,6} [^\n]+\n"
     for line in re.findall(xlm_pat, olevba_out):
 
         # plugin_biff does not escape double quotes in strings. Try to find them
@@ -103,7 +105,15 @@ def _extract_xlm_objects(xlm_code):
         return None
 
     # Transform the AST into XLM_Object objects.
+    if debug:
+        print("=========== START XLM AST ==============")
+        print(xlm_ast.pretty())
+        print("=========== DONE XLM AST ==============")
     formula_cells = StackTransformer().transform(xlm_ast)
+    if debug:
+        print("=========== START XLM TRANSFORMED ==============")
+        print(formula_cells)
+        print("=========== DONE XLM TRANSFORMED ==============")
     return formula_cells
 
 ####################################################################
@@ -151,16 +161,16 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     @param xlm_cells (dict) A dict of XLM formula objects (XLM_Object objects) where
     dict[ROW][COL] gives the XLM cell at (ROW, COL).
 
-    @return (tuple) A 2 element tuple where the 1st element is the updated ExcelWorkbook and 
-    2nd element is a list of 2 element tuples containing the XLM cell indices on success, 
-    (None, None) on error.
+    @return (tuple) A 3 element tuple where the 1st element is the updated ExcelWorkbook and 
+    2nd element is a list of 2 element tuples containing the XLM cell indices on success and 
+    the 3rd element is the XLM sheet object, (None, None, None) on error.
     """
 
     # Read in the Excel workbook data.
     workbook = excel.read_excel_sheets(maldoc)
     if (workbook is None):
         color_print.output('r', "ERROR: Reading in Excel file " + str(maldoc) + " failed.")
-        return (None, None)
+        return (None, None, None)
 
     # Guess the name of the sheet containing the XLM macros.
     xlm_sheet_name = _guess_xlm_sheet(workbook)
@@ -172,22 +182,28 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     # Insert the XLM macros into the XLM sheet.
     xlm_sheet = workbook.sheet_by_name(xlm_sheet_name)
     xlm_cell_indices = []
+    if debug:
+        print("=========== START MERGE ==============")
     rows = xlm_cells.keys()
     for row in rows:
         cols = xlm_cells[row].keys()
         for col in cols:
             xlm_cell = xlm_cells[row][col]
+            if debug:
+                print((row, col))
+                print(xlm_cell)
             cell_index = (row, col)
             xlm_sheet.cells[cell_index] = xlm_cell
             xlm_cell_indices.append(cell_index)
 
     # Debug.
     if debug:
+        print("=========== DONE MERGE ==============")
         print(workbook)
             
     # Done. Return the indices of the added XLM cells and the updated
     # workbook.
-    return (workbook, xlm_cell_indices)
+    return (workbook, xlm_cell_indices, xlm_sheet)
             
 ####################################################################
 def emulate(maldoc):
@@ -203,6 +219,10 @@ def emulate(maldoc):
 
     # Run olevba on the file and extract the XLM macro code lines.
     xlm_code = _extract_xlm(maldoc)
+    if debug:
+        print("=========== START RAW XLM ==============")
+        print(xlm_code)
+        print("=========== DONE RAW XLM ==============")
     if (xlm_code is None):
         return []
 
@@ -214,13 +234,17 @@ def emulate(maldoc):
 
     # Merge the XLM cells with the value cells into a single unified spereadsheet
     # object.
-    workbook, xlm_cell_indices = _merge_XLM_cells(maldoc, xlm_cells)
+    workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
     if (workbook is None):
         color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
         return []
+
+    # Save the indices of the XLM cells in the workbook. We do this here directly so that
+    # the base definition of the ExcelWorkbook class does not need to be changed.
+    xlm_sheet.xlm_cell_indices = xlm_cell_indices
     
     # Emulate the XLM.
-    #r = workbook.trace()
+    r = XLM_Object.eval(xlm_sheet)
     
     # Done.
     return []

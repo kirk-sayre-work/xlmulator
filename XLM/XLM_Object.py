@@ -3,8 +3,156 @@
 Class for representing a single XLM formula (1 cell).
 """
 
-from XLM.stack_item import *
+# https://github.com/kirk-sayre-work/office_dumper.git
+import excel
 
+from XLM.stack_item import *
+import XLM.xlm_library
+
+####################################################################
+def _eval_stack(stack, sheet):
+    """
+    Evaluate XLM stack items.
+
+    @param stack (list) The stack to emulate.
+    @param sheet (ExcelSheet object) The sheet containing the XLM cell with the given stack.
+
+    @return (tuple) A 2 element tuple where the 1st element is the fully emulated result value
+    of the top stack item and the 2nd element is the updated stack.
+    """
+
+    # Sanity check.
+    if (stack is None):
+        raise ValueError("The XLM cell stack is None.")
+    if (len(stack) == 0):
+        raise ValueError("The XLM cell stack is empty.")
+
+    # Get the current stack item. Make sure the original stack is not modified.
+    tmp_stack = list(stack)
+    curr_item = tmp_stack.pop()
+
+    if debug:
+        print("===== START MID LEVEL EVAL " + str(curr_item) + " =======")
+        print(curr_item)
+        print(tmp_stack)
+    
+    # If this is not a function there is nothing to do.
+    if (not curr_item.is_function()):
+
+        # Just return the stack item if it is fully resolved.
+        if (hasattr(curr_item, "eval")):
+            curr_item = curr_item.eval(sheet)
+        if debug:
+            print("????????")
+            print(curr_item)
+            print(type(curr_item))
+
+        # Is this a reference to a new XLM cell?
+        if (isinstance(curr_item, XLM_Object)):
+
+            # Yes, eval that cell.
+            curr_item = _eval_cell(curr_item, sheet)
+
+        # Done emulating this item?
+        if ((not hasattr(curr_item, "is_function")) or (not curr_item.is_function())):
+            if debug:
+                print("===== DONE MID LEVEL EVAL " + str(curr_item) + " =======")
+            return (curr_item, tmp_stack)
+
+    # We have a function.
+
+    # Sanity check.
+    num_args = curr_item.get_num_args()
+    if (len(tmp_stack) < num_args):
+        print(tmp_stack)
+        raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
+
+    # Resolve all the arguments.
+    args = []
+    for i in range(0, num_args):
+        arg, tmp_stack = _eval_stack(tmp_stack, sheet)
+        args.insert(0, arg)
+
+    # Evaluate the function.
+    r = XLM.xlm_library.eval(curr_item.name, args, sheet)
+    if debug:
+        print(r)
+        print(tmp_stack)
+        print("===== DONE MID LEVEL EVAL " + str(curr_item) + " =======")
+    return (r, tmp_stack)
+    
+####################################################################
+def _eval_cell(xlm_cell, sheet):
+    """
+    Emulate the behavior of a single XLM cell.
+
+    @param xlm_cell (XLM_Object object) The XLM cell to emulate.
+
+    @param sheet (ExcelSheet object) The sheet containing the cell. Intermediate
+    XLM cell values will be updated in this object.
+
+    @return (str) The final value of the XLM function.
+    """
+
+    # Evaluate the XLM stack for the cell.
+    stack = xlm_cell.stack
+    if debug:
+        print("==== START TOP LEVEL EVAL " + str(xlm_cell) + " ======")
+        print(xlm_cell)
+        print(stack)
+    final_val, _ = _eval_stack(stack, sheet)
+    if debug:
+        print("==== DONE TOP LEVEL EVAL " + str(xlm_cell) + " ======")
+
+    # Done.
+    return str(final_val)
+    
+####################################################################
+def eval(sheet):
+    """
+    Emulate the XLM behavior of an Excel sheet.
+
+    @param sheet (ExcelSheet object) The workbook to emulate.
+
+    @return (list) A list of 3 element tuples containing the actions performed
+    by the sheet.
+    """
+
+    # Sanity check.
+    if (not isinstance(sheet, excel.ExcelSheet)):
+        raise ValueError("sheet arg is a '" + str(type(sheet)) + "', not a 'ExcelSheet'.")
+    if (not hasattr(sheet, "xlm_cell_indices")):
+        raise ValueError("sheet arg does not have 'xlm_cell_indices' field.")
+
+    # Emulate the XLM cells.
+    #
+    # XLM macros are fancy Excel formulas, so we should be able to ignore the execution
+    # flow of the XLM macros and just evaluate every XLM cell in an arbitrary order. This
+    # assumes that the XLM macros do not modify the program state, where program state is tracked
+    # by updating constant values stored in cells.
+
+    # We will be updating cells values as we emulate the XLM. Make a copy of the sheet so
+    # we don't stomp on the original sheet.
+    result_sheet = excel.ExcelSheet(sheet)
+    result_sheet.xlm_cell_indices = sheet.xlm_cell_indices
+    
+    # Cycle through each XLM cell.
+    for cell_index in result_sheet.xlm_cell_indices:
+
+        # Get the XLM cell (XLM_Object) to emulate.
+        xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        resolved_cell = _eval_cell(xlm_cell, result_sheet)
+        if debug:
+            print("-------")
+            print(xlm_cell)
+            print(resolved_cell)
+        result_sheet.cells[cell_index] = resolved_cell
+
+    if debug:
+        print("------- FINAL SHEET --------")
+        print(result_sheet)
+    return None
+        
 ####################################################################
 def _get_str(stack):
     """
@@ -98,6 +246,17 @@ class XLM_Object(object):
         for item in stack:
             self.stack.append(item)
         self.gloss = None
+
+    ####################################################################
+    def is_function(self):
+        """
+        Determine if this XLM formula is a function call.
+
+        @return (boolean) True if it is a call, False if not.
+        """
+        if (len(self.stack) == 0):
+            return False
+        return self.stack[-1].is_function()
         
     ####################################################################
     def full_str(self):

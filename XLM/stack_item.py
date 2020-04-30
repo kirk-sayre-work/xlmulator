@@ -12,11 +12,11 @@ class stack_item(object):
     """
 
     ####################################################################
-    def eval(self, workbook):
+    def eval(self, sheet):
         """
         Evaluate the current value of the object.
         
-        @param workbook (Excel workbook object) The Excel workbook in which to evaluate this
+        @param sheet (ExcelSheet object) The Excel sheet in which to evaluate this
         XLM stack item.
 
         @return The result of emualting this stack item.
@@ -120,6 +120,10 @@ class stack_int(stack_item):
         """
         return str(self.value)
 
+    ####################################################################
+    def eval(self, sheet):
+        return self.value
+    
 ####################################################################
 ## Number of arguments required by functions referenced with ptgFuncV.
 num_funcv_args = {"CHAR" : (1),
@@ -184,6 +188,7 @@ class stack_concat(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_concat"
     
     ####################################################################
     def full_str(self):
@@ -220,6 +225,10 @@ class stack_cell_ref(stack_item):
         """
         return "$R" + str(self.row) + "$C" + str(self.column)
 
+    ####################################################################
+    def eval(self, sheet):
+        return sheet.cell(self.row, self.column)
+    
 ####################################################################
 class stack_str(stack_item):
     """
@@ -241,6 +250,10 @@ class stack_str(stack_item):
         A human readable version of this stack item.
         """
         return '"' + self.value + '"'
+
+    ####################################################################
+    def eval(self, sheet):
+        return self.value
 
 ####################################################################
 class stack_bool(stack_item):
@@ -281,6 +294,11 @@ class stack_attr(stack_item):
         """
         return ""
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return 0
+    
 ####################################################################
 class stack_add(stack_item):
     """
@@ -294,6 +312,7 @@ class stack_add(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_plus"
     
     ####################################################################
     def full_str(self):
@@ -315,6 +334,7 @@ class stack_sub(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_minus"
     
     ####################################################################
     def full_str(self):
@@ -510,6 +530,7 @@ class stack_less_than(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_less_than"
     
     ####################################################################
     def full_str(self):
@@ -555,6 +576,7 @@ class stack_not_equal(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_not_equal"
     
     ####################################################################
     def full_str(self):
@@ -576,6 +598,7 @@ class stack_mul(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_times"
     
     ####################################################################
     def full_str(self):
@@ -621,6 +644,7 @@ class stack_equal(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_equals"
     
     ####################################################################
     def full_str(self):
@@ -642,6 +666,7 @@ class stack_greater_than(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_greater_than"
     
     ####################################################################
     def full_str(self):
@@ -713,6 +738,7 @@ class stack_div(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_divide"
     
     ####################################################################
     def full_str(self):
@@ -734,6 +760,7 @@ class stack_uminus(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_unsigned_minus"
     
     ####################################################################
     def full_str(self):
@@ -755,6 +782,7 @@ class stack_greater_equal(stack_item):
         """
         self.num_args = 2
         self.is_infix_func = True
+        self.name = "_greater_or_equal"
     
     ####################################################################
     def full_str(self):
