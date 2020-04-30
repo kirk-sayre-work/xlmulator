@@ -2,6 +2,9 @@
 Emulation support for XLM functions.
 """
 
+import XLM.XLM_Object
+import XLM.stack_item
+
 ####################################################################
 ## Function emulators
 ####################################################################
@@ -101,7 +104,7 @@ def HALT(params):
 func_lookup["HALT"] = HALT
 
 def FORMULA(params):
-    r = "ACTION: FORMULA(" + str(params) + ")"
+    r = str(params[0])
     return r
 func_lookup["FORMULA"] = FORMULA
 
@@ -124,6 +127,14 @@ def eval(func_name, params, sheet):
     # Get the emulator for the function and run it.
     func = func_lookup[func_name]
 
+    # FORMULA can compute a value and update a cell with that computed value. Track
+    # the cell to update in this case.
+    update_index = None
+    if ((func_name == "FORMULA") and (len(params) > 1)):
+        # $R54$C54
+        update_fields = str(params[1]).replace("$C", ":").replace("$R", "").split(":")
+        update_index = (int(update_fields[0]), int(update_fields[1]))
+    
     # Evaluate the parameters.
     eval_params = []
     for p in params:
@@ -132,6 +143,14 @@ def eval(func_name, params, sheet):
         else:
             eval_params.append(p)
     r = func(eval_params)
+
+    # Does this value get written to a cell?
+    if (update_index is not None):
+        new_item = XLM.stack_item.stack_str(str(r))
+        new_cell = XLM.XLM_Object.XLM_Object(update_index[0], update_index[1], [new_item])
+        sheet.cells[update_index] = new_cell
+
+    # Return the result.
     return r
 
     

@@ -35,8 +35,14 @@ def _eval_stack(stack, sheet):
         print("===== START MID LEVEL EVAL " + str(curr_item) + " =======")
         print(curr_item)
         print(tmp_stack)
-    
-    # If this is not a function there is nothing to do.
+
+    # If this has already been ersolved to a constant we are done.
+    if (not hasattr(curr_item, "is_function")):
+        if debug:
+            print("===== DONE MID LEVEL EVAL " + str(curr_item) + " =======")
+        return (curr_item, tmp_stack)
+        
+    # If this is not a function there is nothing much to do.
     if (not curr_item.is_function()):
 
         # Just return the stack item if it is fully resolved.
@@ -67,6 +73,14 @@ def _eval_stack(stack, sheet):
         print(tmp_stack)
         raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
 
+    # If we are currently looking at a 2 element FORMLUA function we will need to tweak the top
+    # argument on the stack. This is actually the destination to where to write the formula value,
+    # so we don't want to read the current value of that cell and pass that as an argument to
+    # FORMULA.
+    if ((curr_item.name == "FORMULA") and (num_args == 2)):
+        ref_item = tmp_stack.pop()
+        tmp_stack.append(str(ref_item))
+    
     # Resolve all the arguments.
     args = []
     for i in range(0, num_args):
@@ -95,6 +109,8 @@ def _eval_cell(xlm_cell, sheet):
     """
 
     # Evaluate the XLM stack for the cell.
+    if (not hasattr(xlm_cell, "stack")):
+        return str(xlm_cell)
     stack = xlm_cell.stack
     if debug:
         print("==== START TOP LEVEL EVAL " + str(xlm_cell) + " ======")
@@ -135,12 +151,30 @@ def eval(sheet):
     # we don't stomp on the original sheet.
     result_sheet = excel.ExcelSheet(sheet)
     result_sheet.xlm_cell_indices = sheet.xlm_cell_indices
-    
-    # Cycle through each XLM cell.
+
+    # Evaluate all the FORMULA() cells first since they can modify cell values.
+    done_cells = set()
     for cell_index in result_sheet.xlm_cell_indices:
 
         # Get the XLM cell (XLM_Object) to emulate.
         xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+
+        # Is this a FORMULA() cell?
+        if ("FORMULA(" not in str(xlm_cell)):
+            continue
+
+        # This is a FORMULA() cell. Evaluate it.
+        resolved_cell = _eval_cell(xlm_cell, result_sheet)
+        result_sheet.cells[cell_index] = resolved_cell
+        done_cells.add(str(xlm_cell))
+    
+    # Cycle through each remaining XLM cell.
+    for cell_index in result_sheet.xlm_cell_indices:
+
+        # Get the XLM cell (XLM_Object) to emulate.
+        xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        if (str(xlm_cell) in done_cells):
+            continue
         resolved_cell = _eval_cell(xlm_cell, result_sheet)
         if debug:
             print("-------")

@@ -40,7 +40,7 @@ except IOError as e:
     sys.exit(102)
 
 # Debugging flag.
-debug = False
+debug = True
 XLM.XLM_Object.debug = debug
 
 ####################################################################
