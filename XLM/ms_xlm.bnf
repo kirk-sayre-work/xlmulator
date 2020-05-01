@@ -226,7 +226,7 @@ MULTIOP:    "*" | "/"
 CMPOP:      "<" | ">" | "=" | "<>"
 CONCATOP:   "&"
 STRING:   /\"[^"]*?\"/i
-BOOLEAN: "TRUE" | "FALSE"
+BOOLEAN.2: "TRUE" | "FALSE"
 ROW: "R"
 COL: "C"
 REF: "[" SIGNED_INT  "]"

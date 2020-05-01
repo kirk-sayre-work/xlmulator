@@ -467,7 +467,7 @@ class stack_func_var(stack_item):
     """
 
     ####################################################################
-    def __init__(self, name, num_args, hexcode):
+    def __init__(self, name, num_args, hexcode="???"):
         """
         Constructor.
 
