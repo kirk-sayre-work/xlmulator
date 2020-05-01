@@ -1,6 +1,6 @@
 """@package stack_transformer
 
-Lark AST transformer to generate XLM_Objects from an AST.
+Lark AST transformer to generate XLM_Objects from an AST generated from olevba_xlm.bnf.
 """
 
 from __future__ import print_function
