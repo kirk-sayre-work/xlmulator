@@ -14,9 +14,10 @@ from lark import Transformer
 
 from XLM.stack_item import *
 from XLM.XLM_Object import *
+
 import XLM.color_print
 
-## Load the MS XLM grammar.
+# Load the MS XLM grammar.
 ms_xlm_grammar_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "ms_xlm.bnf")
 ms_xlm_grammar = None
 try:
@@ -28,7 +29,7 @@ except IOError as e:
     sys.exit(102)
 
 ####################################################################
-def _parse_ms_xlm(expression):
+def parse_ms_xlm(expression):
     """
     Parse a XLM expression in the real MS XLM format (not plugin_biff) to an
     XLM_Object.
@@ -39,6 +40,26 @@ def _parse_ms_xlm(expression):
     return None.
     """
 
+    # Convert to MS XLM is needed.
+    if (not expression.startswith("=")):
+        expression = '="' + str(expression) + '"'
+    
+    # Parse the given MS XLM.
+    xlm_parser = Lark(ms_xlm_grammar, start="start", parser='lalr')
+    xlm_ast = None
+    try:
+        xlm_ast = xlm_parser.parse(expression)
+    except UnexpectedInput as e:
+        color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + expression + "'. " + str(e))
+        return None
+        
+    # Convert the AST to a XLM_Object.
+    r = MsStackTransformer().transform(xlm_ast)
+    print(r)
+    for s in r.stack:
+        print(s)
+    return r
+    
 ####################################################################
 def _load_stack_args(args, stack):
     """
