@@ -59,7 +59,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Emulate the XLM macros.
+    print("Emulating XLM macros in " + str(args.maldocs) + " ...")
     actions, xlm_code = emulate_XLM(args.maldocs)
+    print("Done emulating XLM macros in " + str(args.maldocs) + " .")
 
     # Display results.
 
