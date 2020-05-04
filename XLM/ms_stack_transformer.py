@@ -25,7 +25,7 @@ try:
     ms_xlm_grammar = f.read()
     f.close()
 except IOError as e:
-    color_print.output('r', "ERROR: Cannot read MS XLM grammar file " + ms_xlm_grammar_file + ". " + str(e))
+    XLM.color_print.output('r', "ERROR: Cannot read MS XLM grammar file " + ms_xlm_grammar_file + ". " + str(e))
     sys.exit(102)
     
 ####################################################################
@@ -50,7 +50,7 @@ def parse_ms_xlm(expression):
     try:
         xlm_ast = xlm_parser.parse(expression)
     except UnexpectedInput as e:
-        color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + expression + "'. " + str(e))
+        XLM.color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + expression + "'. " + str(e))
         return None
         
     # Convert the AST to a XLM_Object.

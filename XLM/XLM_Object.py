@@ -10,20 +10,24 @@ import excel
 
 from XLM.stack_item import *
 import XLM.xlm_library
+import XLM.color_print
 
 ####################################################################
-def _eval_stack(stack, sheet):
+def _eval_stack(stack, sheet, cell_stack):
     """
     Evaluate XLM stack items.
 
     @param stack (list) The stack to emulate.
     @param sheet (ExcelSheet object) The sheet containing the XLM cell with the given stack.
+    @param cell_stack (list) Stack of cells being analyzed. Used to break infinite recursion.
 
     @return (tuple) A 2 element tuple where the 1st element is the fully emulated result value
     of the top stack item and the 2nd element is the updated stack.
     """
 
     # Sanity check.
+    if (cell_stack is None):
+        raise ValueError("Stack of cells being emulated is None.")
     if (stack is None):
         raise ValueError("The XLM cell stack is None.")
     if (len(stack) == 0):
@@ -59,7 +63,7 @@ def _eval_stack(stack, sheet):
         if (isinstance(curr_item, XLM_Object)):
 
             # Yes, eval that cell.
-            curr_item = _eval_cell(curr_item, sheet)
+            curr_item = _eval_cell(curr_item, sheet, cell_stack)
 
         # Done emulating this item?
         if ((not hasattr(curr_item, "is_function")) or (not curr_item.is_function())):
@@ -86,7 +90,7 @@ def _eval_stack(stack, sheet):
     # Resolve all the arguments.
     args = []
     for i in range(0, num_args):
-        arg, tmp_stack = _eval_stack(tmp_stack, sheet)
+        arg, tmp_stack = _eval_stack(tmp_stack, sheet, cell_stack)
         args.insert(0, arg)
 
     # Evaluate the function.
@@ -98,7 +102,7 @@ def _eval_stack(stack, sheet):
     return (r, tmp_stack)
     
 ####################################################################
-def _eval_cell(xlm_cell, sheet):
+def _eval_cell(xlm_cell, sheet, cell_stack):
     """
     Emulate the behavior of a single XLM cell.
 
@@ -107,9 +111,17 @@ def _eval_cell(xlm_cell, sheet):
     @param sheet (ExcelSheet object) The sheet containing the cell. Intermediate
     XLM cell values will be updated in this object.
 
+    @param cell_stack (list) Stack of cells being analyzed. Used to break infinite recursion.
+
     @return (str) The final value of the XLM function.
     """
 
+    # Are we getting into infinite recursion?
+    if (xlm_cell in cell_stack):
+        msg = "WARNING: Infinite recursion detected when resolving '" + xlm_cell.cell_id + ":" + str(xlm_cell) + "'."
+        XLM.color_print.output('y', msg)
+        return 0
+    
     # Evaluate the XLM stack for the cell.
     if (not hasattr(xlm_cell, "stack")):
         return str(xlm_cell)
@@ -118,11 +130,13 @@ def _eval_cell(xlm_cell, sheet):
         print("==== START TOP LEVEL EVAL " + str(xlm_cell) + " ======")
         print(xlm_cell)
         print(stack)
-    final_val, _ = _eval_stack(stack, sheet)
+    cell_stack.append(xlm_cell)
+    final_val, _ = _eval_stack(stack, sheet, cell_stack)
     if debug:
         print("==== DONE TOP LEVEL EVAL " + str(xlm_cell) + " ======")
 
     # Done.
+    cell_stack.pop()
     return str(final_val)
 
 ####################################################################
@@ -244,7 +258,7 @@ def eval(sheet):
             continue
 
         # This is a FORMULA() cell. Evaluate it.
-        resolved_cell = _eval_cell(xlm_cell, result_sheet)
+        resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
         result_sheet.cells[cell_index] = resolved_cell
         done_cells.add(str(xlm_cell))
     
@@ -256,7 +270,7 @@ def eval(sheet):
         xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
         if (str(xlm_cell) in done_cells):
             continue
-        resolved_cell = _eval_cell(xlm_cell, result_sheet)
+        resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
         if debug:
             print("-------")
             print(xlm_cell)

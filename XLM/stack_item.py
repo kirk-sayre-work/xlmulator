@@ -94,6 +94,11 @@ class unparsed(stack_item):
         """
         return "...UNPARSED..."
 
+    ####################################################################
+    def eval(self, sheet):
+        XLM.color_print.output('y', "WARNING: Unparsed XLM being skipped during emulation.")
+        return 0
+    
 ####################################################################
 class stack_int(stack_item):
     """
@@ -383,6 +388,11 @@ class stack_exp(stack_item):
         """
         # TODO: Figure out proper representation.
         return "EXP?? $R" + str(self.row) + "$C" + str(self.column)
+
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return 0
     
 ####################################################################
 class stack_name(stack_item):
