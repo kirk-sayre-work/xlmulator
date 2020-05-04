@@ -177,6 +177,91 @@ def ALERT(params):
     return "ACTION: OUTPUT:ALERT(" + str(params) + ")"
 func_lookup["ALERT"] = ALERT
 
+def ALIGNMENT(params):
+    r = "ALIGNMENT"
+    return r
+func_lookup["ALIGNMENT"] = ALIGNMENT
+
+def ERROR(params):
+    r = "ERROR"
+    return r
+func_lookup["ERROR"] = ERROR
+
+def BORDER(params):
+    r = "BORDER"
+    return r
+func_lookup["BORDER"] = BORDER
+
+def WORKBOOK_SELECT(params):
+    r = "WORKBOOK.SELECT"
+    return r
+func_lookup["WORKBOOK.SELECT"] = WORKBOOK_SELECT
+
+def PATTERNS(params):
+    r = "PATTERNS"
+    return r
+func_lookup["PATTERNS"] = PATTERNS
+
+def WINDOW_RESTORE(params):
+    r = "WINDOW.RESTORE"
+    return r
+func_lookup["WINDOW.RESTORE"] = WINDOW_RESTORE
+
+def FORMAT_FONT(params):
+    r = "FORMAT.FONT"
+    return r
+func_lookup["FORMAT.FONT"] = FORMAT_FONT
+
+def WINDOW_SIZE(params):
+    r = "WINDOW.SIZE"
+    return r
+func_lookup["WINDOW.SIZE"] = WINDOW_SIZE
+
+def RETURN(params):
+    r = "RETURN"
+    return r
+func_lookup["RETURN"] = RETURN
+
+def EDIT_COLOR(params):
+    r = "EDIT.COLOR"
+    return r
+func_lookup["EDIT.COLOR"] = EDIT_COLOR
+
+def DELETE_NAME(params):
+    r = "DELETE.NAME"
+    return r
+func_lookup["DELETE.NAME"] = DELETE_NAME
+
+def SELECT(params):
+    r = "SELECT"
+    return r
+func_lookup["SELECT"] = SELECT
+
+def COLUMN_WIDTH(params):
+    r = "COLUMN.WIDTH"
+    return r
+func_lookup["COLUMN.WIDTH"] = COLUMN_WIDTH
+
+def ROW_HEIGHT(params):
+    r = "ROW.HEIGHT"
+    return r
+func_lookup["ROW.HEIGHT"] = ROW_HEIGHT
+
+def WINDOW_MAXIMIZE(params):
+    r = "WINDOW.MAXIMIZE"
+    return r
+func_lookup["WINDOW.MAXIMIZE"] = WINDOW_MAXIMIZE
+
+def FORMAT_NUMBER(params):
+    r = "FORMAT.NUMBER"
+    return r
+func_lookup["FORMAT.NUMBER"] = FORMAT_NUMBER
+
+def OFFSET(params):
+    r = "OFFSET"
+    return r
+func_lookup["OFFSET"] = OFFSET
+
 ####################################################################
 def eval(func_name, params, sheet):
     """

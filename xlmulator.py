@@ -64,11 +64,13 @@ if __name__ == '__main__':
     # Display results.
 
     # XLM Macros.
-    print('-'*79)
-    print('XLM MACRO %s ' % args.maldocs)
-    print('- '*39)
-    print(xlm_code)
-    
-    print('\nRecorded Actions:')
-    print(dump_actions(actions))
+    if (len(xlm_code) > 0):
+        print('-'*79)
+        print('XLM MACRO %s ' % args.maldocs)
+        print('- '*39)
+        print(xlm_code)
+
+    if (len(actions) > 0):
+        print('\nRecorded Actions:')
+        print(dump_actions(actions))
     

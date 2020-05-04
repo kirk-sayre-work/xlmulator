@@ -403,6 +403,11 @@ class stack_name(stack_item):
         # TODO: Figure out the actual representation.
         return "NAME?? " + self.hexcode
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return 0
+    
 ####################################################################
 class stack_num(stack_item):
     """
@@ -425,6 +430,11 @@ class stack_num(stack_item):
         """
         return self.name
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return self.name
+    
 ####################################################################
 class stack_missing_arg(stack_item):
     """
@@ -438,6 +448,11 @@ class stack_missing_arg(stack_item):
         """
         return "...MISSING_ARG..."
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return 0
+    
 ####################################################################
 class stack_func(stack_item):
     """
@@ -460,6 +475,11 @@ class stack_func(stack_item):
         """
         return self.name
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: What should this actually evaluate to?
+        return self.name
+    
 ####################################################################
 class stack_func_var(stack_item):
     """

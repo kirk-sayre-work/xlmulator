@@ -8,6 +8,7 @@ import subprocess
 import sys
 import re
 import os
+import string
 
 # sudo pip install lark-parser
 from lark import Lark
@@ -82,6 +83,13 @@ def _extract_xlm(maldoc):
                 new_str = "Str '" + old_str[5:-5] + "' ptg"
                 line = line.replace(old_str, new_str)
         r += line
+
+    # Convert characters so this can be parsed.
+    try:
+        r = r.decode()
+    except UnicodeDecodeError:
+        r = ''.join(filter(lambda x:x in string.printable, r))
+        
     return r
 
 ####################################################################
@@ -100,7 +108,7 @@ def _extract_xlm_objects(xlm_code):
     xlm_ast = None
     try:
         xlm_parser = Lark(xlm_grammar, start="lines", parser='lalr')
-        xlm_ast = xlm_parser.parse(xlm_code.decode())
+        xlm_ast = xlm_parser.parse(xlm_code)
     except UnexpectedInput as e:
         color_print.output('r', "ERROR: Parsing olevba XLM failed.\n" + str(e))
         return None
@@ -225,20 +233,20 @@ def emulate(maldoc):
         print(xlm_code)
         print("=========== DONE RAW XLM ==============")
     if (xlm_code is None):
-        return []
+        return ([], "")
 
     # Parse the XLM text and get XLM objects that can be emulated.
     xlm_cells = _extract_xlm_objects(xlm_code)
     if (xlm_cells is None):
         color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")
-        return []
+        return ([], "")
 
     # Merge the XLM cells with the value cells into a single unified spereadsheet
     # object.
     workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
     if (workbook is None):
         color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
-        return []
+        return ([], "")
 
     # Save the indices of the XLM cells in the workbook. We do this here directly so that
     # the base definition of the ExcelWorkbook class does not need to be changed.
