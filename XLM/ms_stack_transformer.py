@@ -27,7 +27,7 @@ try:
 except IOError as e:
     color_print.output('r', "ERROR: Cannot read MS XLM grammar file " + ms_xlm_grammar_file + ". " + str(e))
     sys.exit(102)
-
+    
 ####################################################################
 def parse_ms_xlm(expression):
     """

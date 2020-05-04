@@ -159,10 +159,11 @@ def _pull_actions(sheet):
                 # Pull out the call name and args.
                 tmp = curr_val.replace("CALL(", "")[:-1].replace("'", '"')
                 fields = json.loads(tmp)
-                func_name = fields[0]
+                dll_name = fields[0]
+                func_name = fields[1]
                 call = func_name + "("
                 first = True
-                for arg in fields[1:]:
+                for arg in fields[3:]:
                     if (not first):
                         call += ", "
                     first = False
@@ -170,7 +171,7 @@ def _pull_actions(sheet):
                 call += ")"
 
                 # Save the action.
-                r.append(("CALL", call, func_name))
+                r.append(("CALL", call, "From DLL '" + dll_name + "'"))
 
             # Halt?
             if ((curr_val.startswith("HALT")) or (curr_val.startswith("CLOSE"))):

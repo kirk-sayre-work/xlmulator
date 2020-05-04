@@ -5,6 +5,8 @@ Emulation support for XLM functions.
 import XLM.XLM_Object
 import XLM.stack_item
 
+debug = False
+
 ####################################################################
 ## Function emulators
 ####################################################################
@@ -263,6 +265,18 @@ def OFFSET(params):
 func_lookup["OFFSET"] = OFFSET
 
 ####################################################################
+def _is_interesting_cell(cell):
+    """
+    See if a cell value looks interesting.
+
+    @param cell (XLM_Object) The cell to check.
+
+    @return (boolean) True if the cell value is interesting, False if not.
+    """
+    cell_str = str(cell).replace('"', '').strip()
+    return (len(cell_str) > 0)
+
+####################################################################
 def eval(func_name, params, sheet):
     """
     Emulate the behavior of a given XLM function.
@@ -305,7 +319,16 @@ def eval(func_name, params, sheet):
         import XLM.ms_stack_transformer
         new_cell = XLM.ms_stack_transformer.parse_ms_xlm(str(r))
         new_cell.update_cell_id(update_index)
-        sheet.cells[update_index] = new_cell
+
+        # Only do the update if it looks interesting.
+        if (_is_interesting_cell(new_cell)):
+            sheet.cells[update_index] = new_cell
+            if debug:
+                print("FORMULA:")
+                print("'" + str(new_cell) + "'")
+                print(new_cell.cell_id)
+
+        # Track this if it is a new cell.
         if (update_index not in sheet.xlm_cell_indices):
             sheet.xlm_cell_indices.append(update_index)
 

@@ -19,6 +19,7 @@ import excel
 import XLM.color_print
 from XLM.stack_transformer import StackTransformer 
 import XLM.XLM_Object
+import XLM.xlm_library
 
 ## Check installation prerequisites.
 
@@ -44,6 +45,7 @@ except IOError as e:
 #debug = True
 debug = False
 XLM.XLM_Object.debug = debug
+XLM.xlm_library.debug = debug
 
 ####################################################################
 def _extract_xlm(maldoc):
