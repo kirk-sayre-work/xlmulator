@@ -55,6 +55,14 @@ def parse_ms_xlm(expression):
         
     # Convert the AST to a XLM_Object.
     r = MsStackTransformer().transform(xlm_ast)
+
+    # If we did not get a XLM_Object (just a stack_item), make an XLM_Object with the
+    # single stack item on the stack.
+    if (isinstance(r, stack_item)):
+        stack = [r]
+        r = XLM_Object(-1, -1, stack)
+
+    # Done.
     return r
     
 ####################################################################
