@@ -55,9 +55,6 @@ def parse_ms_xlm(expression):
         
     # Convert the AST to a XLM_Object.
     r = MsStackTransformer().transform(xlm_ast)
-    print(r)
-    for s in r.stack:
-        print(s)
     return r
     
 ####################################################################
@@ -256,7 +253,7 @@ class MsStackTransformer(Transformer):
         return stack_str(items[1:-1])
     
     def BOOLEAN(self, items):
-        return stack_bool(items)
+        return stack_bool(str(items))
     
     def ROW(self, items):
         return items[0]
@@ -271,17 +268,17 @@ class MsStackTransformer(Transformer):
         return str(items)
     
     def SIGNED_INT(self, items):
-        return int(items)
+        return int(str(items))
     
     def INT(self, items):
-        return int(items)
+        return int(str(items))
     
     def DECIMAL(self, items):
-        return stack_float(items)
+        return stack_float(str(items))
     
     def SIGNED_DECIMAL(self, items):
-        return float(items)
+        return float(str(items))
     
     def NUMBER(self, items):
-        return stack_int(items)
+        return stack_int(str(items))
     

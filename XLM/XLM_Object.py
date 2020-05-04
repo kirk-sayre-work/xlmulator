@@ -158,8 +158,6 @@ def _pull_actions(sheet):
 
                 # Pull out the call name and args.
                 tmp = curr_val.replace("CALL(", "")[:-1].replace("'", '"')
-                print(curr_val)
-                print(tmp)
                 fields = json.loads(tmp)
                 func_name = fields[0]
                 call = func_name + "("
