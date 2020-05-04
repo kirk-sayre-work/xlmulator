@@ -165,7 +165,7 @@ class stack_funcv(stack_item):
             if (isinstance(self.num_args, tuple)):
                 self.num_args = self.num_args[0]
         else:
-            color_print.output('y', "WARNING: # of arguments for '" + self.name + "' unknown. Defaulting to 1.")
+            XLM.color_print.output('y', "WARNING: # of arguments for '" + self.name + "' unknown. Defaulting to 1.")
             self.num_args = 1
     
     ####################################################################
@@ -229,7 +229,11 @@ class stack_cell_ref(stack_item):
 
     ####################################################################
     def eval(self, sheet):
-        return sheet.cell(self.row, self.column)
+        try:
+            return sheet.cell(self.row, self.column)
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell '" + str(self) + "' not found. Defaulting to 0.")
+            return 0
     
 ####################################################################
 class stack_str(stack_item):

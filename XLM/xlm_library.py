@@ -264,6 +264,11 @@ def OFFSET(params):
     return r
 func_lookup["OFFSET"] = OFFSET
 
+def WORKBOOK_UNHIDE(params):
+    r = "WORKBOOK.UNHIDE"
+    return r
+func_lookup["WORKBOOK.UNHIDE"] = WORKBOOK_UNHIDE
+
 ####################################################################
 def _is_interesting_cell(cell):
     """
