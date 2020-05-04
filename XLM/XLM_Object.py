@@ -173,8 +173,22 @@ def _pull_actions(sheet):
                 r.append(("CALL", call, func_name))
 
             # Halt?
-            if (curr_val.startswith("HALT")):
-                r.append(("HALT", "HALT()", "Done."))
+            if ((curr_val.startswith("HALT")) or (curr_val.startswith("CLOSE"))):
+                r.append(("HALT", curr_val, "Done."))
+
+            # File action?
+            if (curr_val.startswith("FILE:")):
+                curr_val = curr_val.replace("FILE:", "")
+                call = curr_val
+                func_name = curr_val[:curr_val.index("(")]
+                r.append(("FILE", call, func_name))
+
+            # User output?
+            if (curr_val.startswith("OUTPUT:")):
+                curr_val = curr_val.replace("OUTPUT:", "")
+                call = curr_val
+                func_name = curr_val[:curr_val.index("(")]
+                r.append(("OUTPUT", call, func_name))
 
     # Done.
     return r
@@ -346,6 +360,17 @@ class XLM_Object(object):
             self.stack.append(item)
         self.gloss = None
 
+    ####################################################################
+    def update_cell_id(self, new_id):
+        """
+        Change the row and column of the cell.
+
+        @param new_id (tuple) A 2 element tuple of the from (row, column).
+        """
+        self.row = new_id[0]
+        self.col = new_id[1]
+        self.cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
+        
     ####################################################################
     def is_function(self):
         """

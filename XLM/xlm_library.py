@@ -219,8 +219,7 @@ def eval(func_name, params, sheet):
         # r is something in the real XLM format. Need to parse real XLM to an XLM object.
         import XLM.ms_stack_transformer
         new_cell = XLM.ms_stack_transformer.parse_ms_xlm(str(r))
-        new_cell.row = update_index[0]
-        new_cell.col = update_index[1]
+        new_cell.update_cell_id(update_index)
         sheet.cells[update_index] = new_cell
         if (update_index not in sheet.xlm_cell_indices):
             sheet.xlm_cell_indices.append(update_index)
