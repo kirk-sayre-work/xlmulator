@@ -61,7 +61,10 @@ def parse_ms_xlm(expression):
     if (isinstance(r, stack_item)):
         stack = [r]
         r = XLM_Object(-1, -1, stack)
-
+    if (isinstance(r, list)):
+        stack = _load_stack_args([r], [])
+        r = XLM_Object(-1, -1, stack)
+        
     # Done.
     return r
     
@@ -83,12 +86,18 @@ def _load_stack_args(args, stack):
         item = args[0]
         args = args[1:]
 
+        # If this is an XLM object just push the stack of the XLM object.
+        if (isinstance(item, XLM_Object)):
+            for s in item.stack:
+                stack.append(s)
+            continue
+        
         # Simple case is a literal.
         if (not isinstance(item, list)):
             stack.append(item)
             continue
 
-        # Single item as 2nd argument to a ninfix operator.
+        # Single item as 2nd argument to an infix operator.
         if (len(item) == 1):
             stack.append(item[0])
             continue
@@ -202,7 +211,14 @@ class MsStackTransformer(Transformer):
         return items
     
     def r1c1_notation_cell(self, items):
-        return items
+        row = 0
+        col = 0
+        if (len(items) >= 2):
+            row = int(items[1])
+        if (len(items) >= 4):
+            col = int(items[3])
+        r = stack_cell_ref(row, col)
+        return r
 
     def expression(self, items):
         return items[0]
@@ -270,7 +286,8 @@ class MsStackTransformer(Transformer):
         return items[0]
         
     def REF(self, items):
-        return items
+        r = int(str(items)[1:-1])
+        return r
     
     def NAME(self, items):
         return str(items)

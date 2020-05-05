@@ -375,10 +375,8 @@ class XLM_Object(object):
         """
         self.row = row
         self.col = col
-        self.stack = []
-        self.cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
-        for item in stack:
-            self.stack.append(item)
+        self.stack = stack
+        self.update_cell_id((self.row, self.col))
         self.gloss = None
 
     ####################################################################
@@ -391,6 +389,19 @@ class XLM_Object(object):
         self.row = new_id[0]
         self.col = new_id[1]
         self.cell_id = "$R" + str(self.row) + "$C" + str(self.col) + ":"
+        new_stack = []
+        for item in self.stack:
+
+            # Fix relative cell references since we know the cell index now.
+            if ((isinstance(item, stack_cell_ref)) and (self.row > 0) and (self.col > 0)):
+
+                # Relative access?
+                if (item.row < 1):
+                    item.row = self.row + item.row
+                if (item.column < 1):
+                    item.column = self.col + item.column
+            new_stack.append(item)
+        self.stack = new_stack
         
     ####################################################################
     def is_function(self):

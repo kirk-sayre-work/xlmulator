@@ -2,8 +2,12 @@
 Emulation support for XLM functions.
 """
 
+import random
+
 import XLM.XLM_Object
 import XLM.stack_item
+import XLM.utils
+import XLM.color_print
 
 debug = False
 
@@ -24,7 +28,7 @@ def _plus(params, sheet):
     r = 0
     try:
         for p in params:
-            r += int(float(p))
+            r += XLM.utils.convert_num(p)
     except ValueError:
         # Just do string concat.
         r = ""
@@ -34,66 +38,66 @@ def _plus(params, sheet):
 func_lookup["_plus"] = _plus
 
 def _minus(params, sheet):
-    r = int(float(params[0])) - int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) - XLM.utils.convert_num(params[1])
     return r
 func_lookup["_minus"] = _minus
 
 def _less_than(params, sheet):
     r = False
-    r = int(float(params[0])) < int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) < XLM.utils.convert_num(params[1])
     return r
 func_lookup["_less_than"] = _less_than
 
 def _not_equal(params, sheet):
     r = False
-    r = int(float(params[0])) != int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) != XLM.utils.convert_num(params[1])
     return r
 func_lookup["_not_equal"] = _not_equal
 
 def _times(params, sheet):
     r = 0
-    r = int(float(params[0])) * int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) * XLM.utils.convert_num(params[1])
     return r
 func_lookup["_times"] = _times
 
 def _equals(params, sheet):
     r = False
-    r = int(float(params[0])) == int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) == XLM.utils.convert_num(params[1])
     return r
 func_lookup["_equals"] = _equals
 
 def _greater_than(params, sheet):
     r = False
-    r = int(float(params[0])) > int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) > XLM.utils.convert_num(params[1])
     return r
 func_lookup["_greater_than"] = _greater_than
 
 def _divide(params, sheet):
     r = 0
-    r = int(float(params[0])) / int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) / XLM.utils.convert_num(params[1])
     return r
 func_lookup["_divide"] = _divide
 
 def _unsigned_minus(params, sheet):
     r = 0
     # TODO: This is probably wrong.
-    r = int(float(params[0])) - int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) - XLM.utils.convert_num(params[1])
     return r
 func_lookup["_unsigned_minus"] = _unsigned_minus
 
 def _greater_or_equal(params, sheet):
     r = False
-    r = int(float(params[0])) >= int(float(params[1]))
+    r = XLM.utils.convert_num(params[0]) >= XLM.utils.convert_num(params[1])
     return r
 func_lookup["_greater_or_equal"] = _greater_or_equal
 
 def CHAR(params, sheet):
     try:
-        r = chr(int(float(params[0])))
+        r = chr(int(XLM.utils.convert_num(params[0])))
         return r
     except ValueError:
-        XLM.color_print.output('y', "WARNING: Invalid CHAR() code " + str(int(float(params[0]))) + ".")
-        return chr(int(float(params[0])) % 127)
+        XLM.color_print.output('y', "WARNING: Invalid CHAR() code " + str(XLM.utils.convert_num(params[0])) + ".")
+        return "?"
 func_lookup["CHAR"] = CHAR
 
 def RUN(params, sheet):
@@ -105,7 +109,7 @@ def CONCATENATE(params, sheet):
 func_lookup["CONCATENATE"] = CONCATENATE
 
 def CALL(params, sheet):
-    r = "ACTION: CALL(" + str(params, sheet) + ")"
+    r = "ACTION: CALL(" + str(params) + ")"
     return r
 func_lookup["CALL"] = CALL
 
@@ -140,23 +144,23 @@ def WAIT(params, sheet):
 func_lookup["WAIT"] = WAIT
 
 def FOPEN(params, sheet):
-    return "ACTION: FILE:FOPEN(" + str(params, sheet) + ")"
+    return "ACTION: FILE:FOPEN(" + str(params) + ")"
 func_lookup["FOPEN"] = FOPEN
 
 def FPOS(params, sheet):
-    return "ACTION: FILE:FPOS(" + str(params, sheet) + ")"
+    return "ACTION: FILE:FPOS(" + str(params) + ")"
 func_lookup["FPOS"] = FPOS
 
 def FREAD(params, sheet):
-    return "ACTION: FILE:FREAD(" + str(params, sheet) + ")"
+    return "ACTION: FILE:FREAD(" + str(params) + ")"
 func_lookup["FREAD"] = FREAD
 
 def FCLOSE(params, sheet):
-    return "ACTION: FILE:FCLOSE(" + str(params, sheet) + ")"
+    return "ACTION: FILE:FCLOSE(" + str(params) + ")"
 func_lookup["FCLOSE"] = FCLOSE
 
 def FILE_DELETE(params, sheet):
-    return "ACTION: FILE:FILE.DELETE(" + str(params, sheet) + ")"
+    return "ACTION: FILE:FILE.DELETE(" + str(params) + ")"
 func_lookup["FILE.DELETE"] = FILE_DELETE
 
 def IF(params, sheet):
@@ -179,7 +183,7 @@ def ISNUMBER(params, sheet):
 func_lookup["ISNUMBER"] = ISNUMBER
 
 def ALERT(params, sheet):
-    return "ACTION: OUTPUT:ALERT(" + str(params, sheet) + ")"
+    return "ACTION: OUTPUT:ALERT(" + str(params) + ")"
 func_lookup["ALERT"] = ALERT
 
 def ALIGNMENT(params, sheet):
@@ -283,12 +287,26 @@ def SET_NAME(params, sheet):
 func_lookup["SET.NAME"] = SET_NAME
 
 def GET_CELL(params, sheet):
-    try:
-        r = sheet.cell(params[0], params[1])
-        return r
-    except KeyError:
-        XLM.color_print.output('y', "WARNING: Cell '" + str(params) + "' not found. Defaulting to 1.")
-        return 1
+    
+    # This gets information about a cell. For now this will just return hardcoded
+    # values.
+
+    # 1st param is the lookup type, 2nd param is the cell reference.
+    info_type = XLM.utils.convert_num(params[0])
+    cell_ref = params[1]
+
+    # Row height of cell, in points ?
+    if (info_type == 17):
+        return 16.5
+
+    # Size of font, in points ?
+    if (info_type == 19):
+        return 9
+
+    # Unhandled info type.
+    XLM.color_print.output('y', "WARNING: GET.CELL() information type " + str(info_type) + " is not handled. Defaulting to 1.")
+    return 1
+    
 func_lookup["GET.CELL"] = GET_CELL
 
 def DAY(params, sheet):
@@ -300,6 +318,17 @@ def APP_MAXIMIZE(params, sheet):
     r = "APP.MAXIMIZE"
     return r
 func_lookup["APP.MAXIMIZE"] = APP_MAXIMIZE
+
+def RANDBETWEEN(params, sheet):
+    start = XLM.utils.convert_num(params[0])
+    end = XLM.utils.convert_num(params[1])
+    return random.randrange(start, end)
+func_lookup["RANDBETWEEN"] = RANDBETWEEN
+
+def ISERROR(params, sheet):
+    # All good.
+    return False
+func_lookup["ISERROR"] = ISERROR
 
 ####################################################################
 def _is_interesting_cell(cell):
