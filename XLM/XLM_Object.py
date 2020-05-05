@@ -251,6 +251,8 @@ def eval(sheet):
 
         # Get the XLM cell (XLM_Object) to emulate.
         xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        if (not isinstance(xlm_cell, XLM_Object)):
+            continue
         xlm_code += xlm_cell.cell_id + " ---> " + str(xlm_cell) + "\n"
         
         # Is this a FORMULA() cell?
@@ -268,6 +270,8 @@ def eval(sheet):
 
         # Get the XLM cell (XLM_Object) to emulate.
         xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        if (not isinstance(xlm_cell, XLM_Object)):
+            continue
         if (str(xlm_cell) in done_cells):
             continue
         resolved_cell = _eval_cell(xlm_cell, result_sheet, [])

@@ -41,6 +41,7 @@ def parse_ms_xlm(expression):
     """
 
     # Convert to MS XLM is needed.
+    orig_expression = expression
     if (not expression.startswith("=")):
         expression = '="' + str(expression) + '"'
     
@@ -50,8 +51,14 @@ def parse_ms_xlm(expression):
     try:
         xlm_ast = xlm_parser.parse(expression)
     except UnexpectedInput as e:
-        XLM.color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + expression + "'. " + str(e))
-        return None
+
+        # Maybe there is a problem with nested double quotes.
+        expression = "=" + str(orig_expression)
+        try:
+            xlm_ast = xlm_parser.parse(expression)
+        except UnexpectedInput as e:
+            XLM.color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + orig_expression + "'. " + str(e))
+            return None
         
     # Convert the AST to a XLM_Object.
     r = MsStackTransformer().transform(xlm_ast)

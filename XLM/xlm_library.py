@@ -330,6 +330,21 @@ def ISERROR(params, sheet):
     return False
 func_lookup["ISERROR"] = ISERROR
 
+def CLEAR(params, sheet):
+    r = "CLEAR"
+    return r
+func_lookup["CLEAR"] = CLEAR
+
+def ON_TIME(params, sheet):
+    r = "ON.TIME"
+    return r
+func_lookup["ON.TIME"] = ON_TIME
+
+def User_Defined_Function(params, sheet):
+    r = "User Defined Function"
+    return r
+func_lookup["User Defined Function"] = User_Defined_Function
+
 ####################################################################
 def _is_interesting_cell(cell):
     """

@@ -237,8 +237,8 @@ class stack_cell_ref(stack_item):
         try:
             return sheet.cell(self.row, self.column)
         except KeyError:
-            XLM.color_print.output('y', "WARNING: Cell '" + str(self) + "' not found. Defaulting to 0.")
-            return 0
+            XLM.color_print.output('y', "WARNING: Cell '" + str(self) + "' not found. Defaulting to ''.")
+            return ''
     
 ####################################################################
 class stack_str(stack_item):
@@ -392,7 +392,7 @@ class stack_exp(stack_item):
     ####################################################################
     def eval(self, sheet):
         # TODO: What should this actually evaluate to?
-        return 0
+        return ''
     
 ####################################################################
 class stack_name(stack_item):
@@ -607,6 +607,11 @@ class stack_namex(stack_item):
         # TODO: Figure out the proper representation for this.
         return "ptgNameX " + self.name + " " + str(self.number)
 
+    ####################################################################
+    def eval(self, sheet):
+        # TODO: Figure out what this should do.
+        return self.name
+    
 ####################################################################
 class stack_not_equal(stack_item):
     """

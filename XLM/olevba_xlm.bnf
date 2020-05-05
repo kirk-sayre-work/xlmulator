@@ -7,7 +7,7 @@ xlm_line: "' " NUMBER " "~3..6 NUMBER " " LINE_TYPE " : " data
 
 // The main types of XLM lines are basic info about sheets, cell values, cells with
 // XLM formulas, and string value calls.
-data: sheet_info | cell_value | cell_formula | string_value
+data: sheet_info | cell_value | cell_formula | string_value | data_conn
 
 // Just pull off the info string from sheet info lines.
 sheet_info: "Sheet Information - " STRING
@@ -15,6 +15,7 @@ sheet_info: "Sheet Information - " STRING
 cell_value: "Cell Value, " STRING
 // Just pull off the info string from string value lines.
 string_value: "String Value of a " STRING
+data_conn: "Data Connection"
 
 // XLM formula lines are what we are interested. XLM operates as a stack machine,
 // so what we get from the olevba output is a list of items that are pushed
@@ -86,7 +87,7 @@ stack_mem_error: "ptgMemErr"
 // Literal definitions.
 NUMBER: ("0".."9")+
 HEX_NUMBER: "0x" ("0".."9"|"a".."f")+
-LINE_TYPE: "BOUNDSHEET" | "LABEL" | "FORMULA" | "STRING"
+LINE_TYPE: "BOUNDSHEET" | "LABEL" | "FORMULA" | "STRING" | "DCONN"
 STRING: /[^\n]+/
 DOUBLE_QUOTE_STRING: /"[^"]*"/
 SINGLE_QUOTE_STRING: /'[^']*'/
