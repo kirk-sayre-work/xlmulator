@@ -127,6 +127,11 @@ def _extract_xlm(maldoc):
                 tmp_r += chr(char_code)
             r = tmp_r
 
+    # Did we find XLM?
+    if (len(r.strip()) == 0):
+        color_print.output('y', "WARNING: No XLM found.")
+        return None
+            
     # Done. Return XLM lines.
     return r
 
@@ -273,6 +278,9 @@ def emulate(maldoc):
     if (xlm_code is None):
         return ([], "")
 
+    # Do we have any XLM?
+    
+    
     # Parse the XLM text and get XLM objects that can be emulated.
     xlm_cells = _extract_xlm_objects(xlm_code)
     if (xlm_cells is None):
