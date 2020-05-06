@@ -159,6 +159,10 @@ def FCLOSE(params, sheet):
     return "ACTION: FILE:FCLOSE(" + str(params) + ")"
 func_lookup["FCLOSE"] = FCLOSE
 
+def FILE_CLOSE(params, sheet):
+    return FCLOSE(params, sheet)
+func_lookup["FILE.CLOSE"] = FILE_CLOSE
+
 def FILE_DELETE(params, sheet):
     return "ACTION: FILE:FILE.DELETE(" + str(params) + ")"
 func_lookup["FILE.DELETE"] = FILE_DELETE
@@ -166,6 +170,10 @@ func_lookup["FILE.DELETE"] = FILE_DELETE
 def IF(params, sheet):
     return "IF"
 func_lookup["IF"] = IF
+
+def END_IF(params, sheet):
+    return "END.IF"
+func_lookup["END.IF"] = END_IF
 
 def CLOSE(params, sheet):
     r = "ACTION: CLOSE"
@@ -285,6 +293,10 @@ def SET_NAME(params, sheet):
     r = "SET.NAME"
     return r
 func_lookup["SET.NAME"] = SET_NAME
+
+def ERROR_TYPE(params, sheet):
+    return 1.0
+func_lookup["ERROR.TYPE"] = ERROR_TYPE
 
 def GET_CELL(params, sheet):
     
