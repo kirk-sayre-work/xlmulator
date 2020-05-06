@@ -278,9 +278,6 @@ def emulate(maldoc):
     if (xlm_code is None):
         return ([], "")
 
-    # Do we have any XLM?
-    
-    
     # Parse the XLM text and get XLM objects that can be emulated.
     xlm_cells = _extract_xlm_objects(xlm_code)
     if (xlm_cells is None):

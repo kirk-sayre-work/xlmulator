@@ -1,14 +1,32 @@
 #!/usr/bin/env python
 
 import argparse
+import subprocess
 
 import prettytable
+import excel
 
 import XLM
+import XLM.color_print
 
 """@package xlmulator
 Top level command line tool for emulating Excel XLM macros.
 """
+
+###################################################################################################
+def is_excel_file(maldoc):
+    """
+    Check to see if the given file is an Excel file..
+
+    @param name (str) The name of the file to check.
+
+    @return (bool) True if the file is an Excel file, False if not.
+    """
+    typ = subprocess.check_output(["file", maldoc])
+    if (b"Excel" in typ):
+        return True
+    typ = subprocess.check_output(["exiftool", maldoc])
+    return ((b"ms-excel" in typ) or (b"Worksheets" in typ))
 
 ###########################################################################
 def emulate_XLM(maldoc):
@@ -18,9 +36,15 @@ def emulate_XLM(maldoc):
     @param maldoc (str) The fully qualified name of the Excel file to
     analyze.
 
-    @return (boolean) Return True if analysis succeeded, False if it failed.
+    @return (tuple) 1st element is a list of 3 element tuples containing the actions performed
+    by the sheet, 2nd element is the human readable XLM code.
     """
 
+    # Only emulate Excel files.
+    if (not is_excel_file(maldoc)):
+        XLM.color_print.output('y', "WARNING: '" + str(maldoc) + "' is not an Excel file. Not emulating.")
+        return ([], "")
+    
     # Emulate the XLM macros.
     r = XLM.emulate(maldoc)
     return r
