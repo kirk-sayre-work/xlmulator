@@ -545,6 +545,7 @@ class stack_area(stack_item):
         @param row (str or int) The row number of the cell.
         @param column (str or int) The column number of the cell.
         """
+        # TODO: Handle multiple cells.
         if (isinstance(row, str)):
             row = int(row)
         self.row = row
@@ -562,6 +563,14 @@ class stack_area(stack_item):
         # TODO: Figure out proper representation.
         return "AREA?? $R" + str(self.row) + "$C" + str(self.column)    
 
+    ####################################################################
+    def eval(self, sheet):
+        try:
+            return sheet.cell(self.row, self.column)
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell '" + str(self) + "' not found. Defaulting to ''.")
+            return ''
+    
 ####################################################################
 class stack_less_than(stack_item):
     """

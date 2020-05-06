@@ -2,6 +2,7 @@
 Emulation support for XLM functions.
 """
 
+import sys
 import random
 
 import XLM.XLM_Object
@@ -151,6 +152,10 @@ func_lookup["WAIT"] = WAIT
 def FOPEN(params, sheet):
     return "ACTION: FILE:FOPEN(" + str(params) + ")"
 func_lookup["FOPEN"] = FOPEN
+
+def OPEN(params, sheet):
+    return FOPEN(params, sheet)
+func_lookup["OPEN"] = OPEN
 
 def FPOS(params, sheet):
     return "ACTION: FILE:FPOS(" + str(params) + ")"
@@ -303,6 +308,17 @@ def ERROR_TYPE(params, sheet):
     return 1.0
 func_lookup["ERROR.TYPE"] = ERROR_TYPE
 
+def DOCUMENTS(params, sheet):
+    return ["workbook.xls"]
+func_lookup["DOCUMENTS"] = DOCUMENTS
+
+def MATCH(params, sheet):
+    # TODO: Find some coherent documentation on what MATCH is supposed to do.
+    #print("MATCH")
+    #print(params)
+    return("MATCH")
+func_lookup["MATCH"] = MATCH
+
 def GET_CELL(params, sheet):
     
     # This gets information about a cell. For now this will just return hardcoded
@@ -361,6 +377,14 @@ def User_Defined_Function(params, sheet):
     r = "User Defined Function"
     return r
 func_lookup["User Defined Function"] = User_Defined_Function
+
+def LOWER(params, sheet):
+    return str(params[0]).lower()
+func_lookup["LOWER"] = LOWER
+
+def SUMIF(params, sheet):
+    return "SUMIF"
+func_lookup["SUMIF"] = SUMIF
 
 ####################################################################
 def _is_interesting_cell(cell):
