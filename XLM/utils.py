@@ -2,6 +2,8 @@
 Utility functions.
 """
 
+import XLM.color_print
+
 ####################################################################
 def convert_num(num_str):
     """
@@ -19,5 +21,9 @@ def convert_num(num_str):
     except ValueError:
         pass
 
-    # Now try as a float. We will raise an exception if this fails.
-    return float(num_str)
+    # Now try as a float.
+    try:
+        return float(num_str)
+    except ValueError:
+        XLM.color_print.output('r', "ERROR: Cannot convert '" + num_str + "' to a number. Returning 0.")
+        return 0

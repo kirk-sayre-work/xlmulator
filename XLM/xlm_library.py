@@ -2,7 +2,6 @@
 Emulation support for XLM functions.
 """
 
-import sys
 import random
 
 import XLM.XLM_Object
