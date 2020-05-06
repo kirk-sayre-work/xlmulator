@@ -40,11 +40,12 @@ def _eval_stack(stack, sheet, cell_stack):
     if debug:
         print("===== START MID LEVEL EVAL " + str(curr_item) + " =======")
         print(curr_item)
+        print(type(curr_item))
         print(tmp_stack)
 
-    # If this has already been ersolved to a constant we are done.
+    # If this has already been resolved to a constant we are done.
     if (not hasattr(curr_item, "is_function")):
-        if debug:
+        if debug:            
             print("===== DONE MID LEVEL EVAL " + str(curr_item) + " =======")
         return (curr_item, tmp_stack)
         
@@ -79,7 +80,7 @@ def _eval_stack(stack, sheet, cell_stack):
         print(tmp_stack)
         raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
 
-    # If we are currently looking at a 2 element FORMLUA function we will need to tweak the top
+    # If we are currently looking at a 2 element FORMULA function we will need to tweak the top
     # argument on the stack. This is actually the destination to where to write the formula value,
     # so we don't want to read the current value of that cell and pass that as an argument to
     # FORMULA.
@@ -120,7 +121,7 @@ def _eval_cell(xlm_cell, sheet, cell_stack):
     if (xlm_cell in cell_stack):
         msg = "WARNING: Infinite recursion detected when resolving '" + xlm_cell.cell_id + ":" + str(xlm_cell) + "'."
         XLM.color_print.output('y', msg)
-        return 0
+        return ''
     
     # Evaluate the XLM stack for the cell.
     if (not hasattr(xlm_cell, "stack")):
@@ -211,6 +212,12 @@ def _pull_actions(sheet):
                 func_name = curr_val[:curr_val.index("(")]
                 r.append(("OUTPUT", call, func_name))
 
+            # Executing something?
+            if (curr_val.startswith("EXEC:")):
+                curr_val = curr_val.replace("EXEC:", "")
+                call = curr_val
+                r.append(("EXEC", call, ""))
+                
     # Done.
     return r
     

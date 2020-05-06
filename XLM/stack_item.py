@@ -391,7 +391,8 @@ class stack_exp(stack_item):
 
     ####################################################################
     def eval(self, sheet):
-        # TODO: What should this actually evaluate to?
+        # TODO: There may be a problem with plugin_biff.py where it incorrectly
+        # parses out ptgExp when there should be a function call in the cell.
         return ''
     
 ####################################################################

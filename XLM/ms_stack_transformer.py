@@ -57,8 +57,12 @@ def parse_ms_xlm(expression):
         try:
             xlm_ast = xlm_parser.parse(expression)
         except UnexpectedInput as e:
+
+            # Parsing failed. Just return this as a string.
             XLM.color_print.output('r', "ERROR: Cannot parse MS XLM expression '" + orig_expression + "'. " + str(e))
-            return None
+            tmp_str = stack_str(orig_expression)
+            r = XLM_Object(-1, -1, [tmp_str])
+            return r
         
     # Convert the AST to a XLM_Object.
     r = MsStackTransformer().transform(xlm_ast)

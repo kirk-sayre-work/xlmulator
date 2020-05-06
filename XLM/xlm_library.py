@@ -113,6 +113,11 @@ def CALL(params, sheet):
     return r
 func_lookup["CALL"] = CALL
 
+def EXEC(params, sheet):
+    r = "ACTION: EXEC: " + str(params)
+    return r
+func_lookup["EXEC"] = EXEC
+
 def HALT(params, sheet):
     r = "ACTION: HALT"
     return r

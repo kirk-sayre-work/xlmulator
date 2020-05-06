@@ -49,7 +49,6 @@ class StackTransformer(Transformer):
         return str(items[0])
     
     def line(self, items):
-        print(items)
         return items
 
     def data(self, items):
