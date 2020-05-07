@@ -409,6 +409,18 @@ def NEXT(params, sheet):
     return "NEXT"
 func_lookup["NEXT"] = NEXT
 
+def COPY(params, sheet):
+    return "COPY"
+func_lookup["COPY"] = COPY
+
+def PASTE_SPECIAL(params, sheet):
+    return "PASTE.SPECIAL"
+func_lookup["PASTE.SPECIAL"] = PASTE_SPECIAL
+
+def CANCEL_COPY(params, sheet):
+    return "CANCEL.COPY"
+func_lookup["CANCEL.COPY"] = CANCEL_COPY
+
 """
 def (params, sheet):
     return ""
