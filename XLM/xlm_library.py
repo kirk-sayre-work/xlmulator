@@ -391,6 +391,10 @@ def SUMIF(params, sheet):
     return "SUMIF"
 func_lookup["SUMIF"] = SUMIF
 
+def SUM(params, sheet):
+    return "SUM"
+func_lookup["SUM"] = SUM
+
 def SEND_KEYS(params, sheet):
     return "SEND.KEYS"
 func_lookup["SEND.KEYS"] = SEND_KEYS
@@ -482,6 +486,18 @@ func_lookup["APP.TITLE"] = APP_TITLE
 def MESSAGE(params, sheet):
     return "ACTION: OUTPUT:MESSAGE(" + str(params) + ")"
 func_lookup["MESSAGE"] = MESSAGE
+
+def FORMULA_FILL(params, sheet):
+    return "FORMULA.FILL"
+func_lookup["FORMULA.FILL"] = FORMULA_FILL
+
+def FOR_CELL(params, sheet):
+    return "FOR.CELL"
+func_lookup["FOR.CELL"] = FOR_CELL
+
+def VBA_INSERT_FILE(params, sheet):
+    return "ACTION: FILE:VBA.INSERT.FILE(" + str(params) + ")"
+func_lookup["VBA.INSERT.FILE"] = VBA_INSERT_FILE
 
 """
 def (params, sheet):
