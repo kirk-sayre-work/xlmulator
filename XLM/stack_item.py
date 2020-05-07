@@ -3,6 +3,7 @@
 Class for representing a single item on the XLM stack machine.
 """
 
+import XLM.utils
 import XLM.color_print
 
 ####################################################################
@@ -253,7 +254,10 @@ class stack_str(stack_item):
 
         @param value (str) Value of the string.
         """
-        self.value = str(value)
+        try:
+            self.value = str(value)
+        except UnicodeEncodeError:
+            self.value = XLM.utils.strip_unprintable(value)
     
     ####################################################################
     def full_str(self):

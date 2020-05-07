@@ -20,6 +20,7 @@ import XLM.color_print
 from XLM.stack_transformer import StackTransformer 
 import XLM.XLM_Object
 import XLM.xlm_library
+import XLM.utils
 
 ## Check installation prerequisites.
 
@@ -115,17 +116,7 @@ def _extract_xlm(maldoc):
     try:
         r = r.decode()
     except UnicodeDecodeError:
-
-        # Grr. Python2 unprintable stripping.
-        if (isinstance(r, str)):
-            r = ''.join(filter(lambda x:x in string.printable, r))
-
-        # Grr. Python3 unprintable stripping.
-        else:
-            tmp_r = ""
-            for char_code in filter(lambda x:chr(x) in string.printable, r):
-                tmp_r += chr(char_code)
-            r = tmp_r
+        r = XLM.utils.strip_unprintable(r)
 
     # Did we find XLM?
     if (len(r.strip()) == 0):

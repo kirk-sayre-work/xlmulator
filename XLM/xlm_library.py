@@ -385,6 +385,36 @@ def SUMIF(params, sheet):
     return "SUMIF"
 func_lookup["SUMIF"] = SUMIF
 
+def SEND_KEYS(params, sheet):
+    return "SEND.KEYS"
+func_lookup["SEND.KEYS"] = SEND_KEYS
+
+def APP_ACTIVATE(params, sheet):
+    return "APP.ACTIVATE"
+func_lookup["APP.ACTIVATE"] = APP_ACTIVATE
+
+def FWRITELN(params, sheet):
+    return "ACTION: FILE:FWRITELN(" + str(params) + ")"
+func_lookup["FWRITELN"] = FWRITELN
+
+def FILES(params, sheet):
+    return "FILES"
+func_lookup["FILES"] = FILES
+
+def WHILE(params, sheet):
+    return "WHILE"
+func_lookup["WHILE"] = WHILE
+
+def NEXT(params, sheet):
+    return "NEXT"
+func_lookup["NEXT"] = NEXT
+
+"""
+def (params, sheet):
+    return ""
+func_lookup[""] = 
+"""
+
 ####################################################################
 def _is_interesting_cell(cell):
     """
