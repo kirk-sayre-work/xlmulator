@@ -145,7 +145,8 @@ num_funcv_args = {"CHAR" : (1),
                   "LOWER" : (1),
                   "NEXT" : (0),
                   "NOW" : (1),
-                  "WHILE" : (1) }
+                  "WHILE" : (1),
+                  "SET.VALUE" : (2) }
     
 ####################################################################
 class stack_funcv(stack_item):

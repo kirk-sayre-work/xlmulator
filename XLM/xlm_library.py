@@ -427,6 +427,62 @@ def CANCEL_COPY(params, sheet):
     return "CANCEL.COPY"
 func_lookup["CANCEL.COPY"] = CANCEL_COPY
 
+def INDEX(params, sheet):
+    return "INDEX"
+func_lookup["INDEX"] = INDEX
+
+def SET_VALUE(params, sheet):
+    return "SET.VALUE"
+func_lookup["SET.VALUE"] = SET_VALUE
+
+def ON_SHEET(params, sheet):
+    return "ON.SHEET"
+func_lookup["ON.SHEET"] = ON_SHEET
+
+def GET_DOCUMENT(params, sheet):
+    return "GET.DOCUMENT"
+func_lookup["GET.DOCUMENT"] = GET_DOCUMENT
+
+def NEW(params, sheet):
+    return "NEW"
+func_lookup["NEW"] = NEW
+
+def WORKBOOK_INSERT(params, sheet):
+    return "WORKBOOK.INSERT"
+func_lookup["WORKBOOK.INSERT"] = WORKBOOK_INSERT
+
+def ACTIVATE_PREV(params, sheet):
+    return "ACTIVATE.PREV"
+func_lookup["ACTIVATE.PREV"] = ACTIVATE_PREV
+
+def WORKBOOK_COPY(params, sheet):
+    return "WORKBOOK.COPY"
+func_lookup["WORKBOOK.COPY"] = WORKBOOK_COPY
+
+def WORKBOOK_NAME(params, sheet):
+    return "WORKBOOK.NAME"
+func_lookup["WORKBOOK.NAME"] = WORKBOOK_NAME
+
+def PROTECT_DOCUMENT(params, sheet):
+    return "PROTECT.DOCUMENT"
+func_lookup["PROTECT.DOCUMENT"] = PROTECT_DOCUMENT
+
+def WORKBOOK_PREV(params, sheet):
+    return "WORKBOOK.PREV"
+func_lookup["WORKBOOK.PREV"] = WORKBOOK_PREV
+
+def SAVE_AS(params, sheet):
+    return "ACTION: FILE:SAVE.AS(" + str(params) + ")"
+func_lookup["SAVE.AS"] = SAVE_AS
+
+def APP_TITLE(params, sheet):
+    return "ACTION: OUTPUT:APP.TITLE(" + str(params) + ")"
+func_lookup["APP.TITLE"] = APP_TITLE
+
+def MESSAGE(params, sheet):
+    return "ACTION: OUTPUT:MESSAGE(" + str(params) + ")"
+func_lookup["MESSAGE"] = MESSAGE
+
 """
 def (params, sheet):
     return ""
