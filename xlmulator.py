@@ -29,12 +29,14 @@ def is_excel_file(maldoc):
     return ((b"ms-excel" in typ) or (b"Worksheets" in typ))
 
 ###########################################################################
-def emulate_XLM(maldoc):
+def emulate_XLM(maldoc, debug=False):
     """
     Emulate the behavior of the XLM macros in the given Excel file.
 
     @param maldoc (str) The fully qualified name of the Excel file to
     analyze.
+
+    @param debug (boolean) Whether to print LOTS of debug to STDOUT.
 
     @return (tuple) 1st element is a list of 3 element tuples containing the actions performed
     by the sheet, 2nd element is the human readable XLM code.
@@ -46,6 +48,7 @@ def emulate_XLM(maldoc):
         return ([], "")
     
     # Emulate the XLM macros.
+    XLM.debug = debug
     r = XLM.emulate(maldoc)
     return r
 
@@ -80,11 +83,14 @@ if __name__ == '__main__':
     help_msg = "Emulate the behavior of the XLM macros in a Excel file."
     parser = argparse.ArgumentParser(description=help_msg)
     parser.add_argument("maldocs", help="The Excel file to analyze.")
+    parser.add_argument('-d', '--debug',
+                        action='store_true',
+                        help="Print lots of debug information.")
     args = parser.parse_args()
 
     # Emulate the XLM macros.
     print("Emulating XLM macros in " + str(args.maldocs) + " ...")
-    actions, xlm_code = emulate_XLM(args.maldocs)
+    actions, xlm_code = emulate_XLM(args.maldocs, args.debug)
     print("Done emulating XLM macros in " + str(args.maldocs) + " .")
 
     # Display results.

@@ -21,6 +21,7 @@ from XLM.stack_transformer import StackTransformer
 import XLM.XLM_Object
 import XLM.xlm_library
 import XLM.utils
+import XLM.ms_stack_transformer
 
 ## Check installation prerequisites.
 
@@ -47,6 +48,7 @@ except IOError as e:
 debug = False
 XLM.XLM_Object.debug = debug
 XLM.xlm_library.debug = debug
+#XLM.ms_stack_transformer.debug = debug
 
 ####################################################################
 def _extract_xlm(maldoc):

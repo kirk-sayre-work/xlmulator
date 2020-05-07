@@ -579,10 +579,12 @@ def eval(func_name, params, sheet):
         new_cell.update_cell_id(update_index)
 
         # Only do the update if it looks interesting.
+        if debug:
+            print("FORMULA:")
+            print("orig string: '" + str(r) + "'")
         if (_is_interesting_cell(new_cell)):
             sheet.cells[update_index] = new_cell
             if debug:
-                print("FORMULA:")
                 print("'" + str(new_cell) + "'")
                 print(new_cell.cell_id)
 

@@ -27,6 +27,10 @@ try:
 except IOError as e:
     XLM.color_print.output('r', "ERROR: Cannot read MS XLM grammar file " + ms_xlm_grammar_file + ". " + str(e))
     sys.exit(102)
+
+# Debugging flag.
+debug = True
+#debug = False
     
 ####################################################################
 def parse_ms_xlm(expression):
@@ -63,7 +67,7 @@ def parse_ms_xlm(expression):
             tmp_str = stack_str(orig_expression)
             r = XLM_Object(-1, -1, [tmp_str])
             return r
-        
+
     # Convert the AST to a XLM_Object.
     r = MsStackTransformer().transform(xlm_ast)
 
@@ -96,7 +100,7 @@ def _load_stack_args(args, stack):
         # Pull an arg.
         item = args[0]
         args = args[1:]
-
+        
         # If this is an XLM object just push the stack of the XLM object.
         if (isinstance(item, XLM_Object)):
             for s in item.stack:
@@ -119,7 +123,7 @@ def _load_stack_args(args, stack):
         second_arg = item[2:]
         if (len(second_arg) == 1):
             second_arg = second_arg[0]
-        
+            
         # Nested expression involving another operator with args.
         stack = _load_stack([op, [first_arg, second_arg]], stack)
 
@@ -139,6 +143,7 @@ def _load_stack(items, stack):
     """
 
     # ['ALERT', ["The workbook cannot be opened or repaired by Microsoft Excel because it's corrupt.", 2, [1, +, [3, *, 2], +, [[2, -, 5], *, 4]], ["ff", &, "dd", &, "ss"]]]
+    # ['IF', [[GET.WORKSPACE(13), <, 770], CLOSE(FALSE), ]]
 
     # The function args are a list in the 2nd element.
     func_args = items[1]
@@ -178,7 +183,7 @@ class MsStackTransformer(Transformer):
         # Make the function call stack.
         stack = []
         stack = _load_stack(items, stack)
-
+        
         # Nested calls are represented as XLM_Objects by the transformer. Pull out
         # the stacks of these XLM objects and add them to the single stack for the
         # expression.
@@ -198,7 +203,7 @@ class MsStackTransformer(Transformer):
     
     def method_call(self, items):
         new_items = [items[0] + "." + items[1], items[2]]
-
+        
         # Make the function call stack.
         stack = []
         stack = _load_stack(new_items, stack)
@@ -213,7 +218,7 @@ class MsStackTransformer(Transformer):
     def argument(self, items):
         if (len(items) > 0):
             return items[0]
-        return stack_attr()
+        return stack_str("")
     
     def cell(self, items):
         return items
@@ -232,7 +237,7 @@ class MsStackTransformer(Transformer):
         return r
 
     def expression(self, items):
-        return items[0]
+        return items
     
     def concat_expression(self, items):
         return items

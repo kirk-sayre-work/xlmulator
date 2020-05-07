@@ -348,7 +348,7 @@ def _get_str(stack):
 
     # Non-infix function. These have a variable # of arguments.
     num_args = curr_item.get_num_args()
-
+    
     # Sanity check.
     if (len(tmp_stack) < num_args):
         print(tmp_stack)
@@ -442,6 +442,8 @@ class XLM_Object(object):
             return self.gloss
 
         # Work through the stack to compute the human readable string.
+        #print("GET STR:")
+        #print(self.stack)
         self.gloss, _ = _get_str(self.stack)        
         return self.gloss
 
