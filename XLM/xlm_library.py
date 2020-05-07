@@ -183,6 +183,8 @@ def FILE_DELETE(params, sheet):
 func_lookup["FILE.DELETE"] = FILE_DELETE
 
 def IF(params, sheet):
+    print("DOING IF!!")
+    print(params)
     return "IF"
 func_lookup["IF"] = IF
 
@@ -348,7 +350,7 @@ def GET_CELL(params, sheet):
 func_lookup["GET.CELL"] = GET_CELL
 
 def DAY(params, sheet):
-    r = 2
+    r = 4
     return r
 func_lookup["DAY"] = DAY
 
@@ -498,6 +500,21 @@ func_lookup["FOR.CELL"] = FOR_CELL
 def VBA_INSERT_FILE(params, sheet):
     return "ACTION: FILE:VBA.INSERT.FILE(" + str(params) + ")"
 func_lookup["VBA.INSERT.FILE"] = VBA_INSERT_FILE
+
+def OR(params, sheet):
+    r = False
+    for p in params:
+        if (isinstance(p, bool)):
+            r = r or p
+    return r
+func_lookup["OR"] = OR
+
+def NOT(params, sheet):
+    if ((len(params) > 0) and (isinstance(params[0], bool))):
+        return not params[0]
+    XLM.color_print.output('y', "WARNING: Cannot perform NOT on '" + str(params) + "'. Empty or not a boolean.")
+    return False
+func_lookup["NOT"] = NOT
 
 """
 def (params, sheet):

@@ -36,7 +36,7 @@ def _eval_stack(stack, sheet, cell_stack):
     # Get the current stack item. Make sure the original stack is not modified.
     tmp_stack = list(stack)
     curr_item = tmp_stack.pop()
-
+    
     if debug:
         print("===== START MID LEVEL EVAL " + str(curr_item) + " =======")
         print(curr_item)
@@ -76,6 +76,8 @@ def _eval_stack(stack, sheet, cell_stack):
 
     # Sanity check.
     num_args = curr_item.get_num_args()
+    if debug:
+        print("num args = " + str(num_args))
     if (len(tmp_stack) < num_args):
         print(tmp_stack)
         raise ValueError("Operator '" + str(curr_item) + "' requires " + str(num_args) + " arguments.")
@@ -174,7 +176,7 @@ def _pull_actions(sheet):
                 # Pull out the call name and args.
                 tmp = curr_val.replace("CALL(", "")[:-1].replace("'", '"')
                 fields = json.loads(tmp)
-                dll_name = fields[0]
+                dll_name = str(fields[0])
                 func_name = fields[1]
                 if (isinstance(func_name, int)):
                     func_name = fields[0]
@@ -403,6 +405,10 @@ class XLM_Object(object):
         new_stack = []
         for item in self.stack:
 
+            # Skip ptgAttr stack items??
+            if (isinstance(item, stack_attr)):
+                continue
+            
             # Fix relative cell references since we know the cell index now.
             if ((isinstance(item, stack_cell_ref)) and (self.row > 0) and (self.col > 0)):
 

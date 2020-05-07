@@ -144,9 +144,10 @@ num_funcv_args = {"CHAR" : (1),
                   "ISNUMBER" : (1),
                   "LOWER" : (1),
                   "NEXT" : (0),
-                  "NOW" : (1),
+                  "NOW" : (0),
                   "WHILE" : (1),
-                  "SET.VALUE" : (2) }
+                  "SET.VALUE" : (2),
+                  "NOT" : (1) }
     
 ####################################################################
 class stack_funcv(stack_item):
@@ -317,7 +318,7 @@ class stack_attr(stack_item):
     ####################################################################
     def eval(self, sheet):
         # TODO: What should this actually evaluate to?
-        return 0
+        return ''
     
 ####################################################################
 class stack_add(stack_item):
