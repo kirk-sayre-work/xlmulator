@@ -35,7 +35,7 @@ def strip_unprintable(the_str):
 
     # Grr. Python2 unprintable stripping.
     r = the_str
-    if ((isinstance(r, str)) or (isinstance(r, unicode))):
+    if ((isinstance(r, str)) or (not isinstance(r, bytes))):
         r = ''.join(filter(lambda x:x in string.printable, r))
         
     # Grr. Python3 unprintable stripping.

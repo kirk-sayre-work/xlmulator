@@ -74,7 +74,13 @@ func_lookup["_greater_than"] = _greater_than
 
 def _divide(params, sheet):
     r = 0
-    r = XLM.utils.convert_num(params[0]) / XLM.utils.convert_num(params[1])
+    num = XLM.utils.convert_num(params[0])
+    den = XLM.utils.convert_num(params[1])
+    if (den == 0):
+        XLM.color_print.output('r', "ERROR: Division by zero.")
+        # Not right, but better than crashing.
+        return 0
+    r = num / den
     return r
 func_lookup["_divide"] = _divide
 
