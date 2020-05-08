@@ -147,7 +147,8 @@ num_funcv_args = {"CHAR" : (1),
                   "NOW" : (0),
                   "WHILE" : (1),
                   "SET.VALUE" : (2),
-                  "NOT" : (1) }
+                  "NOT" : (1),
+                  "DAY" : (1) }
     
 ####################################################################
 class stack_funcv(stack_item):

@@ -44,12 +44,21 @@ except IOError as e:
     sys.exit(102)
 
 # Debugging flag.
-#debug = True
 debug = False
-XLM.XLM_Object.debug = debug
-XLM.xlm_library.debug = debug
-#XLM.ms_stack_transformer.debug = debug
 
+####################################################################
+def set_debug(flag):
+    """
+    Turn debugging on or off.
+
+    @param flag (boolean) True means output debugging, False means no.
+    """
+    global debug
+    debug = flag
+    XLM.XLM_Object.debug = flag
+    XLM.xlm_library.debug = flag
+    XLM.ms_stack_transformer.debug = flag
+    
 ####################################################################
 def _extract_xlm(maldoc):
     """

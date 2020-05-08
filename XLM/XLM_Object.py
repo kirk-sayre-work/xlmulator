@@ -12,6 +12,8 @@ from XLM.stack_item import *
 import XLM.xlm_library
 import XLM.color_print
 
+debug = False
+
 ####################################################################
 def _eval_stack(stack, sheet, cell_stack):
     """

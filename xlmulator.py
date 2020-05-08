@@ -56,7 +56,7 @@ def emulate_XLM(maldoc, debug=False):
         return ([], "")
     
     # Emulate the XLM macros.
-    XLM.debug = debug
+    XLM.set_debug(debug)
     r = XLM.emulate(maldoc)
     return r
 
