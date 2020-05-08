@@ -174,7 +174,7 @@ def _pull_actions(sheet):
             if (curr_val.startswith("CALL(")):
 
                 # Pull out the call name and args.
-                tmp = curr_val.replace("CALL(", "")[:-1].replace("'", '"')
+                tmp = "[" + curr_val.replace("CALL(", "")[:-1].replace("'", '"') + "]"
                 fields = json.loads(tmp)
                 dll_name = str(fields[0])
                 func_name = fields[1]
