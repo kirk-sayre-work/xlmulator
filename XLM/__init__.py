@@ -64,11 +64,12 @@ def _extract_xlm(maldoc):
 
     # Run olevba on the given file.
     olevba_out = None
+    FNULL = open(os.devnull, 'w')
     try:
         cmd = "timeout 30 olevba -c \"" + str(maldoc) + "\""
-        olevba_out = subprocess.check_output(cmd, shell=True)
+        olevba_out = subprocess.check_output(cmd, shell=True, stderr=FNULL)
     except Exception as e:
-        color_print.output('r', "Error running olevba on " + str(maldoc) + " failed. " + str(e))
+        color_print.output('r', "ERROR: Running olevba on " + str(maldoc) + " failed. " + str(e))
         return None
 
     # Pull out the chunks containing the XLM lines.
@@ -269,6 +270,7 @@ def emulate(maldoc):
         print(xlm_code)
         print("=========== DONE RAW XLM ==============")
     if (xlm_code is None):
+        color_print.output('r', "ERROR: Unable to extract XLM. Emulation aborted.")
         return ([], "")
 
     # Parse the XLM text and get XLM objects that can be emulated.
