@@ -95,7 +95,15 @@ def _eval_stack(stack, sheet, cell_stack):
     # Resolve all the arguments.
     args = []
     for i in range(0, num_args):
-        arg, tmp_stack = _eval_stack(tmp_stack, sheet, cell_stack)
+
+        # If we are looking at a SET.VALUE() call the 1st argument is a reference to
+        # the cell to update. Keep the 1st arg as a cell ref string in this case.
+        arg = None
+        if ((curr_item.name == "SET.VALUE") and (i == (num_args - 1))):
+            cell_ref = tmp_stack.pop()
+            arg = str(cell_ref)            
+        else:
+            arg, tmp_stack = _eval_stack(tmp_stack, sheet, cell_stack)
         args.insert(0, arg)
 
     # Evaluate the function.

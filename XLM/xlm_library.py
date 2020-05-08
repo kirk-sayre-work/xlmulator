@@ -436,6 +436,9 @@ def INDEX(params, sheet):
 func_lookup["INDEX"] = INDEX
 
 def SET_VALUE(params, sheet):
+    update_fields = str(params[0]).replace("$C", ":").replace("$R", "").split(":")
+    update_index = (int(update_fields[0]), int(update_fields[1]))
+    sheet.cells[update_index] = params[0]
     return "SET.VALUE"
 func_lookup["SET.VALUE"] = SET_VALUE
 
@@ -488,6 +491,8 @@ def MESSAGE(params, sheet):
 func_lookup["MESSAGE"] = MESSAGE
 
 def FORMULA_FILL(params, sheet):
+    print("FORMULA.FILL!!")
+    print(params)
     return "FORMULA.FILL"
 func_lookup["FORMULA.FILL"] = FORMULA_FILL
 
