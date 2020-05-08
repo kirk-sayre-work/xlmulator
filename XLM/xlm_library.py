@@ -398,7 +398,7 @@ def SUM(params, sheet):
 func_lookup["SUM"] = SUM
 
 def SEND_KEYS(params, sheet):
-    return "SEND.KEYS"
+    return "ACTION: INPUT:SEND.KEYS(" + str(params) + ")"
 func_lookup["SEND.KEYS"] = SEND_KEYS
 
 def APP_ACTIVATE(params, sheet):
@@ -515,6 +515,10 @@ def NOT(params, sheet):
     XLM.color_print.output('y', "WARNING: Cannot perform NOT on '" + str(params) + "'. Empty or not a boolean.")
     return False
 func_lookup["NOT"] = NOT
+
+def GET_WORKBOOK(params, sheet):
+    return "GET.WORKBOOK"
+func_lookup["GET.WORKBOOK"] = GET_WORKBOOK
 
 """
 def (params, sheet):

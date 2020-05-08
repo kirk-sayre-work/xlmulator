@@ -214,6 +214,13 @@ def _pull_actions(sheet):
                 func_name = curr_val[:curr_val.index("(")]
                 r.append(("OUTPUT", call, func_name))
 
+            # User input?
+            if (curr_val.startswith("INPUT:")):
+                curr_val = curr_val.replace("INPUT:", "")
+                call = curr_val
+                func_name = curr_val[:curr_val.index("(")]
+                r.append(("INPUT", call, func_name))
+
             # Executing something?
             if (curr_val.startswith("EXEC:")):
                 curr_val = curr_val.replace("EXEC:", "")
