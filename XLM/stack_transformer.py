@@ -186,6 +186,9 @@ class StackTransformer(Transformer):
     ## Terminal Transformers
     ##########################################################
 
+    def BOOLEAN(self, items):
+        return stack_bool(str(items))
+    
     def NUMBER(self, items):
         return int(str(items))
 

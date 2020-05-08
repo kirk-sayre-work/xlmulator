@@ -115,12 +115,12 @@ def CONCATENATE(params, sheet):
 func_lookup["CONCATENATE"] = CONCATENATE
 
 def CALL(params, sheet):
-    r = "ACTION: CALL(" + str(params) + ")"
+    r = "ACTION: CALL(" + str(params)[1:-1] + ")"
     return r
 func_lookup["CALL"] = CALL
 
 def EXEC(params, sheet):
-    r = "ACTION: EXEC: " + str(params)
+    r = "ACTION: EXEC: " + str(params)[1:-1]
     return r
 func_lookup["EXEC"] = EXEC
 
@@ -155,7 +155,7 @@ def WAIT(params, sheet):
 func_lookup["WAIT"] = WAIT
 
 def FOPEN(params, sheet):
-    return "ACTION: FILE:FOPEN(" + str(params) + ")"
+    return "ACTION: FILE:FOPEN(" + str(params)[1:-1] + ")"
 func_lookup["FOPEN"] = FOPEN
 
 def OPEN(params, sheet):
@@ -163,15 +163,15 @@ def OPEN(params, sheet):
 func_lookup["OPEN"] = OPEN
 
 def FPOS(params, sheet):
-    return "ACTION: FILE:FPOS(" + str(params) + ")"
+    return "ACTION: FILE:FPOS(" + str(params)[1:-1] + ")"
 func_lookup["FPOS"] = FPOS
 
 def FREAD(params, sheet):
-    return "ACTION: FILE:FREAD(" + str(params) + ")"
+    return "ACTION: FILE:FREAD(" + str(params)[1:-1] + ")"
 func_lookup["FREAD"] = FREAD
 
 def FCLOSE(params, sheet):
-    return "ACTION: FILE:FCLOSE(" + str(params) + ")"
+    return "ACTION: FILE:FCLOSE(" + str(params)[1:-1] + ")"
 func_lookup["FCLOSE"] = FCLOSE
 
 def FILE_CLOSE(params, sheet):
@@ -179,12 +179,10 @@ def FILE_CLOSE(params, sheet):
 func_lookup["FILE.CLOSE"] = FILE_CLOSE
 
 def FILE_DELETE(params, sheet):
-    return "ACTION: FILE:FILE.DELETE(" + str(params) + ")"
+    return "ACTION: FILE:FILE.DELETE(" + str(params)[1:-1] + ")"
 func_lookup["FILE.DELETE"] = FILE_DELETE
 
 def IF(params, sheet):
-    print("DOING IF!!")
-    print(params)
     return "IF"
 func_lookup["IF"] = IF
 
@@ -208,7 +206,7 @@ def ISNUMBER(params, sheet):
 func_lookup["ISNUMBER"] = ISNUMBER
 
 def ALERT(params, sheet):
-    return "ACTION: OUTPUT:ALERT(" + str(params) + ")"
+    return "ACTION: OUTPUT:ALERT(" + str(params)[1:-1] + ")"
 func_lookup["ALERT"] = ALERT
 
 def ALIGNMENT(params, sheet):
@@ -398,7 +396,7 @@ def SUM(params, sheet):
 func_lookup["SUM"] = SUM
 
 def SEND_KEYS(params, sheet):
-    return "ACTION: INPUT:SEND.KEYS(" + str(params) + ")"
+    return "ACTION: INPUT:SEND.KEYS(" + str(params)[1:-1] + ")"
 func_lookup["SEND.KEYS"] = SEND_KEYS
 
 def APP_ACTIVATE(params, sheet):
@@ -406,7 +404,7 @@ def APP_ACTIVATE(params, sheet):
 func_lookup["APP.ACTIVATE"] = APP_ACTIVATE
 
 def FWRITELN(params, sheet):
-    return "ACTION: FILE:FWRITELN(" + str(params) + ")"
+    return "ACTION: FILE:FWRITELN(" + str(params)[1:-1] + ")"
 func_lookup["FWRITELN"] = FWRITELN
 
 def FILES(params, sheet):
@@ -478,15 +476,15 @@ def WORKBOOK_PREV(params, sheet):
 func_lookup["WORKBOOK.PREV"] = WORKBOOK_PREV
 
 def SAVE_AS(params, sheet):
-    return "ACTION: FILE:SAVE.AS(" + str(params) + ")"
+    return "ACTION: FILE:SAVE.AS(" + str(params)[1:-1] + ")"
 func_lookup["SAVE.AS"] = SAVE_AS
 
 def APP_TITLE(params, sheet):
-    return "ACTION: OUTPUT:APP.TITLE(" + str(params) + ")"
+    return "ACTION: OUTPUT:APP.TITLE(" + str(params)[1:-1] + ")"
 func_lookup["APP.TITLE"] = APP_TITLE
 
 def MESSAGE(params, sheet):
-    return "ACTION: OUTPUT:MESSAGE(" + str(params) + ")"
+    return "ACTION: OUTPUT:MESSAGE(" + str(params)[1:-1] + ")"
 func_lookup["MESSAGE"] = MESSAGE
 
 def FORMULA_FILL(params, sheet):
@@ -498,7 +496,7 @@ def FOR_CELL(params, sheet):
 func_lookup["FOR.CELL"] = FOR_CELL
 
 def VBA_INSERT_FILE(params, sheet):
-    return "ACTION: FILE:VBA.INSERT.FILE(" + str(params) + ")"
+    return "ACTION: FILE:VBA.INSERT.FILE(" + str(params)[1:-1] + ")"
 func_lookup["VBA.INSERT.FILE"] = VBA_INSERT_FILE
 
 def OR(params, sheet):
