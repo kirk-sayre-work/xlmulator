@@ -42,6 +42,14 @@ def emulate_XLM(maldoc, debug=False):
     by the sheet, 2nd element is the human readable XLM code.
     """
 
+    # Does the file exist?
+    try:
+        f = open(maldoc, 'r')
+        f.close()
+    except IOError:
+        XLM.color_print.output('r', "ERROR: File '" + str(maldoc) + "' cannot be opened. Not emulating.")
+        return ([], "")
+        
     # Only emulate Excel files.
     if (not is_excel_file(maldoc)):
         XLM.color_print.output('y', "WARNING: '" + str(maldoc) + "' is not an Excel file. Not emulating.")
