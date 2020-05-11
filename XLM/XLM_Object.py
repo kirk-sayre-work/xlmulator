@@ -171,7 +171,11 @@ def _pull_actions(sheet):
     for index in indices:
 
         # Get the current cell value.
-        curr_val = str(sheet.cell(index[0], index[1]))
+        curr_value = None
+        try:
+            curr_val = str(sheet.cell(index[0], index[1]))
+        except KeyError:
+            continue
 
         # Is this an action?
         # 'ACTION: CALL(['URLDownloadToFileA', 0, 'foo', 0, 'http:/bar.com', 'C:\\ProgramData\\junk', 0, 0])'
@@ -276,7 +280,12 @@ def eval(sheet):
     for cell_index in result_sheet.xlm_cell_indices:
 
         # Get the XLM cell (XLM_Object) to emulate.
-        xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        xlm_cell = None
+        try:
+            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
+            continue
         if (not isinstance(xlm_cell, XLM_Object)):
             continue
         xlm_code += xlm_cell.cell_id + " ---> " + str(xlm_cell) + "\n"
@@ -295,7 +304,12 @@ def eval(sheet):
     for cell_index in result_sheet.xlm_cell_indices:
 
         # Get the XLM cell (XLM_Object) to emulate.
-        xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        xlm_cell = None
+        try:
+            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
+            continue
         if (not isinstance(xlm_cell, XLM_Object)):
             continue
         if (str(xlm_cell) in done_cells):

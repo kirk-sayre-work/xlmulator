@@ -29,6 +29,10 @@ cell: "R" NUMBER "C" NUMBER
 cell_area: ("R" NUMBER? "~" NUMBER? "C" NUMBER? "~" NUMBER?)
            | ("R" NUMBER "C" NUMBER? "~" NUMBER?)
            | ("R" NUMBER? "~" NUMBER? "C" NUMBER)
+           | cell_area_col
+           | cell_area_row
+cell_area_col: ("C" NUMBER)
+cell_area_row: ("R" NUMBER)
 
 // These are all the items that can be pushed onto the XLM stack.
 stack_item: stack_int | stack_funcv | stack_concat
@@ -44,6 +48,7 @@ stack_item: stack_int | stack_funcv | stack_concat
             | stack_mem_no_mem | stack_area_error | stack_div
             | stack_uminus | stack_greater_equal | stack_area_3d
             | stack_end_sheet | stack_mem_error | stack_percent
+            | stack_mem_area | stack_range
 
 unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " (DOUBLE_QUOTE_STRING|SINGLE_QUOTE_STRING)
 unknown_token: "*UNKNOWN TOKEN* " HEX_NUMBER
@@ -84,6 +89,8 @@ stack_area_3d: "ptgArea3d" "A"? "V"?
 stack_end_sheet: "ptgEndSheet"
 stack_mem_error: "ptgMemErr"
 stack_percent: "ptgPercent"
+stack_mem_area: "ptgMemArea" (" " REFERENCE_EXP)?
+stack_range: "ptgRange"
 
 // Literal definitions.
 NUMBER: ("0".."9")+
@@ -96,4 +103,4 @@ NAME: /[\w\.]+/
 USER_DEFINED.2: "User Defined Function"
 UNKNOWN_FUNC.2: "*UNKNOWN FUNCTION*"
 BOOLEAN: "TRUE" | "FALSE"
-
+REFERENCE_EXP.2: "REFERENCE-EXPRESSION"

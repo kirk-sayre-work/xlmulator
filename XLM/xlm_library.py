@@ -527,6 +527,26 @@ def REGISTER_ID(params, sheet):
     return "REGISTER.ID"
 func_lookup["REGISTER.ID"] = REGISTER_ID
 
+def ACTIVATE(params, sheet):
+    return "ACTIVATE"
+func_lookup["ACTIVATE"] = ACTIVATE
+
+def ARGUMENT(params, sheet):
+    return "ARGUMENT"
+func_lookup["ARGUMENT"] = ARGUMENT
+
+def ACTIVE_CELL(params, sheet):
+    return "ACTIVE.CELL"
+func_lookup["ACTIVE.CELL"] = ACTIVE_CELL
+
+def LEN(params, sheet):
+    return len(str(params)) - 2
+func_lookup["LEN"] = LEN
+
+def ELSE(params, sheet):
+    return "ELSE"
+func_lookup["ELSE"] = ELSE
+
 """
 def (params, sheet):
     return ""

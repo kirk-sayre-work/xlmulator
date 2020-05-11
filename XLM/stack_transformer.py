@@ -62,12 +62,20 @@ class StackTransformer(Transformer):
     def stack_item(self, items):
         return items[0]
     
-    def cell(self, items):
+    def cell(self, items):        
         return (items[0], items[1])
 
     def cell_area(self, items):
         # TODO: Need to handle "~" in cell areas.
-        return (items[0], items[1])
+        if (len(items) > 1):
+            return (items[0], items[1])
+        return items[0]
+
+    def cell_area_col(self, items):
+        return (-1, items[0])
+
+    def cell_area_row(self, items):
+        return (items[0], -1)
     
     def stack_int(self, items):
         return stack_int(items[0])
@@ -179,10 +187,19 @@ class StackTransformer(Transformer):
     def stack_mem_error(self, items):
         return stack_mem_error()
 
+    def stack_mem_area(self, items):
+        return stack_mem_area()
+
+    def stack_range(self, items):
+        return stack_range()
+    
     def stack_percent(self, items):
         return stack_percent()
 
     def unparsed(self, items):
+        return unparsed()
+
+    def unknown_token(self, items):
         return unparsed()
     
     ##########################################################

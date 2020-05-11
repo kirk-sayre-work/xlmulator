@@ -148,7 +148,10 @@ num_funcv_args = {"CHAR" : (1),
                   "WHILE" : (1),
                   "SET.VALUE" : (2),
                   "NOT" : (1),
-                  "DAY" : (1) }
+                  "DAY" : (1),
+                  "ACTIVE.CELL" : (0),
+                  "ELSE" : (0),
+                  "LEN" : (1) }
     
 ####################################################################
 class stack_funcv(stack_item):
@@ -896,4 +899,24 @@ class stack_percent(stack_item):
         A human readable version of this stack item.
         """
         return "PERCENT"
+
+####################################################################
+class stack_mem_area(stack_item):
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "MEMAREA"
+
+####################################################################
+class stack_range(stack_item):
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "RANGE"
     
