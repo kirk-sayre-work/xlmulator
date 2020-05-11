@@ -886,4 +886,14 @@ class stack_mem_error(stack_item):
         A human readable version of this stack item.
         """
         return "MEMERROR"
+
+####################################################################
+class stack_percent(stack_item):
+
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "PERCENT"
     

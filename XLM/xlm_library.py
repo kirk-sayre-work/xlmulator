@@ -523,6 +523,10 @@ def GET_WORKBOOK(params, sheet):
     return "GET.WORKBOOK"
 func_lookup["GET.WORKBOOK"] = GET_WORKBOOK
 
+def REGISTER_ID(params, sheet):
+    return "REGISTER.ID"
+func_lookup["REGISTER.ID"] = REGISTER_ID
+
 """
 def (params, sheet):
     return ""

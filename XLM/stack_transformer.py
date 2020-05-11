@@ -179,6 +179,9 @@ class StackTransformer(Transformer):
     def stack_mem_error(self, items):
         return stack_mem_error()
 
+    def stack_percent(self, items):
+        return stack_percent()
+
     def unparsed(self, items):
         return unparsed()
     
