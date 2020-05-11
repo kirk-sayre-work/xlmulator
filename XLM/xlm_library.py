@@ -114,6 +114,7 @@ def CHAR(params, sheet):
 func_lookup["CHAR"] = CHAR
 
 def RUN(params, sheet):
+    # STUBBED
     return "RUN"
 func_lookup["RUN"] = RUN
 
@@ -146,6 +147,7 @@ def WORKBOOK_HIDE(params, sheet):
 func_lookup["WORKBOOK.HIDE"] = WORKBOOK_HIDE
 
 def GOTO(params, sheet):
+    # STUBBED
     return "GOTO"
 func_lookup["GOTO"] = GOTO
 
@@ -158,6 +160,7 @@ def NOW(params, sheet):
 func_lookup["NOW"] = NOW
 
 def WAIT(params, sheet):
+    # STUBBED
     return "WAIT"
 func_lookup["WAIT"] = WAIT
 
@@ -190,10 +193,12 @@ def FILE_DELETE(params, sheet):
 func_lookup["FILE.DELETE"] = FILE_DELETE
 
 def IF(params, sheet):
+    # STUBBED
     return "IF"
 func_lookup["IF"] = IF
 
 def END_IF(params, sheet):
+    # STUBBED
     return "END.IF"
 func_lookup["END.IF"] = END_IF
 
@@ -203,11 +208,13 @@ def CLOSE(params, sheet):
 func_lookup["CLOSE"] = CLOSE
 
 def SEARCH(params, sheet):
+    # STUBBED
     r = "SEARCH"
     return r
 func_lookup["SEARCH"] = SEARCH
 
 def ISNUMBER(params, sheet):
+    # STUBBED
     r = "ISNUMBER"
     return r
 func_lookup["ISNUMBER"] = ISNUMBER
@@ -217,101 +224,121 @@ def ALERT(params, sheet):
 func_lookup["ALERT"] = ALERT
 
 def ALIGNMENT(params, sheet):
+    # STUBBED
     r = "ALIGNMENT"
     return r
 func_lookup["ALIGNMENT"] = ALIGNMENT
 
 def ERROR(params, sheet):
+    # STUBBED
     r = "ERROR"
     return r
 func_lookup["ERROR"] = ERROR
 
 def BORDER(params, sheet):
+    # STUBBED
     r = "BORDER"
     return r
 func_lookup["BORDER"] = BORDER
 
 def WORKBOOK_SELECT(params, sheet):
+    # STUBBED
     r = "WORKBOOK.SELECT"
     return r
 func_lookup["WORKBOOK.SELECT"] = WORKBOOK_SELECT
 
 def PATTERNS(params, sheet):
+    # STUBBED
     r = "PATTERNS"
     return r
 func_lookup["PATTERNS"] = PATTERNS
 
 def WINDOW_RESTORE(params, sheet):
+    # STUBBED
     r = "WINDOW.RESTORE"
     return r
 func_lookup["WINDOW.RESTORE"] = WINDOW_RESTORE
 
 def FORMAT_FONT(params, sheet):
+    # STUBBED
     r = "FORMAT.FONT"
     return r
 func_lookup["FORMAT.FONT"] = FORMAT_FONT
 
 def WINDOW_SIZE(params, sheet):
+    # STUBBED
     r = "WINDOW.SIZE"
     return r
 func_lookup["WINDOW.SIZE"] = WINDOW_SIZE
 
 def RETURN(params, sheet):
+    # STUBBED
     r = "RETURN"
     return r
 func_lookup["RETURN"] = RETURN
 
 def EDIT_COLOR(params, sheet):
+    # STUBBED
     r = "EDIT.COLOR"
     return r
 func_lookup["EDIT.COLOR"] = EDIT_COLOR
 
 def DELETE_NAME(params, sheet):
+    # STUBBED
     r = "DELETE.NAME"
     return r
 func_lookup["DELETE.NAME"] = DELETE_NAME
 
 def SELECT(params, sheet):
+    # STUBBED
     r = "SELECT"
     return r
 func_lookup["SELECT"] = SELECT
 
 def COLUMN_WIDTH(params, sheet):
+    # STUBBED
     r = "COLUMN.WIDTH"
     return r
 func_lookup["COLUMN.WIDTH"] = COLUMN_WIDTH
 
 def ROW_HEIGHT(params, sheet):
+    # STUBBED
     r = "ROW.HEIGHT"
     return r
 func_lookup["ROW.HEIGHT"] = ROW_HEIGHT
 
 def WINDOW_MAXIMIZE(params, sheet):
+    # STUBBED
     r = "WINDOW.MAXIMIZE"
     return r
 func_lookup["WINDOW.MAXIMIZE"] = WINDOW_MAXIMIZE
 
 def FORMAT_NUMBER(params, sheet):
+    # STUBBED
     r = "FORMAT.NUMBER"
     return r
 func_lookup["FORMAT.NUMBER"] = FORMAT_NUMBER
 
 def OFFSET(params, sheet):
+    # STUBBED
     r = "OFFSET"
     return r
 func_lookup["OFFSET"] = OFFSET
 
 def WORKBOOK_UNHIDE(params, sheet):
+    # STUBBED
     r = "WORKBOOK.UNHIDE"
     return r
 func_lookup["WORKBOOK.UNHIDE"] = WORKBOOK_UNHIDE
 
 def FILL_AUTO(params, sheet):
+    # STUBBED
     r = "FILL.AUTO"
     return r
 func_lookup["FILL.AUTO"] = FILL_AUTO
 
 def SET_NAME(params, sheet):
+    # STUBBED
     r = "SET.NAME"
     return r
 func_lookup["SET.NAME"] = SET_NAME
@@ -328,6 +355,7 @@ def MATCH(params, sheet):
     # TODO: Find some coherent documentation on what MATCH is supposed to do.
     #print("MATCH")
     #print(params)
+    # STUBBED
     return("MATCH")
 func_lookup["MATCH"] = MATCH
 
@@ -350,8 +378,7 @@ def GET_CELL(params, sheet):
 
     # Unhandled info type.
     XLM.color_print.output('y', "WARNING: GET.CELL() information type " + str(info_type) + " is not handled. Defaulting to 1.")
-    return 1
-    
+    return 1    
 func_lookup["GET.CELL"] = GET_CELL
 
 def DAY(params, sheet):
@@ -360,6 +387,7 @@ def DAY(params, sheet):
 func_lookup["DAY"] = DAY
 
 def APP_MAXIMIZE(params, sheet):
+    # STUBBED
     r = "APP.MAXIMIZE"
     return r
 func_lookup["APP.MAXIMIZE"] = APP_MAXIMIZE
@@ -376,16 +404,19 @@ def ISERROR(params, sheet):
 func_lookup["ISERROR"] = ISERROR
 
 def CLEAR(params, sheet):
+    # STUBBED
     r = "CLEAR"
     return r
 func_lookup["CLEAR"] = CLEAR
 
 def ON_TIME(params, sheet):
+    # STUBBED
     r = "ON.TIME"
     return r
 func_lookup["ON.TIME"] = ON_TIME
 
 def User_Defined_Function(params, sheet):
+    # STUBBED
     r = "User Defined Function"
     return r
 func_lookup["User Defined Function"] = User_Defined_Function
@@ -395,10 +426,12 @@ def LOWER(params, sheet):
 func_lookup["LOWER"] = LOWER
 
 def SUMIF(params, sheet):
+    # STUBBED
     return "SUMIF"
 func_lookup["SUMIF"] = SUMIF
 
 def SUM(params, sheet):
+    # STUBBED
     return "SUM"
 func_lookup["SUM"] = SUM
 
@@ -407,6 +440,7 @@ def SEND_KEYS(params, sheet):
 func_lookup["SEND.KEYS"] = SEND_KEYS
 
 def APP_ACTIVATE(params, sheet):
+    # STUBBED
     return "APP.ACTIVATE"
 func_lookup["APP.ACTIVATE"] = APP_ACTIVATE
 
@@ -415,30 +449,37 @@ def FWRITELN(params, sheet):
 func_lookup["FWRITELN"] = FWRITELN
 
 def FILES(params, sheet):
+    # STUBBED
     return "FILES"
 func_lookup["FILES"] = FILES
 
 def WHILE(params, sheet):
+    # STUBBED
     return "WHILE"
 func_lookup["WHILE"] = WHILE
 
 def NEXT(params, sheet):
+    # STUBBED
     return "NEXT"
 func_lookup["NEXT"] = NEXT
 
 def COPY(params, sheet):
+    # STUBBED
     return "COPY"
 func_lookup["COPY"] = COPY
 
 def PASTE_SPECIAL(params, sheet):
+    # STUBBED
     return "PASTE.SPECIAL"
 func_lookup["PASTE.SPECIAL"] = PASTE_SPECIAL
 
 def CANCEL_COPY(params, sheet):
+    # STUBBED
     return "CANCEL.COPY"
 func_lookup["CANCEL.COPY"] = CANCEL_COPY
 
 def INDEX(params, sheet):
+    # STUBBED
     return "INDEX"
 func_lookup["INDEX"] = INDEX
 
@@ -450,38 +491,47 @@ def SET_VALUE(params, sheet):
 func_lookup["SET.VALUE"] = SET_VALUE
 
 def ON_SHEET(params, sheet):
+    # STUBBED
     return "ON.SHEET"
 func_lookup["ON.SHEET"] = ON_SHEET
 
 def GET_DOCUMENT(params, sheet):
+    # STUBBED
     return "GET.DOCUMENT"
 func_lookup["GET.DOCUMENT"] = GET_DOCUMENT
 
 def NEW(params, sheet):
+    # STUBBED
     return "NEW"
 func_lookup["NEW"] = NEW
 
 def WORKBOOK_INSERT(params, sheet):
+    # STUBBED
     return "WORKBOOK.INSERT"
 func_lookup["WORKBOOK.INSERT"] = WORKBOOK_INSERT
 
 def ACTIVATE_PREV(params, sheet):
+    # STUBBED
     return "ACTIVATE.PREV"
 func_lookup["ACTIVATE.PREV"] = ACTIVATE_PREV
 
 def WORKBOOK_COPY(params, sheet):
+    # STUBBED
     return "WORKBOOK.COPY"
 func_lookup["WORKBOOK.COPY"] = WORKBOOK_COPY
 
 def WORKBOOK_NAME(params, sheet):
+    # STUBBED
     return "WORKBOOK.NAME"
 func_lookup["WORKBOOK.NAME"] = WORKBOOK_NAME
 
 def PROTECT_DOCUMENT(params, sheet):
+    # STUBBED
     return "PROTECT.DOCUMENT"
 func_lookup["PROTECT.DOCUMENT"] = PROTECT_DOCUMENT
 
 def WORKBOOK_PREV(params, sheet):
+    # STUBBED
     return "WORKBOOK.PREV"
 func_lookup["WORKBOOK.PREV"] = WORKBOOK_PREV
 
@@ -498,12 +548,12 @@ def MESSAGE(params, sheet):
 func_lookup["MESSAGE"] = MESSAGE
 
 def FORMULA_FILL(params, sheet):
-    print("FORMULA.FILL!!")
-    print(params)
+    # STUBBED
     return "FORMULA.FILL"
 func_lookup["FORMULA.FILL"] = FORMULA_FILL
 
 def FOR_CELL(params, sheet):
+    # STUBBED
     return "FOR.CELL"
 func_lookup["FOR.CELL"] = FOR_CELL
 
@@ -527,22 +577,27 @@ def NOT(params, sheet):
 func_lookup["NOT"] = NOT
 
 def GET_WORKBOOK(params, sheet):
+    # STUBBED
     return "GET.WORKBOOK"
 func_lookup["GET.WORKBOOK"] = GET_WORKBOOK
 
 def REGISTER_ID(params, sheet):
+    # STUBBED
     return "REGISTER.ID"
 func_lookup["REGISTER.ID"] = REGISTER_ID
 
 def ACTIVATE(params, sheet):
+    # STUBBED
     return "ACTIVATE"
 func_lookup["ACTIVATE"] = ACTIVATE
 
 def ARGUMENT(params, sheet):
+    # STUBBED
     return "ARGUMENT"
 func_lookup["ARGUMENT"] = ARGUMENT
 
 def ACTIVE_CELL(params, sheet):
+    # STUBBED
     return "ACTIVE.CELL"
 func_lookup["ACTIVE.CELL"] = ACTIVE_CELL
 
@@ -551,10 +606,12 @@ def LEN(params, sheet):
 func_lookup["LEN"] = LEN
 
 def ELSE(params, sheet):
+    # STUBBED
     return "ELSE"
 func_lookup["ELSE"] = ELSE
 
 def COUNTA(params, sheet):
+    # STUBBED
     return "COUNTA"
 func_lookup["COUNTA"] = COUNTA
 
