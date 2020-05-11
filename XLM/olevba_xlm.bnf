@@ -48,7 +48,7 @@ stack_item: stack_int | stack_funcv | stack_concat
             | stack_mem_no_mem | stack_area_error | stack_div
             | stack_uminus | stack_greater_equal | stack_area_3d
             | stack_end_sheet | stack_mem_error | stack_percent
-            | stack_mem_area | stack_range
+            | stack_mem_area | stack_range | stack_uplus
 
 unparsed: " "* "*INCOMPLETE FORMULA PARSING* Remaining, unparsed expression: " (DOUBLE_QUOTE_STRING|SINGLE_QUOTE_STRING)
 unknown_token: "*UNKNOWN TOKEN* " HEX_NUMBER
@@ -85,6 +85,7 @@ stack_mem_no_mem: "ptgMemNoMem" "A"? "V"?
 stack_area_error: "ptgAreaErrV" "A"? "V"?
 stack_div: "ptgDiv"
 stack_uminus: "ptgUminus"
+stack_uplus: "ptgUplus"
 stack_area_3d: "ptgArea3d" "A"? "V"?
 stack_end_sheet: "ptgEndSheet"
 stack_mem_error: "ptgMemErr"

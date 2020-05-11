@@ -174,6 +174,9 @@ class StackTransformer(Transformer):
     
     def stack_uminus(self, items):
         return stack_uminus()
+
+    def stack_uplus(self, items):
+        return stack_uplus()
     
     def stack_greater_equal(self, items):
         return stack_greater_equal()

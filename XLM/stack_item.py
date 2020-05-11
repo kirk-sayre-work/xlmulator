@@ -839,6 +839,28 @@ class stack_uminus(stack_item):
         return "-u"
 
 ####################################################################
+class stack_uplus(stack_item):
+    """
+    Unsigned plus operator on the stack.
+    """
+    
+    ####################################################################
+    def __init__(self):
+        """
+        Constructor.
+        """
+        self.num_args = 2
+        self.is_infix_func = True
+        self.name = "_unsigned_plus"
+    
+    ####################################################################
+    def full_str(self):
+        """
+        A human readable version of this stack item.
+        """
+        return "+u"    
+
+####################################################################
 class stack_greater_equal(stack_item):
     """
     Greater than or equal operator on the stack.

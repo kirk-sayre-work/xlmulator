@@ -91,6 +91,13 @@ def _unsigned_minus(params, sheet):
     return r
 func_lookup["_unsigned_minus"] = _unsigned_minus
 
+def _unsigned_plus(params, sheet):
+    r = 0
+    # TODO: This is probably wrong.
+    r = XLM.utils.convert_num(params[0]) + XLM.utils.convert_num(params[1])
+    return r
+func_lookup["_unsigned_plus"] = _unsigned_plus
+
 def _greater_or_equal(params, sheet):
     r = False
     r = XLM.utils.convert_num(params[0]) >= XLM.utils.convert_num(params[1])
@@ -546,6 +553,10 @@ func_lookup["LEN"] = LEN
 def ELSE(params, sheet):
     return "ELSE"
 func_lookup["ELSE"] = ELSE
+
+def COUNTA(params, sheet):
+    return "COUNTA"
+func_lookup["COUNTA"] = COUNTA
 
 """
 def (params, sheet):
