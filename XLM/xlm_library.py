@@ -615,6 +615,16 @@ def COUNTA(params, sheet):
     return "COUNTA"
 func_lookup["COUNTA"] = COUNTA
 
+def MID(params, sheet):
+    # STUBBED
+    return "MID"
+func_lookup["MID"] = MID
+
+def CODE(params, sheet):
+    # STUBBED
+    return "CODE"
+func_lookup["CODE"] = CODE
+
 """
 def (params, sheet):
     return ""

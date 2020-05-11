@@ -151,7 +151,8 @@ num_funcv_args = {"CHAR" : (1),
                   "DAY" : (1),
                   "ACTIVE.CELL" : (0),
                   "ELSE" : (0),
-                  "LEN" : (1) }
+                  "LEN" : (1),
+                  "MID" : (3) }
     
 ####################################################################
 class stack_funcv(stack_item):
