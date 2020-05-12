@@ -128,7 +128,7 @@ def _extract_xlm(maldoc):
 
     # Convert characters so this can be parsed.
     try:
-        r = r.decode()
+        r = XLM.utils.to_str(r)
     except UnicodeDecodeError:
         r = XLM.utils.strip_unprintable(r)
 
@@ -306,7 +306,7 @@ def _read_workbook_2007(maldoc):
     for cell_index in workbook_info[xlm_sheet_name].keys():
 
         # Parse the formula into an XLM object.
-        formula_str = "=" + workbook_info[xlm_sheet_name][cell_index][0]
+        formula_str = b"=" + workbook_info[xlm_sheet_name][cell_index][0]
         formula = XLM.ms_stack_transformer.parse_ms_xlm(formula_str)
 
         # Set the value of the formula if we know it.

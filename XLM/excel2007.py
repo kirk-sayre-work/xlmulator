@@ -53,7 +53,7 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
         return None
     
     # Read in the formula file.
-    zip_subfile = (b"xl/" + zip_subfile).decode()
+    zip_subfile = XLM.utils.to_str(b"xl/" + zip_subfile)
     if (zip_subfile not in unzipped_data.namelist()):
         return None
     f1 = unzipped_data.open(zip_subfile)
@@ -71,35 +71,31 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
     r = {}
     for curr_cell_info in cell_raw_info:
 
-        # Pull out the letter style column ID.
-        cell_id_raw = curr_cell_info[0]
-        col_raw = ""
-        row_pos = 0
-        for c in cell_id_raw.decode():
-            if (c.isdigit()):
-                break
-            row_pos += 1
-            col_raw += c
-
-        # Convert the letter style column ID to an integer.
-        col = XLM.utils.excel_col_letter_to_index(col_raw)
-
-        # Get the row #.
-        row = int(cell_id_raw[row_pos:])
-
         # Tuple cell index.
+        cell_id_raw = curr_cell_info[0]
+        row, col = XLM.utils.parse_cell_index(cell_id_raw)
         cell_index = (row, col)
 
         # Get the raw formula.
         formula = curr_cell_info[1]
-
+        formula = formula.replace(b"&lt;", b"<").\
+                  replace(b"&amp;", b"&").\
+                  replace(b"&gt;", b">").\
+                  replace(b"&quot;", b'"').\
+                  replace(b"&apos;", b"'")
+    
         # Do we know the computed formula value?
         formula_val = None
         if (len(curr_cell_info) > 2):
 
             # Get the value as a string.
             formula_val = curr_cell_info[2]
-
+            formula_val = formula_val.replace(b"&lt;", b"<").\
+                          replace(b"&amp;", b"&").\
+                          replace(b"&gt;", b">").\
+                          replace(b"&quot;", b'"').\
+                          replace(b"&apos;", b"'")
+            
             # Try some numeric conversions. If these fail we will just track it as a
             # string.
             try:

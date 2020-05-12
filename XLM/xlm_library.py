@@ -568,6 +568,8 @@ funcs_of_interest.append("MESSAGE")
 
 def FORMULA_FILL(params, sheet):
     # STUBBED
+    #print("FORMULA.FILL!!")
+    #print(params)
     return "FORMULA.FILL"
 func_lookup["FORMULA.FILL"] = FORMULA_FILL
 

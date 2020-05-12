@@ -103,3 +103,51 @@ def excel_col_letter_to_index(x):
     @return (int) The integer version of the column reference.
     """
     return reduce(lambda s,a:s*26+ord(a)-ord('A')+1, x, 0)
+
+####################################################################
+def parse_cell_index(cell_id_raw):
+    """
+    Parse out a MS cell reference like 'AD234' into an integer (row, column)
+    tuple.
+
+    @param cell_id_raw (str) The MS Excel letters for column, integer for row
+    style cell reference.
+
+    @return (tuple) An integer (row, column) tuple.
+    """
+
+    # Pull out the letter style column ID.
+    col_raw = ""
+    row_pos = 0
+    for c in to_str(cell_id_raw):
+        if (c.isdigit()):
+            break
+        row_pos += 1
+        col_raw += c
+
+    # Convert the letter style column ID to an integer.
+    #print(curr_cell_info)
+    col = excel_col_letter_to_index(col_raw)
+
+    # Get the row #.
+    row = int(cell_id_raw[row_pos:])
+
+    # Done.
+    return (row, col)
+
+####################################################################
+def to_str(s):
+    """
+    Convert a bytes like object to a str.
+
+    param s (bytes) The string to convert to str. If this is already str
+    the original string will be returned.
+
+    @return (str) s as a str.
+    """
+
+    # Needs conversion?
+    if (isinstance(s, bytes)):
+        return s.decode()
+    return s
+

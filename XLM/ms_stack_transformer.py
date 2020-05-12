@@ -7,6 +7,7 @@ from __future__ import print_function
 import string
 import os
 import sys
+import traceback
 
 from lark import Lark
 from lark import UnexpectedInput
@@ -44,7 +45,8 @@ def parse_ms_xlm(expression):
     return None.
     """
 
-    # Convert to MS XLM is needed.
+    # Make into a valid formula.
+    expression = XLM.utils.to_str(expression)
     orig_expression = expression
     if (not expression.startswith("=")):
         expression = '="' + str(expression) + '"'
@@ -69,6 +71,9 @@ def parse_ms_xlm(expression):
             return r
 
     # Convert the AST to a XLM_Object.
+    if debug:
+        print(expression)
+        print(xlm_ast.pretty())
     r = MsStackTransformer().transform(xlm_ast)
 
     # If we did not get a XLM_Object (just a stack_item), make an XLM_Object with the
@@ -203,7 +208,7 @@ class MsStackTransformer(Transformer):
     
     def method_call(self, items):
         new_items = [items[0] + "." + items[1], items[2]]
-        
+
         # Make the function call stack.
         stack = []
         stack = _load_stack(new_items, stack)
@@ -225,7 +230,13 @@ class MsStackTransformer(Transformer):
     
     def a1_notation_cell(self, items):
         if (isinstance(items, list)):
-            return items[0]
+            ref = items[0]
+            if (isinstance(ref, str)):
+
+                # Convert to cell reference object.
+                row, col = XLM.utils.parse_cell_index(ref)
+                return stack_cell_ref(row, col)
+            return ref
         return items
     
     def r1c1_notation_cell(self, items):
