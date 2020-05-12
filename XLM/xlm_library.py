@@ -148,6 +148,7 @@ def FORMULA(params, sheet):
     r = str(params[0])
     return r
 func_lookup["FORMULA"] = FORMULA
+funcs_of_interest.append("FORMULA")
 
 def WORKBOOK_HIDE(params, sheet):
     return "WORKBOOK.HIDE"

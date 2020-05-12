@@ -11,6 +11,8 @@ import sys
 
 import XLM.utils
 
+debug = False
+
 ####################################################################
 def unzip_file(fname):
     """
@@ -66,36 +68,49 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
     # <c r="HO1" t="str"><f>CHAR($EC$210-123)</f><v>e</v></c>
     # <c r="EY1"><v>383</v></c>
     # <c r="FE23" t="b"><f>RUN($IK$1673)</f><v>0</v></c>
-    cell_pat = b'<c +r="(\w+)".+?<f>([^<]+)</f>(?:<v>([^<]+)</v>)?</c>'
+    cell_pat = b'<c +r="(\w+)".+?(?:(<f>[^<]+)</f>)?(?:(<v>[^<]+)</v>)?</c>'
     cell_raw_info = re.findall(cell_pat, contents)
     r = {}
     for curr_cell_info in cell_raw_info:
 
+        # Sanity check.
+        if (len(curr_cell_info) < 2):
+            continue
+        
         # Tuple cell index.
         cell_id_raw = curr_cell_info[0]
         row, col = XLM.utils.parse_cell_index(cell_id_raw)
         cell_index = (row, col)
 
-        # Get the raw formula.
-        formula = curr_cell_info[1]
-        formula = formula.replace(b"&lt;", b"<").\
-                  replace(b"&amp;", b"&").\
-                  replace(b"&gt;", b">").\
-                  replace(b"&quot;", b'"').\
-                  replace(b"&apos;", b"'")
-    
-        # Do we know the computed formula value?
-        formula_val = None
+        # Get the possible raw formula and value.
+        item1 = curr_cell_info[1]
+        item1 = item1.replace(b"&lt;", b"<").\
+                replace(b"&amp;", b"&").\
+                replace(b"&gt;", b">").\
+                replace(b"&quot;", b'"').\
+                replace(b"&apos;", b"'")
+        item2 = None
         if (len(curr_cell_info) > 2):
+            item2 = curr_cell_info[2]
+            item2 = item2.replace(b"&lt;", b"<").\
+                    replace(b"&amp;", b"&").\
+                    replace(b"&gt;", b">").\
+                    replace(b"&quot;", b'"').\
+                    replace(b"&apos;", b"'")
+        formula = None
+        formula_val = None
+        if (item1.startswith("<f>")):
+            formula = item1[len("<f>"):]
+        if (item2.startswith("<f>")):
+            formula = item2[len("<f>"):]
+        if (item1.startswith("<v>")):
+            formula_val = item1[len("<v>"):]
+        if (item2.startswith("<v>")):
+            formula_val = item2[len("<v>"):]
+        
+        # Do we know the computed formula value?
+        if (formula_val is not None):
 
-            # Get the value as a string.
-            formula_val = curr_cell_info[2]
-            formula_val = formula_val.replace(b"&lt;", b"<").\
-                          replace(b"&amp;", b"&").\
-                          replace(b"&gt;", b">").\
-                          replace(b"&quot;", b'"').\
-                          replace(b"&apos;", b"'")
-            
             # Try some numeric conversions. If these fail we will just track it as a
             # string.
             try:
@@ -108,6 +123,8 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
                 
         # Save the cell data.
         r[cell_index] = (formula, formula_val)
+        if debug:
+            print(curr_cell_info)
 
     return r
 

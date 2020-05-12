@@ -60,6 +60,7 @@ def set_debug(flag):
     XLM.XLM_Object.debug = flag
     XLM.xlm_library.debug = flag
     XLM.ms_stack_transformer.debug = flag
+    XLM.excel2007.debug = flag
     
 ####################################################################
 def _extract_xlm(maldoc):
@@ -305,8 +306,24 @@ def _read_workbook_2007(maldoc):
     xlm_cells = {}
     for cell_index in workbook_info[xlm_sheet_name].keys():
 
+        # Value only cell?
+        row = cell_index[0]
+        col = cell_index[1]
+        if (row not in xlm_cells):
+            xlm_cells[row] = {}
+        raw_formula = workbook_info[xlm_sheet_name][cell_index][0]
+        if (raw_formula is None):
+
+            # Do we have a value?
+            formula_val = workbook_info[xlm_sheet_name][cell_index][1]
+            if (formula_val is not None):
+
+                # Just save the value in the cell.
+                xlm_cells[row][col] = formula_val
+            continue
+            
         # Parse the formula into an XLM object.
-        formula_str = b"=" + workbook_info[xlm_sheet_name][cell_index][0]
+        formula_str = b"=" + raw_formula
         formula = XLM.ms_stack_transformer.parse_ms_xlm(formula_str)
 
         # Set the value of the formula if we know it.
@@ -316,10 +333,6 @@ def _read_workbook_2007(maldoc):
 
         # Save the XLM object.
         formula.update_cell_id(cell_index)
-        row = cell_index[0]
-        col = cell_index[1]
-        if (row not in xlm_cells):
-            xlm_cells[row] = {}
         xlm_cells[row][col] = formula
 
     # Merge the XLM cells with the value cells into a single unified spereadsheet
