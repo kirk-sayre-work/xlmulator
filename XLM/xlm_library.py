@@ -15,6 +15,10 @@ debug = False
 ## Function emulators
 ####################################################################
 
+# Functions to always emulate.
+funcs_of_interest = []
+
+# Table mapping function names to emulator functions.
 func_lookup = {}
 
 def _concat(params, sheet):
@@ -126,16 +130,19 @@ def CALL(params, sheet):
     r = "ACTION: CALL(" + str(params)[1:-1] + ")"
     return r
 func_lookup["CALL"] = CALL
+funcs_of_interest.append("CALL")
 
 def EXEC(params, sheet):
     r = "ACTION: EXEC: " + str(params)[1:-1]
     return r
 func_lookup["EXEC"] = EXEC
+funcs_of_interest.append("EXEC")
 
 def HALT(params, sheet):
     r = "ACTION: HALT"
     return r
 func_lookup["HALT"] = HALT
+funcs_of_interest.append("HALT")
 
 def FORMULA(params, sheet):
     r = str(params[0])
@@ -167,6 +174,7 @@ func_lookup["WAIT"] = WAIT
 def FOPEN(params, sheet):
     return "ACTION: FILE:FOPEN(" + str(params)[1:-1] + ")"
 func_lookup["FOPEN"] = FOPEN
+funcs_of_interest.append("FOPEN")
 
 def OPEN(params, sheet):
     return FOPEN(params, sheet)
@@ -175,14 +183,17 @@ func_lookup["OPEN"] = OPEN
 def FPOS(params, sheet):
     return "ACTION: FILE:FPOS(" + str(params)[1:-1] + ")"
 func_lookup["FPOS"] = FPOS
+funcs_of_interest.append("FPOS")
 
 def FREAD(params, sheet):
     return "ACTION: FILE:FREAD(" + str(params)[1:-1] + ")"
 func_lookup["FREAD"] = FREAD
+funcs_of_interest.append("FREAD")
 
 def FCLOSE(params, sheet):
     return "ACTION: FILE:FCLOSE(" + str(params)[1:-1] + ")"
 func_lookup["FCLOSE"] = FCLOSE
+funcs_of_interest.append("FCLOSE")
 
 def FILE_CLOSE(params, sheet):
     return FCLOSE(params, sheet)
@@ -191,6 +202,7 @@ func_lookup["FILE.CLOSE"] = FILE_CLOSE
 def FILE_DELETE(params, sheet):
     return "ACTION: FILE:FILE.DELETE(" + str(params)[1:-1] + ")"
 func_lookup["FILE.DELETE"] = FILE_DELETE
+funcs_of_interest.append("FILE.DELETE")
 
 def IF(params, sheet):
     # STUBBED
@@ -206,6 +218,7 @@ def CLOSE(params, sheet):
     r = "ACTION: CLOSE"
     return r
 func_lookup["CLOSE"] = CLOSE
+funcs_of_interest.append("CLOSE")
 
 def SEARCH(params, sheet):
     # STUBBED
@@ -222,6 +235,7 @@ func_lookup["ISNUMBER"] = ISNUMBER
 def ALERT(params, sheet):
     return "ACTION: OUTPUT:ALERT(" + str(params)[1:-1] + ")"
 func_lookup["ALERT"] = ALERT
+funcs_of_interest.append("ALERT")
 
 def ALIGNMENT(params, sheet):
     # STUBBED
@@ -438,6 +452,7 @@ func_lookup["SUM"] = SUM
 def SEND_KEYS(params, sheet):
     return "ACTION: INPUT:SEND.KEYS(" + str(params)[1:-1] + ")"
 func_lookup["SEND.KEYS"] = SEND_KEYS
+funcs_of_interest.append("SEND.KEYS")
 
 def APP_ACTIVATE(params, sheet):
     # STUBBED
@@ -447,6 +462,7 @@ func_lookup["APP.ACTIVATE"] = APP_ACTIVATE
 def FWRITELN(params, sheet):
     return "ACTION: FILE:FWRITELN(" + str(params)[1:-1] + ")"
 func_lookup["FWRITELN"] = FWRITELN
+funcs_of_interest.append("FWRITELN")
 
 def FILES(params, sheet):
     # STUBBED
@@ -538,14 +554,17 @@ func_lookup["WORKBOOK.PREV"] = WORKBOOK_PREV
 def SAVE_AS(params, sheet):
     return "ACTION: FILE:SAVE.AS(" + str(params)[1:-1] + ")"
 func_lookup["SAVE.AS"] = SAVE_AS
+funcs_of_interest.append("SAVE.AS")
 
 def APP_TITLE(params, sheet):
     return "ACTION: OUTPUT:APP.TITLE(" + str(params)[1:-1] + ")"
 func_lookup["APP.TITLE"] = APP_TITLE
+funcs_of_interest.append("APP.TITLE")
 
 def MESSAGE(params, sheet):
     return "ACTION: OUTPUT:MESSAGE(" + str(params)[1:-1] + ")"
 func_lookup["MESSAGE"] = MESSAGE
+funcs_of_interest.append("MESSAGE")
 
 def FORMULA_FILL(params, sheet):
     # STUBBED
@@ -560,6 +579,7 @@ func_lookup["FOR.CELL"] = FOR_CELL
 def VBA_INSERT_FILE(params, sheet):
     return "ACTION: FILE:VBA.INSERT.FILE(" + str(params)[1:-1] + ")"
 func_lookup["VBA.INSERT.FILE"] = VBA_INSERT_FILE
+funcs_of_interest.append("VBA.INSERT.FILE")
 
 def OR(params, sheet):
     r = False
@@ -630,6 +650,22 @@ def (params, sheet):
     return ""
 func_lookup[""] = 
 """
+
+####################################################################
+def should_emulate_cell(cell):
+    """
+    Check to see if a given XLM cell runs something that we want to track 
+    in the actions.
+
+    @param cell (XLM_Object) The cell to check.
+
+    @return (boolean) True if the cell should be emulated, False if not.
+    """
+    cell_str = str(cell)    
+    for func in funcs_of_interest:
+        if (cell_str.startswith(func)):
+            return True
+    return False
 
 ####################################################################
 def _is_interesting_cell(cell):

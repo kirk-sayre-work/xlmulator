@@ -84,13 +84,13 @@ def is_excel_file_97(maldoc):
 
     @return (bool) True if the file is an Excel file, False if not.
     """
-    typ = subprocess.check_output(["file", maldoc])
+    typ = str(subprocess.check_output(["file", maldoc]))
     if ("Composite Document File" not in typ):
         return False
-    if (b"Excel" in typ):
+    if ("Excel" in typ):
         return True
-    typ = subprocess.check_output(["exiftool", maldoc])
-    return ((b"ms-excel" in typ) or (b"Worksheets" in typ))
+    typ = str(subprocess.check_output(["exiftool", maldoc]))
+    return (("ms-excel" in typ) or ("Worksheets" in typ))
 
 ####################################################################
 def excel_col_letter_to_index(x): 
@@ -102,5 +102,4 @@ def excel_col_letter_to_index(x):
 
     @return (int) The integer version of the column reference.
     """
-    #return (reduce(lambda s,a:s*26+ord(a)-ord('A')+1, x, 0) - 1)
     return reduce(lambda s,a:s*26+ord(a)-ord('A')+1, x, 0)

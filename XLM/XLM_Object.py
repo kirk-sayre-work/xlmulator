@@ -130,7 +130,7 @@ def _eval_cell(xlm_cell, sheet, cell_stack):
     """
 
     # Did we already compute the value for this cell?
-    if ((xlm_cell.value is not None) and (not str(xlm_cell).startswith("CALL"))):
+    if ((xlm_cell.value is not None) and (not XLM.xlm_library.should_emulate_cell(xlm_cell))):
         if debug:
             print("Short circuit eval of '" + str(xlm_cell) + "'. Alerady got val.")
             print(xlm_cell.value)
@@ -209,7 +209,10 @@ def _pull_actions(sheet):
                     if (not first):
                         call += ", "
                     first = False
-                    call += str(arg)
+                    arg_str = str(arg)
+                    if (isinstance(arg, str) or isinstance(arg, unicode)):
+                        arg_str = '"' + arg_str + '"'
+                    call += arg_str
                 call += ")"
 
                 # Save the action.
