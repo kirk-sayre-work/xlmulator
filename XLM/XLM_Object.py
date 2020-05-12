@@ -129,6 +129,10 @@ def _eval_cell(xlm_cell, sheet, cell_stack):
     @return (str) The final value of the XLM function.
     """
 
+    # Did we already compute the value for this cell?
+    if (xlm_cell.value is not None):
+        return xlm_cell.value
+    
     # Are we getting into infinite recursion?
     if (xlm_cell in cell_stack):
         msg = "WARNING: Infinite recursion detected when resolving '" + xlm_cell.cell_id + ":" + str(xlm_cell) + "'."
@@ -150,7 +154,8 @@ def _eval_cell(xlm_cell, sheet, cell_stack):
 
     # Done.
     cell_stack.pop()
-    return str(final_val)
+    xlm_cell.value = str(final_val)
+    return xlm_cell.value
 
 ####################################################################
 def _pull_actions(sheet):
@@ -422,6 +427,7 @@ class XLM_Object(object):
         self.stack = stack
         self.update_cell_id((self.row, self.col))
         self.gloss = None
+        self.value = None
 
     ####################################################################
     def update_cell_id(self, new_id):
