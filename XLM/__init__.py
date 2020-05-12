@@ -22,6 +22,8 @@ import XLM.XLM_Object
 import XLM.xlm_library
 import XLM.utils
 import XLM.ms_stack_transformer
+import XLM.excel2007
+import XLM.ms_stack_transformer
 
 ## Check installation prerequisites.
 
@@ -259,7 +261,116 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     # Done. Return the indices of the added XLM cells and the updated
     # workbook.
     return (workbook, xlm_cell_indices, xlm_sheet)
+
+####################################################################
+def _read_workbook_2007(maldoc):
+    """
+    Read in an Excel 2007+ workbook and the XLM macros in the workbook.
+
+    @param maldoc (str) The fully qualified name of the Excel file to
+    analyze.
+
+    @return (tuple) A 3 element tuple where the 1st element is the workbook object,
+    the 2nd element is a list of XLM cell indices ((row, column) tuples) and the 3rd
+    element is a sheet element for the sheet with XLM macros.
+    """
+
+    # Read in the 2007+ cells.
+    workbook_info = XLM.excel2007.read_excel_2007_XLM(maldoc)    
+    if (workbook_info is None):
+        return (None, None, None)
+    if (len(workbook_info) == 0):
+        color_print.output('y', "WARNING: No XLM macros found.")
+        return (None, None, None)
+
+    if debug:
+        print("=========== START 2007+ CONTENTS ==============")
+        for sheet in workbook_info.keys():
+            print("\n------")
+            print(sheet)
+            print("")
+            for c in workbook_info[sheet].keys():
+                print(str(c) + " ---> " + str(workbook_info[sheet][c]))
+        print("=========== DONE 2007+ CONTENTS ==============")
             
+    # Figure out which sheet probably has the XLM macros.
+    xlm_sheet_name = None
+    max_formulas = -1
+    for sheet in workbook_info.keys():
+        if (len(workbook_info[sheet]) > max_formulas):
+            max_formulas = len(workbook_info[sheet])
+            xlm_sheet_name = sheet
+
+    # Parse each formula and add it to a sheet object.
+    xlm_cells = {}
+    for cell_index in workbook_info[xlm_sheet_name].keys():
+
+        # Parse the formula into an XLM object.
+        formula_str = "=" + workbook_info[xlm_sheet_name][cell_index][0]
+        formula = XLM.ms_stack_transformer.parse_ms_xlm(formula_str)
+
+        # Set the value of the formula if we know it.
+        formula_val = workbook_info[xlm_sheet_name][cell_index][1]
+        if (formula_val is not None):
+            formula.value = formula_val
+
+        # Save the XLM object.
+        formula.update_cell_id(cell_index)
+        row = cell_index[0]
+        col = cell_index[1]
+        if (row not in xlm_cells):
+            xlm_cells[row] = {}
+        xlm_cells[row][col] = formula
+
+    # Merge the XLM cells with the value cells into a single unified spereadsheet
+    # object.
+    workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
+    if (workbook is None):
+        color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
+        return (None, None, None)
+    
+    # Done.
+    return (workbook, xlm_cell_indices, xlm_sheet)
+    
+####################################################################
+def _read_workbook_97(maldoc):
+    """
+    Read in an Excel 97 workbook and the XLM macros in the workbook.
+
+    @param maldoc (str) The fully qualified name of the Excel file to
+    analyze.
+
+    @return (tuple) A 3 element tuple where the 1st element is the workbook object,
+    the 2nd element is a list of XLM cell indices ((row, column) tuples) and the 3rd
+    element is a sheet element for the sheet with XLM macros.
+    """
+
+    # Run olevba on the file and extract the XLM macro code lines.
+    xlm_code = _extract_xlm(maldoc)
+    if debug:
+        print("=========== START RAW XLM ==============")
+        print(xlm_code)
+        print("=========== DONE RAW XLM ==============")
+    if (xlm_code is None):
+        color_print.output('r', "ERROR: Unable to extract XLM. Emulation aborted.")
+        return (None, None, None)
+
+    # Parse the XLM text and get XLM objects that can be emulated.
+    xlm_cells = _extract_xlm_objects(xlm_code)
+    if (xlm_cells is None):
+        color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")
+        return (None, None, None)
+
+    # Merge the XLM cells with the value cells into a single unified spereadsheet
+    # object.
+    workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
+    if (workbook is None):
+        color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
+        return (None, None, None)
+
+    # Done.    
+    return (workbook, xlm_cell_indices, xlm_sheet)
+    
 ####################################################################
 def emulate(maldoc):
     """
@@ -272,29 +383,24 @@ def emulate(maldoc):
     by the sheet, 2nd element is the human readable XLM code.
     """
 
-    # Run olevba on the file and extract the XLM macro code lines.
-    xlm_code = _extract_xlm(maldoc)
-    if debug:
-        print("=========== START RAW XLM ==============")
-        print(xlm_code)
-        print("=========== DONE RAW XLM ==============")
-    if (xlm_code is None):
-        color_print.output('r', "ERROR: Unable to extract XLM. Emulation aborted.")
-        return ([], "")
+    # Excel 97 file?
+    if (XLM.utils.is_excel_file_97(maldoc)):
+        workbook, xlm_cell_indices, xlm_sheet = _read_workbook_97(maldoc)
+        if (workbook is None):
+            color_print.output('r', "ERROR: Reading Excel 97 file failed. Emulation aborted.")
+            return ([], "")
 
-    # Parse the XLM text and get XLM objects that can be emulated.
-    xlm_cells = _extract_xlm_objects(xlm_code)
-    if (xlm_cells is None):
-        color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")
-        return ([], "")
+    # Excel 2007+ file?
+    elif (XLM.utils.is_excel_file_2007(maldoc)):
+        workbook, xlm_cell_indices, xlm_sheet = _read_workbook_2007(maldoc)
+        if (workbook is None):
+            color_print.output('r', "ERROR: Reading Excel 2007 file failed. Emulation aborted.")
+            return ([], "")
 
-    # Merge the XLM cells with the value cells into a single unified spereadsheet
-    # object.
-    workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
-    if (workbook is None):
-        color_print.output('r', "ERROR: Merging XLM cells failed. Emulation aborted.")
+    else:
+        color_print.output('y', "WARNING: " + maldoc + " is not an Excel file. Emulation aborted.")
         return ([], "")
-
+        
     # Save the indices of the XLM cells in the workbook. We do this here directly so that
     # the base definition of the ExcelWorkbook class does not need to be changed.
     xlm_sheet.xlm_cell_indices = xlm_cell_indices

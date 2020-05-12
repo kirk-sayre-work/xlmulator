@@ -213,7 +213,7 @@ method_call:    NAME "." NAME "(" arglist ")"
 arglist:    (argument ",")* argument
 argument:   expression |
 cell:   a1_notation_cell | r1c1_notation_cell
-a1_notation_cell:   /\$?[a-z]+\$?\d+/i | NAME    // NAME here is a hack to make it work with LALR parser, A9 is a valid NAME and matches with the CELL regex
+a1_notation_cell:   DOLLAR_CELL_REF | NAME    // NAME here is a hack to make it work with LALR parser, A9 is a valid NAME and matches with the CELL regex
 r1c1_notation_cell: ROW [REF | INT ] COL [REF | INT ]
 ?expression:   concat_expression CMPOP concat_expression | concat_expression
 ?concat_expression: additive_expression (CONCATOP additive_expression)*
@@ -230,6 +230,7 @@ BOOLEAN.2: "TRUE" | "FALSE"
 ROW: "R"
 COL: "C"
 REF: "[" SIGNED_INT  "]"
+DOLLAR_CELL_REF: /\$?[a-z]+\$?\d+/i
 %import common.CNAME -> NAME
 %import common.SIGNED_INT -> SIGNED_INT
 %import common.INT -> INT

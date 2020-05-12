@@ -130,7 +130,10 @@ def _eval_cell(xlm_cell, sheet, cell_stack):
     """
 
     # Did we already compute the value for this cell?
-    if (xlm_cell.value is not None):
+    if ((xlm_cell.value is not None) and (not str(xlm_cell).startswith("CALL"))):
+        if debug:
+            print("Short circuit eval of '" + str(xlm_cell) + "'. Alerady got val.")
+            print(xlm_cell.value)
         return xlm_cell.value
     
     # Are we getting into infinite recursion?

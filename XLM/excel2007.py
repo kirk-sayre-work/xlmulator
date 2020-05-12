@@ -8,7 +8,8 @@ import re
 import random
 import os
 import sys
-from functools import reduce
+
+import XLM.utils
 
 ####################################################################
 def unzip_file(fname):
@@ -30,18 +31,6 @@ def unzip_file(fname):
 
     # Return the unzipped data.
     return unzipped_data
-
-####################################################################
-def excel_col_letter_to_index(x): 
-    """
-    Convert a 'AH','C', etc. style Excel column reference to its integer
-    equivalent.
-
-    @param x (str) The letter style Excel column reference.
-
-    @return (int) The integer version of the column reference.
-    """
-    return (reduce(lambda s,a:s*26+ord(a)-ord('A')+1, x, 0) - 1)
 
 ####################################################################
 def _read_excel_2007_sheet(zip_subfile, unzipped_data):
@@ -93,7 +82,7 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
             col_raw += c
 
         # Convert the letter style column ID to an integer.
-        col = excel_col_letter_to_index(col_raw)
+        col = XLM.utils.excel_col_letter_to_index(col_raw)
 
         # Get the row #.
         row = int(cell_id_raw[row_pos:])
@@ -139,6 +128,8 @@ def read_excel_2007_XLM(fname):
     """
     
     # Make sure this is an Excel 2007 file.
+    if (not XLM.utils.is_excel_file_2007(fname)):
+        return None
     
     # Unzip the file.
     unzipped_data = unzip_file(fname)

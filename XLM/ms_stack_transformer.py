@@ -224,6 +224,8 @@ class MsStackTransformer(Transformer):
         return items
     
     def a1_notation_cell(self, items):
+        if (isinstance(items, list)):
+            return items[0]
         return items
     
     def r1c1_notation_cell(self, items):
@@ -323,3 +325,9 @@ class MsStackTransformer(Transformer):
     def NUMBER(self, items):
         return stack_int(str(items))
     
+    def DOLLAR_CELL_REF(self, items):
+        fields = str(items)[1:].split("$")
+        col = XLM.utils.excel_col_letter_to_index(fields[0])
+        row = int(fields[1])
+        r = stack_cell_ref(row, col)
+        return r
