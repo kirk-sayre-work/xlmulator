@@ -79,12 +79,21 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--debug',
                         action='store_true',
                         help="Print lots of debug information.")
+    parser.add_argument('-q', '--quiet',
+                        action='store_true',
+                        help="Do not print progress or error messages.")
     args = parser.parse_args()
 
+    # Disabling progress output?
+    if (args.quiet):
+        XLM.color_print.quiet = True
+    
     # Emulate the XLM macros.
-    print("Emulating XLM macros in " + str(args.maldocs) + " ...")
+    if (not args.quiet):
+        print("Emulating XLM macros in " + str(args.maldocs) + " ...")
     actions, xlm_code = emulate_XLM(args.maldocs, args.debug)
-    print("Done emulating XLM macros in " + str(args.maldocs) + " .")
+    if (not args.quiet):
+        print("Done emulating XLM macros in " + str(args.maldocs) + " .")
 
     # Display results.
 

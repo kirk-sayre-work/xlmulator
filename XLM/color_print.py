@@ -4,6 +4,8 @@ Print colored text to stdout.
 
 from __future__ import print_function
 
+quiet = False
+
 ###########################################################################
 def safe_print(text):
     """
@@ -42,6 +44,10 @@ def output(color, text):
     text - (str) The text to print.
     """
 
+    # Are we skipping all output?
+    if quiet:
+        return
+    
     # Is this a color we handle?
     color = str(color).lower()
     if (color not in colors):

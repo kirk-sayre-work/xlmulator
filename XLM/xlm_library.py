@@ -383,6 +383,10 @@ def GET_CELL(params, sheet):
     info_type = XLM.utils.convert_num(params[0])
     cell_ref = params[1]
 
+    # Cell horizontal alignment?
+    if (info_type == 8):
+        return 5
+    
     # Row height of cell, in points ?
     if (info_type == 17):
         return 16.5
@@ -391,6 +395,18 @@ def GET_CELL(params, sheet):
     if (info_type == 19):
         return 9
 
+    # Font color of 1st char in cell?
+    if (info_type == 24):
+        return 13
+
+    # Shade foreground color of cell?
+    if (info_type == 38):
+        return 15
+
+    # Cell vertical alignment?
+    if (info_type == 50):
+        return 5
+    
     # Unhandled info type.
     XLM.color_print.output('y', "WARNING: GET.CELL() information type " + str(info_type) + " is not handled. Defaulting to 1.")
     return 1    
@@ -503,7 +519,7 @@ func_lookup["INDEX"] = INDEX
 def SET_VALUE(params, sheet):
     update_fields = str(params[0]).replace("$C", ":").replace("$R", "").split(":")
     update_index = (int(update_fields[0]), int(update_fields[1]))
-    sheet.cells[update_index] = params[0]
+    sheet.cells[update_index] = params[1]
     return "SET.VALUE"
 func_lookup["SET.VALUE"] = SET_VALUE
 
@@ -569,8 +585,9 @@ funcs_of_interest.append("MESSAGE")
 
 def FORMULA_FILL(params, sheet):
     # STUBBED
-    #print("FORMULA.FILL!!")
-    #print(params)
+    if debug:
+        print("FORMULA.FILL!!")
+        print(params)
     return "FORMULA.FILL"
 func_lookup["FORMULA.FILL"] = FORMULA_FILL
 

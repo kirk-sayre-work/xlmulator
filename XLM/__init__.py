@@ -225,6 +225,7 @@ def _merge_XLM_cells(maldoc, xlm_cells):
     """
 
     # Read in the Excel workbook data.
+    color_print.output('g', "Merging XLM macro cells with data cells ...")
     workbook = excel.read_excel_sheets(maldoc)
     if (workbook is None):
         color_print.output('r', "ERROR: Reading in Excel file " + str(maldoc) + " failed.")
@@ -261,6 +262,7 @@ def _merge_XLM_cells(maldoc, xlm_cells):
             
     # Done. Return the indices of the added XLM cells and the updated
     # workbook.
+    color_print.output('g', "Merged XLM macro cells with data cells.")
     return (workbook, xlm_cell_indices, xlm_sheet)
 
 ####################################################################
@@ -277,7 +279,9 @@ def _read_workbook_2007(maldoc):
     """
 
     # Read in the 2007+ cells.
+    color_print.output('g', "Analyzing Excel 2007+ file ...")
     workbook_info = XLM.excel2007.read_excel_2007_XLM(maldoc)    
+    color_print.output('g', "Extracted XLM from ZIP archive.")
     if (workbook_info is None):
         return (None, None, None)
     if (len(workbook_info) == 0):
@@ -334,7 +338,8 @@ def _read_workbook_2007(maldoc):
         # Save the XLM object.
         formula.update_cell_id(cell_index)
         xlm_cells[row][col] = formula
-
+    color_print.output('g', "Parsed MS XLM macros.")
+        
     # Merge the XLM cells with the value cells into a single unified spereadsheet
     # object.
     workbook, xlm_cell_indices, xlm_sheet = _merge_XLM_cells(maldoc, xlm_cells)
@@ -359,7 +364,9 @@ def _read_workbook_97(maldoc):
     """
 
     # Run olevba on the file and extract the XLM macro code lines.
+    color_print.output('g', "Analyzing Excel 97 file ...")
     xlm_code = _extract_xlm(maldoc)
+    color_print.output('g', "Extracted XLM with olevba.")
     if debug:
         print("=========== START RAW XLM ==============")
         print(xlm_code)
@@ -370,6 +377,7 @@ def _read_workbook_97(maldoc):
 
     # Parse the XLM text and get XLM objects that can be emulated.
     xlm_cells = _extract_xlm_objects(xlm_code)
+    color_print.output('g', "Parsed olevba XLM macros.")
     if (xlm_cells is None):
         color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")
         return (None, None, None)
@@ -419,7 +427,9 @@ def emulate(maldoc):
     xlm_sheet.xlm_cell_indices = xlm_cell_indices
     
     # Emulate the XLM.
+    color_print.output('g', "Starting XLM emulation ...")
     r = XLM_Object.eval(xlm_sheet)
+    color_print.output('g', "Finished XLM emulation.")
     
     # Done.
     return r

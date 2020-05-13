@@ -284,7 +284,7 @@ def eval(sheet):
     result_sheet = excel.ExcelSheet(sheet)
     result_sheet.xlm_cell_indices = sheet.xlm_cell_indices
 
-    # Evaluate all the FORMULA() cells first since they can modify cell values.
+    # Evaluate all the FORMULA() and SET.VALUE() cells first since they can modify cell values.
     done_cells = set()
     xlm_code = ""
     result_sheet.xlm_cell_indices.sort()
@@ -301,11 +301,12 @@ def eval(sheet):
             continue
         xlm_code += xlm_cell.cell_id + " ---> " + str(xlm_cell) + "\n"
         
-        # Is this a FORMULA() cell?
-        if ("FORMULA(" not in str(xlm_cell)):
+        # Is this a value modifying cell?
+        if (("FORMULA(" not in str(xlm_cell)) and
+            ("SET.VALUE(" not in str(xlm_cell))):
             continue
 
-        # This is a FORMULA() cell. Evaluate it.
+        # This is a value modifying cell. Evaluate it.
         resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
         result_sheet.cells[cell_index] = resolved_cell
         done_cells.add(str(xlm_cell))
