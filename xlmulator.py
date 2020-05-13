@@ -3,7 +3,6 @@
 import argparse
 
 import prettytable
-import excel
 
 import XLM
 import XLM.color_print

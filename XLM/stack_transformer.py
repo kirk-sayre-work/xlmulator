@@ -247,3 +247,11 @@ class StackTransformer(Transformer):
         except UnicodeEncodeError:
             tmp = ''.join(filter(lambda x:x in string.printable, items))
         return tmp
+
+    def DECIMAL(self, items):
+        r = float(str(items))
+        r_str = str(r)
+        if (r_str[r_str.index("."):] == ".0"):
+            r = int(r)
+        return r
+    

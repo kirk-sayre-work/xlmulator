@@ -63,7 +63,7 @@ stack_add: "ptgAdd"
 stack_sub: "ptgSub"
 stack_exp: "ptgExp " cell
 stack_name: "ptgName " HEX_NUMBER
-stack_num: "ptgNum " NAME
+stack_num: "ptgNum " ("FLOAT" | DECIMAL)
 stack_missing_arg: "ptgMissArg"
 stack_func: "ptgFunc " (NAME|UNKNOWN_FUNC)
 stack_func_var: "ptgFuncVar" "A"? "V"? " args " NUMBER " func " (USER_DEFINED|NAME) " (" HEX_NUMBER ")"
@@ -105,3 +105,5 @@ USER_DEFINED.2: "User Defined Function"
 UNKNOWN_FUNC.2: "*UNKNOWN FUNCTION*"
 BOOLEAN: "TRUE" | "FALSE"
 REFERENCE_EXP.2: "REFERENCE-EXPRESSION"
+%import common.DECIMAL -> UNSIGNED_DECIMAL
+DECIMAL: ["+"|"-"]? UNSIGNED_DECIMAL

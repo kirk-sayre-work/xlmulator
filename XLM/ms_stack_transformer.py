@@ -30,8 +30,7 @@ except IOError as e:
     sys.exit(102)
 
 # Debugging flag.
-debug = True
-#debug = False
+debug = False
     
 ####################################################################
 def parse_ms_xlm(expression):
