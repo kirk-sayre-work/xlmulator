@@ -7,12 +7,14 @@ Also functions for parsing olevba XLM.
 from __future__ import print_function
 import string
 import os
+import re
 
 # sudo pip install lark-parser
 from lark import Lark
 from lark import Transformer
 from lark import UnexpectedInput
 
+import XLM.color_print
 from XLM.stack_item import *
 from XLM.XLM_Object import *
 
@@ -24,7 +26,7 @@ try:
     xlm_grammar = f.read()
     f.close()
 except IOError as e:
-    color_print.output('r', "ERROR: Cannot read XLM grammar file " + xlm_grammar_file + ". " + str(e))
+    XLM.color_print.output('r', "ERROR: Cannot read XLM grammar file " + xlm_grammar_file + ". " + str(e))
     sys.exit(102)
     
 # Debugging flag.
@@ -48,7 +50,15 @@ def parse_olevba_xlm(xlm_code):
         xlm_parser = Lark(xlm_grammar, start="lines", parser='lalr')
         xlm_ast = xlm_parser.parse(xlm_code)
     except UnexpectedInput as e:
-        color_print.output('r', "ERROR: Parsing olevba XLM failed.\n" + str(e))
+        XLM.color_print.output('r', "ERROR: Parsing olevba XLM failed.\n" + str(e))
+        num_pat = r"at line (\d+), column (\d+)"
+        error_loc = re.findall(num_pat, str(e))[0]
+        line_num = int(error_loc[0]) - 1
+        col_num = int(error_loc[1]) - 1
+        lines = xlm_code.split("\n")
+        bad_line = lines[line_num]
+        bad_line = bad_line[:col_num] + "...ERROR START...-->" + bad_line[col_num:]
+        XLM.color_print.output('r', "BAD LINE: " + bad_line)
         return None
 
     # Transform the AST into XLM_Object objects.
@@ -164,6 +174,8 @@ class StackTransformer(Transformer):
         return stack_name(items[0])
     
     def stack_num(self, items):
+        if (len(items) == 0):
+            return stack_str("FLOAT")
         return stack_num(items[0])
     
     def stack_missing_arg(self, items):
