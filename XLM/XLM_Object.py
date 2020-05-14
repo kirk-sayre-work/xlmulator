@@ -4,6 +4,8 @@ Class for representing a single XLM formula (1 cell).
 """
 
 import json
+import six
+if six.PY3: unicode = str
 
 # https://github.com/kirk-sayre-work/office_dumper.git
 import excel
