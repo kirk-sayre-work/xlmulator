@@ -10,20 +10,16 @@ import re
 import os
 import string
 
-# sudo pip install lark-parser
-from lark import Lark
-from lark import UnexpectedInput
 # https://github.com/kirk-sayre-work/office_dumper.git
 import excel
 
 import XLM.color_print
-from XLM.stack_transformer import StackTransformer 
+import XLM.stack_transformer
 import XLM.XLM_Object
 import XLM.xlm_library
 import XLM.utils
 import XLM.ms_stack_transformer
 import XLM.excel2007
-import XLM.ms_stack_transformer
 
 ## Check installation prerequisites.
 
@@ -33,17 +29,6 @@ try:
 except Exception as e:
     color_print.output('r', "ERROR: It looks like olevba is not installed. " + str(e) + "\n")
     sys.exit(101)
-
-## Load the olevba XLM grammar.
-xlm_grammar_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "olevba_xlm.bnf")
-xlm_grammar = None
-try:
-    f = open(xlm_grammar_file, "r")
-    xlm_grammar = f.read()
-    f.close()
-except IOError as e:
-    color_print.output('r', "ERROR: Cannot read XLM grammar file " + xlm_grammar_file + ". " + str(e))
-    sys.exit(102)
 
 # Debugging flag.
 debug = False
@@ -60,6 +45,7 @@ def set_debug(flag):
     XLM.XLM_Object.debug = flag
     XLM.xlm_library.debug = flag
     XLM.ms_stack_transformer.debug = flag
+    XLM.stack_transformer.debug = flag
     XLM.excel2007.debug = flag
     
 ####################################################################
@@ -140,39 +126,6 @@ def _extract_xlm(maldoc):
             
     # Done. Return XLM lines.
     return r
-
-####################################################################
-def _extract_xlm_objects(xlm_code):
-    """
-    Parse the given olevba XLM code into an internal object representation 
-    that can be emulated.
-
-    @param xlm_code (str) The olevba XLM code to parse.
-
-    @return (dict) A dict of XLM formula objects (XLM_Object objects) where
-    dict[ROW][COL] gives the XLM cell at (ROW, COL).
-    """
-
-    # Parse the olevba XLM.
-    xlm_ast = None
-    try:
-        xlm_parser = Lark(xlm_grammar, start="lines", parser='lalr')
-        xlm_ast = xlm_parser.parse(xlm_code)
-    except UnexpectedInput as e:
-        color_print.output('r', "ERROR: Parsing olevba XLM failed.\n" + str(e))
-        return None
-
-    # Transform the AST into XLM_Object objects.
-    if debug:
-        print("=========== START XLM AST ==============")
-        print(xlm_ast.pretty())
-        print("=========== DONE XLM AST ==============")
-    formula_cells = StackTransformer().transform(xlm_ast)
-    if debug:
-        print("=========== START XLM TRANSFORMED ==============")
-        print(formula_cells)
-        print("=========== DONE XLM TRANSFORMED ==============")
-    return formula_cells
 
 ####################################################################
 def _guess_xlm_sheet(workbook):
@@ -376,7 +329,7 @@ def _read_workbook_97(maldoc):
         return (None, None, None)
 
     # Parse the XLM text and get XLM objects that can be emulated.
-    xlm_cells = _extract_xlm_objects(xlm_code)
+    xlm_cells = XLM.stack_transformer.parse_olevba_xlm(xlm_code)
     color_print.output('g', "Parsed olevba XLM macros.")
     if (xlm_cells is None):
         color_print.output('r', "ERROR: Parsing of XLM failed. Emulation aborted.")

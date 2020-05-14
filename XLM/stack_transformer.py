@@ -1,15 +1,67 @@
 """@package stack_transformer
 
 Lark AST transformer to generate XLM_Objects from an AST generated from olevba_xlm.bnf.
+Also functions for parsing olevba XLM.
 """
 
 from __future__ import print_function
 import string
+import os
 
+# sudo pip install lark-parser
+from lark import Lark
 from lark import Transformer
+from lark import UnexpectedInput
 
 from XLM.stack_item import *
 from XLM.XLM_Object import *
+
+## Load the olevba XLM grammar.
+xlm_grammar_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "olevba_xlm.bnf")
+xlm_grammar = None
+try:
+    f = open(xlm_grammar_file, "r")
+    xlm_grammar = f.read()
+    f.close()
+except IOError as e:
+    color_print.output('r', "ERROR: Cannot read XLM grammar file " + xlm_grammar_file + ". " + str(e))
+    sys.exit(102)
+    
+# Debugging flag.
+debug = False
+
+####################################################################
+def parse_olevba_xlm(xlm_code):
+    """
+    Parse the given olevba XLM code into an internal object representation 
+    that can be emulated.
+
+    @param xlm_code (str) The olevba XLM code to parse.
+
+    @return (dict) A dict of XLM formula objects (XLM_Object objects) where
+    dict[ROW][COL] gives the XLM cell at (ROW, COL).
+    """
+
+    # Parse the olevba XLM.
+    xlm_ast = None
+    try:
+        xlm_parser = Lark(xlm_grammar, start="lines", parser='lalr')
+        xlm_ast = xlm_parser.parse(xlm_code)
+    except UnexpectedInput as e:
+        color_print.output('r', "ERROR: Parsing olevba XLM failed.\n" + str(e))
+        return None
+
+    # Transform the AST into XLM_Object objects.
+    if debug:
+        print("=========== START XLM AST ==============")
+        print(xlm_ast.pretty())
+        print("=========== DONE XLM AST ==============")
+    formula_cells = StackTransformer().transform(xlm_ast)
+    if debug:
+        print("=========== START XLM TRANSFORMED ==============")
+        print(formula_cells)
+        print("=========== DONE XLM TRANSFORMED ==============")
+    return formula_cells
 
 ####################################################################
 class StackTransformer(Transformer):
