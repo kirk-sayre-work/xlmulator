@@ -70,6 +70,11 @@ def _extract_xlm(maldoc):
         color_print.output('r', "ERROR: Running olevba on " + str(maldoc) + " failed. " + str(e))
         return None
 
+    # Not handling encrypted Excel files.
+    if ("FILEPASS record: file is password protected" in olevba_out):
+        color_print.output('y', "WARNING: " + str(maldoc) + " is password protected. Not emulating.")
+        return None
+    
     # Pull out the chunks containing the XLM lines.
     chunk_pat = b"in file: xlm_macro \- OLE stream: 'xlm_macro'\n(?:\- ){39}\n(.+)"
     chunks = re.findall(chunk_pat, olevba_out, re.DOTALL)
