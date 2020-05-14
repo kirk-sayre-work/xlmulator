@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import json
 
 import prettytable
 
@@ -13,7 +14,7 @@ Top level command line tool for emulating Excel XLM macros.
 """
 
 ###########################################################################
-def emulate_XLM(maldoc, debug=False):
+def emulate_XLM(maldoc, debug=False, out_file_name=None):
     """
     Emulate the behavior of the XLM macros in the given Excel file.
 
@@ -21,6 +22,8 @@ def emulate_XLM(maldoc, debug=False):
     analyze.
 
     @param debug (boolean) Whether to print LOTS of debug to STDOUT.
+
+    @param out_file_name (str) The name of the file in which to save JSON analysis results.
 
     @return (tuple) 1st element is a list of 3 element tuples containing the actions performed
     by the sheet, 2nd element is the human readable XLM code.
@@ -42,6 +45,13 @@ def emulate_XLM(maldoc, debug=False):
     # Emulate the XLM macros.
     XLM.set_debug(debug)
     r = XLM.emulate(maldoc)
+
+    # Save analysis to a JSON file?
+    if (out_file_name is not None):
+        with open(out_file_name, 'w') as outfile:
+            json.dump(r, outfile)
+        
+    # Done.
     return r
 
 ###########################################################################
@@ -75,6 +85,8 @@ if __name__ == '__main__':
     help_msg = "Emulate the behavior of the XLM macros in a Excel file."
     parser = argparse.ArgumentParser(description=help_msg)
     parser.add_argument("maldocs", help="The Excel file to analyze.")
+    parser.add_argument("-o", "--out-file", action="store", default=None,
+                        help="JSON output file containing resulting actions and XLM macro code.")
     parser.add_argument('-d', '--debug',
                         action='store_true',
                         help="Print lots of debug information.")
@@ -90,7 +102,7 @@ if __name__ == '__main__':
     # Emulate the XLM macros.
     if (not args.quiet):
         print("Emulating XLM macros in " + str(args.maldocs) + " ...")
-    actions, xlm_code = emulate_XLM(args.maldocs, args.debug)
+    actions, xlm_code = emulate_XLM(args.maldocs, args.debug, args.out_file)
     if (not args.quiet):
         print("Done emulating XLM macros in " + str(args.maldocs) + " .")
 
@@ -107,3 +119,5 @@ if __name__ == '__main__':
         print('\nRecorded Actions:')
         print(dump_actions(actions))
     
+    if (args.out_file is not None):
+        XLM.color_print.output('g', "Saved analysis results to " + str(args.out_file) + " .")

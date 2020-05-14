@@ -71,7 +71,7 @@ def _extract_xlm(maldoc):
         return None
 
     # Not handling encrypted Excel files.
-    if ("FILEPASS record: file is password protected" in olevba_out):
+    if (b"FILEPASS record: file is password protected" in olevba_out):
         color_print.output('y', "WARNING: " + str(maldoc) + " is password protected. Not emulating.")
         return None
     
