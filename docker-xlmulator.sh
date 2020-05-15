@@ -19,14 +19,12 @@ if [ $? -ne 0 ]; then
 fi
 
 if [[ $(docker ps -f status=running -f ancestor=haroldogden/vipermonkey -l | tail -n +2) ]]; then
-        echo "[+] Docker container is already running!"
-else
-        echo "[!] Container is not running. Starting now..."
-        docker pull haroldogden/vipermonkey:latest
-        docker run --rm --env PYTHONPATH=:/opt/office_dumper -d -t haroldogden/vipermonkey:latest
+        echo "[+] Other XLMulator containers are running!"
 fi
 
-docker_id=$(docker ps -f status=running -f ancestor=haroldogden/vipermonkey -l | tail -n +2 | cut -f1 -d' ')
+echo "[*] Pulling and starting container..."
+docker pull haroldogden/vipermonkey:latest
+docker_id=$(docker run --rm --env PYTHONPATH=:/opt/office_dumper -d -t haroldogden/vipermonkey:latest)
 
 echo "[*] Attempting to copy file $1 into container ID $docker_id"
 
@@ -61,7 +59,6 @@ else
 echo "[!] Please supply at least 1 argument to analyze a file. Supply a 2nd argument for json file output. No more than 2 arguments are supported."
 fi
 
-#docker exec $docker_id bash
 
-#echo "[*] Done - Killing docker container $docker_id"
+echo "[*] Done - Killing docker container $docker_id"
 docker stop $docker_id > /dev/null

@@ -33,6 +33,63 @@ except IOError as e:
 debug = False
 
 ####################################################################
+def fix_olevba_xlm(xlm_code):
+    """
+    plugin_biff.py does not escape some string characters that need escaping, so
+    escape them.
+
+    @param xlm_code (str) The olevba XLM code to modify.
+
+    @return (str) The modified olevba XLM code.
+    """
+
+    # plugin_biff does not escape newlines in strings. Try to find them and fix them.
+    xlm_code = xlm_code.strip()
+    r = b""
+    mod_chunk = b""
+    lines = xlm_code.split(b"\n")
+    pos = -1
+    new_line = b""
+    xlm_pat = br"' \d\d\d\d {1,10}\d{1,6} [^\n]+\n"
+    while (pos < (len(lines) - 1)):
+
+        # Start putting together an aggregated line?
+        pos += 1
+        curr_line = lines[pos]
+        if (curr_line.startswith(b"' ")):
+            mod_chunk += new_line + b"\n"
+            new_line = curr_line
+            continue
+
+        # This line is part of a string with unescaped newlines.
+        new_line += b"\\n" + curr_line
+    if (len(new_line) > 0):
+        mod_chunk += b"\n" + new_line
+    mod_chunk = mod_chunk.strip() + "\n"
+
+    # Handle double quotes in strings.
+    for line in re.findall(xlm_pat, mod_chunk):
+
+        # plugin_biff does not escape double quotes in strings. Try to find them
+        # and fix them.
+        #
+        # ' 0006     72 FORMULA : Cell Formula - R9C1 len=50 ptgRefV R7C49153 ptgStr "Set wsh = CreateObject("WScript.Shell")" ptgFuncV FWRITELN (0x0089) 
+        str_pat = b"Str \".*?\" ptg"
+        str_pat1 = b"Str \"(.*?)\" ptg"
+        for old_str in re.findall(str_pat, line):
+            tmp_str = re.findall(str_pat1, old_str)[0]
+            if (b'"' in tmp_str):
+                # Escape single quotes.
+                escaped_str = old_str[5:-5].replace(b"'", b"&apos;")
+                new_str = b"Str '" + escaped_str + b"' ptg"
+
+                line = line.replace(old_str, new_str)
+        r += line
+
+    # Done.
+    return r
+    
+####################################################################
 def parse_olevba_xlm(xlm_code):
     """
     Parse the given olevba XLM code into an internal object representation 
@@ -44,6 +101,9 @@ def parse_olevba_xlm(xlm_code):
     dict[ROW][COL] gives the XLM cell at (ROW, COL).
     """
 
+    # Fix some escaping issues before parsing.
+    xlm_code = fix_olevba_xlm(xlm_code)
+    
     # Parse the olevba XLM.
     xlm_ast = None
     try:

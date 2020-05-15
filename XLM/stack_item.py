@@ -262,7 +262,7 @@ class stack_str(stack_item):
         @param value (str) Value of the string.
         """
         try:
-            self.value = str(value)
+            self.value = str(value).replace("&apos;", "'")
         except UnicodeEncodeError:
             self.value = XLM.utils.strip_unprintable(value)
     

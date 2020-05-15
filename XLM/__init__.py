@@ -78,44 +78,13 @@ def _extract_xlm(maldoc):
     # Pull out the chunks containing the XLM lines.
     chunk_pat = b"in file: xlm_macro \- OLE stream: 'xlm_macro'\n(?:\- ){39}\n(.+)"
     chunks = re.findall(chunk_pat, olevba_out, re.DOTALL)
+    print("HERE: 1")
     
     # Pull out all the XLM lines from each chunk.
     r = b""
     xlm_pat = br"' \d\d\d\d {1,10}\d{1,6} [^\n]+\n"
     for chunk in chunks:
-
-        # plugin_biff does not escape newlines in strings. Try to find them and fix them.
-        mod_chunk = b""
-        lines = chunk.split(b"\n")
-        pos = -1
-        new_line = b""
-        while (pos < (len(lines) - 1)):
-
-            # Start putting together an aggregated line?
-            pos += 1
-            curr_line = lines[pos]
-            if (curr_line.startswith(b"' ")):
-                mod_chunk += new_line + b"\n"
-                new_line = curr_line
-                continue
-
-            # This line is part of a string with unescaped newlines.
-            new_line += b"\\n" + curr_line
-        mod_chunk += b"\n" + new_line
-        
-        for line in re.findall(xlm_pat, mod_chunk):
-
-            # plugin_biff does not escape double quotes in strings. Try to find them
-            # and fix them.
-            #
-            # ' 0006     72 FORMULA : Cell Formula - R9C1 len=50 ptgRefV R7C49153 ptgStr "Set wsh = CreateObject("WScript.Shell")" ptgFuncV FWRITELN (0x0089) 
-            str_pat = b"Str \".*?\" ptg"
-            str_pat1 = b"Str \"(.*?)\" ptg"
-            for old_str in re.findall(str_pat, line):
-                tmp_str = re.findall(str_pat1, old_str)[0]
-                if (b'"' in tmp_str):
-                    new_str = b"Str '" + old_str[5:-5] + b"' ptg"
-                    line = line.replace(old_str, new_str)
+        for line in re.findall(xlm_pat, chunk):
             r += line
 
     # Convert characters so this can be parsed.
