@@ -656,8 +656,16 @@ def COUNTA(params, sheet):
 func_lookup["COUNTA"] = COUNTA
 
 def MID(params, sheet):
-    # STUBBED
-    return "MID"
+    if (len(params) < 3):
+        XLM.color_print.output('r', "ERROR: MID() expects 3 parameters. " + str(params) + " given.")
+        return ""
+    start = XLM.utils.convert_num(params[1]) - 1
+    end = start + XLM.utils.convert_num(params[2])
+    the_str = str(params[0])
+    if (start > len(the_str)):
+        XLM.color_print.output('r', "ERROR: Start index of MID() (" + str(start) + ") not in string '" + the_str + "'.")
+        return ""
+    return the_str[start:end]
 func_lookup["MID"] = MID
 
 def CODE(params, sheet):
@@ -665,8 +673,14 @@ def CODE(params, sheet):
     return "CODE"
 func_lookup["CODE"] = CODE
 
+def GET_WINDOW(params, sheet):
+    # STUBBED
+    return "GET.WINDOW"
+func_lookup["GET.WINDOW"] = GET_WINDOW
+
 """
 def (params, sheet):
+    # STUBBED
     return ""
 func_lookup[""] = 
 """

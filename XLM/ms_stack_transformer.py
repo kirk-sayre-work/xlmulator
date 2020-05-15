@@ -70,9 +70,6 @@ def parse_ms_xlm(expression):
             return r
 
     # Convert the AST to a XLM_Object.
-    if debug:
-        print(expression)
-        print(xlm_ast.pretty())
     r = MsStackTransformer().transform(xlm_ast)
 
     # If we did not get a XLM_Object (just a stack_item), make an XLM_Object with the
@@ -85,6 +82,11 @@ def parse_ms_xlm(expression):
         r = XLM_Object(-1, -1, stack)
         
     # Done.
+    if debug:
+        print("MS XLM Parsing:")
+        print(expression)
+        print(xlm_ast.pretty())
+        print(r)
     return r
     
 ####################################################################
@@ -239,13 +241,23 @@ class MsStackTransformer(Transformer):
         return items
     
     def r1c1_notation_cell(self, items):
-        row = 0
-        col = 0
+        row = -1
+        col = -1
+        is_relative = False
         if (len(items) >= 2):
-            row = int(items[1])
+            row = items[1]
+            if (isinstance(row, str) and (row.startswith("REF:"))):
+                is_relative = True
+                row = row.replace("REF:", "")
+            row = int(row)
         if (len(items) >= 4):
-            col = int(items[3])
+            col = items[3]
+            if (isinstance(col, str) and (col.startswith("REF:"))):
+                is_relative = True
+                col = col.replace("REF:", "")
+            col = int(col)
         r = stack_cell_ref(row, col)
+        r.is_relative = is_relative
         return r
 
     def expression(self, items):
@@ -315,7 +327,7 @@ class MsStackTransformer(Transformer):
         
     def REF(self, items):
         r = int(str(items)[1:-1])
-        return r
+        return "REF:" + str(r)
     
     def NAME(self, items):
         return str(items)

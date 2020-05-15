@@ -78,7 +78,6 @@ def _extract_xlm(maldoc):
     # Pull out the chunks containing the XLM lines.
     chunk_pat = b"in file: xlm_macro \- OLE stream: 'xlm_macro'\n(?:\- ){39}\n(.+)"
     chunks = re.findall(chunk_pat, olevba_out, re.DOTALL)
-    print("HERE: 1")
     
     # Pull out all the XLM lines from each chunk.
     r = b""

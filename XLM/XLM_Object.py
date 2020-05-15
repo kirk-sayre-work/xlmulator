@@ -256,6 +256,60 @@ def _pull_actions(sheet):
                 
     # Done.
     return r
+
+####################################################################
+def _eval_certain_cells(result_sheet, cell_types, done_cells):
+    """
+    Emulate the behavior of cells running certain functions.
+
+    @param result_sheet (ExcelSheet object) The sheet to emulate. Thie will
+    be modified and updated.
+
+    @param cell_types (set) The names of the functions for which to emulate 
+    cells. All cells will be emulated if this is None.
+
+    @param done_cells (set) Cells that were already emulated. They will not
+    be emulated again.
+
+    @return (set) The cells that were emulated (set of str).
+    """
+
+    # Cycle through each cell.
+    for cell_index in result_sheet.xlm_cell_indices:
+
+        # Get the XLM cell (XLM_Object) to emulate.
+        xlm_cell = None
+        try:
+            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
+            continue
+        if (not isinstance(xlm_cell, XLM_Object)):
+            continue
+        if (str(xlm_cell) in done_cells):
+            continue
+        
+        # Is this a cell of interest?
+        if (cell_types is not None):
+            interesting = False
+            for interesting_func in cell_types:
+                if (interesting_func + "(" in str(xlm_cell)):
+                    interesting = True
+                    break
+            if (not interesting):
+                continue
+
+        # This is an interesting cell. Evaluate it.
+        resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
+        if debug:
+            print("-------")
+            print(xlm_cell)
+            print(resolved_cell)
+        result_sheet.cells[cell_index] = resolved_cell
+        done_cells.add(str(xlm_cell))
+
+    # Return the emulated cells.
+    return done_cells
     
 ####################################################################
 def eval(sheet):
@@ -274,6 +328,21 @@ def eval(sheet):
     if (not hasattr(sheet, "xlm_cell_indices")):
         raise ValueError("sheet arg does not have 'xlm_cell_indices' field.")
 
+    # Get the human readable XLM code.
+    result_sheet = sheet
+    result_sheet.xlm_cell_indices = sheet.xlm_cell_indices
+    result_sheet.xlm_cell_indices.sort()
+    xlm_code = ""
+    for cell_index in result_sheet.xlm_cell_indices:
+        xlm_cell = None
+        try:
+            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
+        except KeyError:
+            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
+            continue
+        cell_id = "$R" + str(cell_index[0]) + "$C" + str(cell_index[1]) + ":"
+        xlm_code += cell_id + " ---> " + str(xlm_cell) + "\n"
+        
     # Emulate the XLM cells.
     #
     # XLM macros are fancy Excel formulas, so we should be able to ignore the execution
@@ -281,59 +350,13 @@ def eval(sheet):
     # assumes that the XLM macros do not modify the program state, where program state is tracked
     # by updating constant values stored in cells.
 
-    # We will be updating cells values as we emulate the XLM. Make a copy of the sheet so
-    # we don't stomp on the original sheet.
-    result_sheet = excel.ExcelSheet(sheet)
-    result_sheet.xlm_cell_indices = sheet.xlm_cell_indices
-
     # Evaluate all the FORMULA() and SET.VALUE() cells first since they can modify cell values.
-    done_cells = set()
-    xlm_code = ""
+    done_cells = _eval_certain_cells(result_sheet, set(["SET.VALUE"]), set())
+    done_cells = _eval_certain_cells(result_sheet, set(["FORMULA"]), done_cells)
+
+    # Emulate each remaining XLM cell.
     result_sheet.xlm_cell_indices.sort()
-    for cell_index in result_sheet.xlm_cell_indices:
-
-        # Get the XLM cell (XLM_Object) to emulate.
-        xlm_cell = None
-        try:
-            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
-        except KeyError:
-            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
-            continue
-        if (not isinstance(xlm_cell, XLM_Object)):
-            continue
-        xlm_code += xlm_cell.cell_id + " ---> " + str(xlm_cell) + "\n"
-        
-        # Is this a value modifying cell?
-        if (("FORMULA(" not in str(xlm_cell)) and
-            ("SET.VALUE(" not in str(xlm_cell))):
-            continue
-
-        # This is a value modifying cell. Evaluate it.
-        resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
-        result_sheet.cells[cell_index] = resolved_cell
-        done_cells.add(str(xlm_cell))
-    
-    # Cycle through each remaining XLM cell.
-    result_sheet.xlm_cell_indices.sort()
-    for cell_index in result_sheet.xlm_cell_indices:
-
-        # Get the XLM cell (XLM_Object) to emulate.
-        xlm_cell = None
-        try:
-            xlm_cell = result_sheet.cell(cell_index[0], cell_index[1])
-        except KeyError:
-            XLM.color_print.output('y', "WARNING: Cell " + str(cell_index) + " not found. Skipping.")
-            continue
-        if (not isinstance(xlm_cell, XLM_Object)):
-            continue
-        if (str(xlm_cell) in done_cells):
-            continue
-        resolved_cell = _eval_cell(xlm_cell, result_sheet, [])
-        if debug:
-            print("-------")
-            print(xlm_cell)
-            print(resolved_cell)
-        result_sheet.cells[cell_index] = resolved_cell
+    done_cells = _eval_certain_cells(result_sheet, None, done_cells)
         
     if debug:
         print("------- FINAL SHEET --------")
@@ -459,9 +482,9 @@ class XLM_Object(object):
             if ((isinstance(item, stack_cell_ref)) and (self.row > 0) and (self.col > 0)):
 
                 # Relative access?
-                if (item.row < 1):
+                if ((item.row < 1) or (item.is_relative)):
                     item.row = self.row + item.row
-                if (item.column < 1):
+                if ((item.column < 1) or (item.is_relative)):
                     item.column = self.col + item.column
             new_stack.append(item)
         self.stack = new_stack

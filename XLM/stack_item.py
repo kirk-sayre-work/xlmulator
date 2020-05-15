@@ -232,6 +232,7 @@ class stack_cell_ref(stack_item):
         self.column = column
         if (self.column > 49152):
             self.column -= 49152
+        self.is_relative = False
     
     ####################################################################
     def full_str(self):
