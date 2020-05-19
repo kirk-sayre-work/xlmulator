@@ -1,4 +1,4 @@
-# xlmulator
+# XLMulator
 
 This is a Python emulator for Excel XLM macros. It runs under Linux
 (developed in Ubuntu). It works in Python 2, Python 3, and PyPy.
