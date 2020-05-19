@@ -94,7 +94,7 @@ variable so that XLMulator can import it.
 ## Source Code
 
 Doxygen generated documentation for the source code of XLMulator is
-available in the code_docs/ directory. Load code_docs/index.html in a
+available in the code_docs/ directory. Load code_docs/html/index.html in a
 web browser to view the code documentation.
 
 ## Acknowledgements
