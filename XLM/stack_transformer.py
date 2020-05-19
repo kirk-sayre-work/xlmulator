@@ -17,6 +17,7 @@ from lark import UnexpectedInput
 import XLM.color_print
 from XLM.stack_item import *
 from XLM.XLM_Object import *
+import XLM.utils
 
 ## Load the olevba XLM grammar.
 xlm_grammar_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "olevba_xlm.bnf")
@@ -44,7 +45,7 @@ def fix_olevba_xlm(xlm_code):
     """
 
     # plugin_biff does not escape newlines in strings. Try to find them and fix them.
-    xlm_code = xlm_code.strip()
+    xlm_code = xlm_code.strip().encode()
     r = b""
     mod_chunk = b""
     lines = xlm_code.split(b"\n")
@@ -65,7 +66,7 @@ def fix_olevba_xlm(xlm_code):
         new_line += b"\\n" + curr_line
     if (len(new_line) > 0):
         mod_chunk += b"\n" + new_line
-    mod_chunk = mod_chunk.strip() + "\n"
+    mod_chunk = mod_chunk.strip() + b"\n"
 
     # Handle double quotes in strings.
     for line in re.findall(xlm_pat, mod_chunk):
@@ -102,7 +103,7 @@ def parse_olevba_xlm(xlm_code):
     """
 
     # Fix some escaping issues before parsing.
-    xlm_code = fix_olevba_xlm(xlm_code)
+    xlm_code = XLM.utils.to_str(fix_olevba_xlm(xlm_code))
     
     # Parse the olevba XLM.
     xlm_ast = None
