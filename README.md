@@ -11,7 +11,7 @@ The simplest way to run XLMulator is to run it out of a prebuilt
 Docker container contained in the global Docker container
 repository. If you already have Docker installed you can just use the
 docker-xlmulator.sh script to start analyzing Excel workbooks with XLM
-macros. Note that depending on how Docker is set up on you machine you
+macros. Note that depending on how Docker is set up on your machine you
 may need to run this script with sudo.
 
 `docker-xlmulator.sh FILE.xls`
@@ -19,10 +19,10 @@ may need to run this script with sudo.
 The Docker script does the following:
 
 1. Pulls down the most recent Docker container.
-2. Turn off networking in the Docker container.
-3. Do a git pull on the XLMulator GitHub repository to ensure that the
+2. Turns off networking in the Docker container.
+3. Does a git pull on the XLMulator GitHub repository to ensure that the
    latest version is used.
-4. Analyze FILE.xls with XLMulator.
+4. Analyzes FILE.xls with XLMulator.
 5. Analysis results are printed to stdout and (if desired) saved to a
    JSON file.
 
@@ -46,17 +46,17 @@ workbook being analyzed. Install LibreOffice and the LibreOffice
 Python UNO programmatic bridge.
 
 `
-apt-get update && apt-get install -y \
-	build-essential \
-	file\
-      	libimage-exiftool-perl\
-	libpython-dev\
-        libreoffice\
-        libreoffice-script-provider-python\
-        uno-libs3\
-        python3-uno\
-        python3\
-        unzip\
+apt-get update && apt-get install -y 
+	build-essential 
+	file
+      	libimage-exiftool-perl
+	libpython-dev
+        libreoffice
+        libreoffice-script-provider-python
+        uno-libs3
+        python3-uno
+        python3
+        unzip
 `
 
 Install the Python packages used by XLMulator (change the pip commands
