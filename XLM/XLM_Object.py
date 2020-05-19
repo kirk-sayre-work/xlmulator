@@ -13,7 +13,7 @@ import excel
 from XLM.stack_item import *
 import XLM.xlm_library
 import XLM.color_print
-import XLM.compute_decode_keys
+#import XLM.compute_decode_keys
 
 debug = False
 
@@ -200,6 +200,7 @@ def _pull_actions(sheet):
 
                 # Pull out the call name and args.
                 tmp = "[" + curr_val.replace("CALL(", "")[:-1].replace("'", '"') + "]"
+                tmp = tmp.replace('b"', '"')
                 fields = json.loads(tmp)
                 dll_name = str(fields[0])
                 func_name = fields[1]

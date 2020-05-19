@@ -99,14 +99,14 @@ def _read_excel_2007_sheet(zip_subfile, unzipped_data):
                     replace(b"&apos;", b"'")
         formula = None
         formula_val = None
-        if (item1.startswith("<f>")):
-            formula = item1[len("<f>"):]
-        if (item2.startswith("<f>")):
-            formula = item2[len("<f>"):]
-        if (item1.startswith("<v>")):
-            formula_val = item1[len("<v>"):]
-        if (item2.startswith("<v>")):
-            formula_val = item2[len("<v>"):]
+        if (item1.startswith(b"<f>")):
+            formula = item1[len(b"<f>"):]
+        if (item2.startswith(b"<f>")):
+            formula = item2[len(b"<f>"):]
+        if (item1.startswith(b"<v>")):
+            formula_val = item1[len(b"<v>"):]
+        if (item2.startswith(b"<v>")):
+            formula_val = item2[len(b"<v>"):]
         
         # Do we know the computed formula value?
         if (formula_val is not None):
