@@ -91,6 +91,12 @@ Install the psutil package.
 Add the office_dumper install directory to your PYTHONPATH environment
 variable so that XLMulator can import it.
 
+## Source Code
+
+Doxygen generated documentation for the source code of XLMulator is
+available in the code_docs/ directory. Load code_docs/index.html in a
+web browser to view the code documentation.
+
 ## Acknowledgements
 
 Thanks to @DissectMalware for allowing their MS XLM grammar to be used in
