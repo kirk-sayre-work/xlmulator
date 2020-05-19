@@ -64,6 +64,16 @@ based on whether you are using Python 2, Python 3, or PyPy).
 
 `pip install lark-parser prettytable`
 
+XLMulator needs the most recent version of oletools, not what is
+installed via pip. Do the following to install the current version of
+oletools:
+
+`
+git clone https://github.com/decalage2/oletools.git
+cd oletools
+sudo python3 ./setup.py
+`
+
 ### Install office_dumper
 
 XLMulator uses another package to dump all sheets of an Excel workbook
@@ -74,5 +84,15 @@ Clone the office_dumper GitHub repository.
 
 `git clone https://github.com/kirk-sayre-work/office_dumper`
 
+Install the psutil package.
+
+`pip3 install psutil`
+
 Add the office_dumper install directory to your PYTHONPATH environment
 variable so that XLMulator can import it.
+
+## Acknowledgements
+
+Thanks to @DissectMalware for allowing their MS XLM grammar to be used in
+XLMulator. Check out their XLM emulator at
+[XLMMacroDeobfuscator](https://github.com/DissectMalware/XLMMacroDeobfuscator/).
