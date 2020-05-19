@@ -10,7 +10,7 @@ def _parse_cell_index(s):
     index_info = re.findall(index_pat, s)[0]
     return (int(index_info[0]), int(index_info[1]))
 
-def _get_compute_items(char_comp, sheet):
+def _get_compute_items(char_comp):
 
     # $R21846$C80-$R65031$C63
     comp_pat = "(\$R\d+\$C\d+)([\-\+\*/])(\$R\d+\$C\d+)"
@@ -26,11 +26,11 @@ def _get_vars_and_constants(compute_exprs, sheet):
     for expr in compute_exprs:
         print(expr)
         lhs = expr[0]
-        if (not lhs in cell_ref_count):
+        if (lhs not in cell_ref_count):
             cell_ref_count[lhs] = 0
         cell_ref_count[lhs] += 1
         rhs = expr[2]
-        if (not rhs in cell_ref_count):
+        if (rhs not in cell_ref_count):
             cell_ref_count[rhs] = 0
         cell_ref_count[rhs] += 1
 
@@ -60,7 +60,7 @@ def _get_vars_and_constants(compute_exprs, sheet):
     # Done.
     return (decode_key_cells, data_map)
 
-def _extract_char_computations(xlm_cell, sheet):
+def _extract_char_computations(xlm_cell):
 
     # Pull out the arguments for each CHAR call.
     # $R57844$C104: ---> FORMULA.FILL(CHAR($R22336$C160-$R48103$C255)&CHAR($R19921$C185/$R49030$C240)&CHAR($R22336$C160*$R6843$C142) ... )
@@ -80,15 +80,120 @@ def _extract_char_computations(xlm_cell, sheet):
 
     # TODO: For now just handling the simple case of 'CELL_REF op CELL_REF'.
     other_exprs = []
-    first_expr = _get_compute_items(first_char, sheet)
+    first_expr = _get_compute_items(first_char)
     for other_char in other_chars:
-        tmp_info = _get_compute_items(other_char, sheet)
+        tmp_info = _get_compute_items(other_char)
         if (tmp_info is not None):
             other_exprs.append(tmp_info)
 
     # Return the char expressions.
     return (first_expr, other_exprs)
+
+def _group_by_decode_key(decode_key_cells, compute_exprs):
+
+    # Group the expressions that use the same decode key.
+    grouped_exprs = {}
+    for decode_key in decode_key_cells:
+        if (decode_key not in grouped_exprs):
+            grouped_exprs[decode_key] = set()
+        for expr in compute_exprs:
+            if ((decode_key == expr[0]) or (decode_key == expr[2])):
+                grouped_exprs[decode_key].add(expr)
+
+    # Done.
+    return grouped_exprs
+
+def _gen_single_constraint(decode_key, exp, constraint_str, data_map):
+
+    # TODO: Generalize this beyond simple expressions like 'a+1'.
     
+    # Rename the decode key cell reference.
+    lhs = exp[0]
+    if (lhs == decode_key):
+        lhs = "a"
+    rhs = exp[2]
+    if (rhs == decode_key):
+        rhs = "a"
+
+    # Resolve values of cell references.
+    num_pat = "^\-?\d+(?:\.\d+)?$"
+    range_hint = None
+    if (lhs in data_map):
+
+        # For later safety ensure that this is a number.
+        tmp_lhs = data_map[lhs.strip()]
+        if (re.match(num_pat, tmp_lhs) is None):
+            XLM.color_print.output('y', "WARNING: CHAR() expression item " + str(tmp_lhs) + " is not a number. Not using.")
+        else:
+            lhs = tmp_lhs
+            range_hint = XLM.utils.convert_num(lhs)
+    if (rhs in data_map):
+
+        # For later safety ensure that this is a number.
+        tmp_rhs = data_map[rhs.strip()]
+        if (re.match(num_pat, tmp_rhs) is None):
+            XLM.color_print.output('y', "WARNING: CHAR() expression item " + str(tmp_rhs) + " is not a number. Not using.")
+        else:
+            rhs = tmp_rhs
+            range_hint = XLM.utils.convert_num(rhs)
+            
+    # Make the expression string to which to apply a constraint.
+    expr_str = lhs + exp[1] + rhs
+
+    # Figure out the range of values the decode key can take, if possible.
+    op = exp[1]
+    key_range = None
+    print("HINT:")
+    print(range_hint)
+    if (range_hint is not None):
+        if (op == "+"):
+            key_range = (int(32 - range_hint), int(126 - range_hint))
+        if (op == "-"):
+            key_range = (int(32 + range_hint), int(126 + range_hint))
+    
+    # Return the constraint Python expression and decode key range.
+    return (constraint_str % expr_str, key_range)
+    
+def _gen_constraint_funcs(grouped_exprs, first_exprs, data_map):
+
+    # Look through each decode key.
+    r = {}
+    for decode_key in grouped_exprs.keys():
+
+        # Is this key used to decode an initial '=' in a FORMULA()?
+        constraint_exp = ""
+        first = True
+        for curr_exp in first_exprs:
+            if ((decode_key == curr_exp[0]) or (decode_key == curr_exp[2])):
+
+                # Make a constraint that this value must decode to the ASCII for '='.
+                first = False
+                tmp = _gen_single_constraint(decode_key, curr_exp, "((%s) == 61)", data_map)
+                constraint_exp += tmp[0]
+                break
+
+        # Add a constraint expression for each of the other expressions that use
+        # this decode key. 
+        key_range = None
+        for curr_exp in grouped_exprs[decode_key]:
+
+            # Add in the constraint check.
+            # Also figure out the range of values to try for the decode key if possible.
+            if (not first):
+                constraint_exp += " and "
+            first = False
+            tmp = _gen_single_constraint(decode_key, curr_exp, "(32 <= (%s) <= 126)", data_map)
+            constraint_exp += tmp[0]
+            if key_range is None:
+                key_range = tmp[1]
+
+        # Generate the constraint function for this decode key.
+        constraint_func = "def ascii_constraint(a):\n    return (%s)\n" % constraint_exp
+        r[decode_key] = (constraint_func, key_range)
+
+    # Done.
+    return r
+                
 def resolve_char_keys(sheet):
 
     # Find all the dynamically created FORMULA() and FORMULA.FILL() cells in the
@@ -109,7 +214,7 @@ def resolve_char_keys(sheet):
             continue
 
         # We have a formula cell. Pull out the raw expressions for computing each char.
-        first_expr, curr_other_exprs = _extract_char_computations(xlm_cell, sheet)
+        first_expr, curr_other_exprs = _extract_char_computations(xlm_cell)
         first_exprs.add(first_expr)
         other_exprs = other_exprs.union(set(curr_other_exprs))
 
@@ -119,18 +224,16 @@ def resolve_char_keys(sheet):
     decode_key_cells, data_map = _get_vars_and_constants(compute_exprs, sheet)
 
     # Group the expressions that use the same decode key.
-    grouped_exprs = {}
-    for decode_key in decode_key_cells:
-        if (decode_key not in grouped_exprs):
-            grouped_exprs[decode_key] = set()
-        for expr in compute_exprs:
-            if ((decode_key == expr[0]) or (decode_key == expr[2])):
-                grouped_exprs[decode_key].add(expr)
+    grouped_exprs = _group_by_decode_key(decode_key_cells, compute_exprs)
 
-    print("GROUPED:")
-    for e in grouped_exprs.keys():
-        print(e)
-        print(grouped_exprs[e])
+    # Generate constraint functions for each decode key.
+    constraint_funcs = _gen_constraint_funcs(grouped_exprs, first_exprs, data_map)
+    print("CONSTRAINT FUNCS:")
+    for k in constraint_funcs.keys():
+        print(k)
+        print(constraint_funcs[k][0])
+        print(constraint_funcs[k][1])
+        print("\n")
             
     sys.exit(0)
         

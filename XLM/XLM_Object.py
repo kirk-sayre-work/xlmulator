@@ -355,7 +355,7 @@ def eval(sheet):
     done_cells = _eval_certain_cells(result_sheet, set(["SET.VALUE"]), set())
 
     # Compute the decode keys used to decode characters so we can build FORMULAs.
-    #XLM.compute_decode_keys.resolve_char_keys(result_sheet)
+    XLM.compute_decode_keys.resolve_char_keys(result_sheet)
 
     # Now decode the FORMULAs.
     done_cells = _eval_certain_cells(result_sheet, set(["FORMULA"]), done_cells)
