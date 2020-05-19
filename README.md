@@ -99,6 +99,6 @@ web browser to view the code documentation.
 
 ## Acknowledgements
 
-Thanks to @DissectMalware for allowing their MS XLM grammar to be used in
-XLMulator. Check out their XLM emulator at
+Thanks to [@DissectMalware](https://twitter.com/DissectMalware) for
+allowing their MS XLM grammar to be used in XLMulator. Check out their XLM emulator at
 [XLMMacroDeobfuscator](https://github.com/DissectMalware/XLMMacroDeobfuscator/).
