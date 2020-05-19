@@ -1,0 +1,19 @@
+<map id="XLM.ms_stack_transformer._load_stack" name="XLM.ms_stack_transformer._load_stack">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1ms__stack__transformer.html#a8b5d8e9be9df67c3fd759a72a464b802" title="Load the arguments of a function call onto the given stack. " alt="" coords="257,154,444,195"/>
+<area shape="rect" id="node17" href="$classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a815a96ec0bf57f230b7507ae68a44c59" title="XLM.ms_stack_transformer.\lMsStackTransformer.function_call" alt="" coords="240,219,461,261"/>
+<area shape="rect" id="node18" href="$classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a3d6bf2b4b73f9af05f7d7f025c74cea1" title="XLM.ms_stack_transformer.\lMsStackTransformer.method_call" alt="" coords="241,285,460,326"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1ms__stack__transformer.html#a08e867b6335fd375845957412696f18f" title="Parse a XLM expression in the real MS XLM format (not plugin_biff) to an XLM_Object. " alt="" coords="509,154,728,195"/>
+<area shape="rect" id="node4" href="$namespaceXLM.html#a253daa00e3183e7b32d40078f0b4186f" title="Read in an Excel 2007+ workbook and the XLM macros in the workbook. " alt="" coords="776,107,959,133"/>
+<area shape="rect" id="node12" href="$namespaceXLM_1_1xlm__library.html#a797319c5e3789390dd2942b647623932" title="Emulate the behavior of a given XLM function. " alt="" coords="795,187,939,213"/>
+<area shape="rect" id="node5" href="$namespaceXLM.html#ae5e3b4bef01ad9ef33a76e0d4f8aff03" title="Merge the given XLM cells into the value cells read from the given Excel file. " alt="" coords="1007,56,1171,83"/>
+<area shape="rect" id="node11" href="$namespaceXLM.html#a90e3bc5b3ab17cedc9bbba0bc4bfb8b3" title="Emulate the behavior of a given Excel file containing XLM macros. " alt="" coords="1886,56,1985,83"/>
+<area shape="rect" id="node6" href="$namespaceXLM.html#a22533810ad31ba740530f28ea17af932" title="Guess the sheet containing the XLM macros by finding the sheet with the most unresolved &quot;#NAME&quot; cells..." alt="" coords="1231,5,1393,32"/>
+<area shape="rect" id="node10" href="$namespaceXLM.html#a553de08660d8207bd748076a6a6dd295" title="Read in an Excel 97 workbook and the XLM macros in the workbook. " alt="" coords="1661,56,1831,83"/>
+<area shape="rect" id="node7" href="$namespaceXLM.html#a07d912a8abf05f72f64b49d574e4c9ff" title="Run olevba on the given file and extract the XLM macro code lines. " alt="" coords="1469,5,1597,32"/>
+<area shape="rect" id="node8" href="$namespaceXLM.html#af964edc10a4bdd0b2605862cf6d9e908" title="Turn debugging on or off. " alt="" coords="1879,5,1992,32"/>
+<area shape="rect" id="node9" href="$namespacexlmulator.html#a4b155db2455be582a2e8d04d986e3abf" title="Emulate the behavior of the XLM macros in the given Excel file. " alt="" coords="2040,31,2199,57"/>
+<area shape="rect" id="node13" href="$namespaceXLM_1_1XLM__Object.html#abdad22bee250c4f56e21eade1c7c82c9" title="Evaluate XLM stack items. " alt="" coords="1009,209,1169,250"/>
+<area shape="rect" id="node14" href="$namespaceXLM_1_1XLM__Object.html#a909e08b56f57d27a9421a8c74bb1e26a" title="Emulate the behavior of a single XLM cell. " alt="" coords="1219,216,1405,243"/>
+<area shape="rect" id="node15" href="$namespaceXLM_1_1XLM__Object.html#a0c2b460828d619f5e32e478d3577e562" title="Emulate the behavior of cells running certain functions. " alt="" coords="1453,209,1613,250"/>
+<area shape="rect" id="node16" href="$namespaceXLM_1_1XLM__Object.html#a3954f973e7e2bd13d078d06a37485005" title="Emulate the XLM behavior of an Excel sheet. " alt="" coords="1669,216,1823,243"/>
+</map>

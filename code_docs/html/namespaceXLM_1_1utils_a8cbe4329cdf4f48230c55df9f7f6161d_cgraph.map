@@ -1,0 +1,5 @@
+<map id="XLM.utils.to_str" name="XLM.utils.to_str">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1color__print.html#afbf2e73f94a746cccb7d918968086ba5" title="Print colored text to stdout. " alt="" coords="179,13,333,39"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1utils.html#a2bafce9973778ed6b2a535ea77effbc1" title="XLM.utils.strip_unprintable" alt="" coords="168,63,344,90"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1color__print.html#a9633ab5687363a686edd20cb2f5f3d7c" title="Sometimes printing large strings when running in a Docker container triggers exceptions. " alt="" coords="392,5,535,47"/>
+</map>

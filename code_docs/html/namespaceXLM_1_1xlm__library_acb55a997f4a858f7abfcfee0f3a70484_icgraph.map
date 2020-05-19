@@ -1,0 +1,7 @@
+<map id="XLM.xlm_library._is_interesting_cell" name="XLM.xlm_library._is_interesting_cell">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1xlm__library.html#a797319c5e3789390dd2942b647623932" title="Emulate the behavior of a given XLM function. " alt="" coords="191,13,335,39"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1XLM__Object.html#abdad22bee250c4f56e21eade1c7c82c9" title="Evaluate XLM stack items. " alt="" coords="383,5,543,47"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1XLM__Object.html#a909e08b56f57d27a9421a8c74bb1e26a" title="Emulate the behavior of a single XLM cell. " alt="" coords="591,13,777,39"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1XLM__Object.html#a0c2b460828d619f5e32e478d3577e562" title="Emulate the behavior of cells running certain functions. " alt="" coords="825,5,985,47"/>
+<area shape="rect" id="node6" href="$namespaceXLM_1_1XLM__Object.html#a3954f973e7e2bd13d078d06a37485005" title="Emulate the XLM behavior of an Excel sheet. " alt="" coords="1033,13,1187,39"/>
+</map>

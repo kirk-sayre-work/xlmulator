@@ -1,0 +1,23 @@
+<map id="XLM._read_workbook_97" name="XLM._read_workbook_97">
+<area shape="rect" id="node2" href="$namespaceXLM.html#a07d912a8abf05f72f64b49d574e4c9ff" title="Run olevba on the given file and extract the XLM macro code lines. " alt="" coords="223,125,351,152"/>
+<area shape="rect" id="node8" href="$namespaceXLM.html#ae5e3b4bef01ad9ef33a76e0d4f8aff03" title="Merge the given XLM cells into the value cells read from the given Excel file. " alt="" coords="609,201,773,228"/>
+<area shape="rect" id="node19" href="$namespaceXLM_1_1stack__transformer.html#ad40d2ca24fa2d4ea5dd333de2ae6bef1" title="Parse the given olevba XLM code into an internal object representation that can be emulated..." alt="" coords="1472,34,1667,75"/>
+<area shape="rect" id="node21" href="$namespaceXLM.html#a90e3bc5b3ab17cedc9bbba0bc4bfb8b3" title="Emulate the behavior of a given Excel file containing XLM macros. " alt="" coords="237,303,336,329"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1utils.html#a8cbe4329cdf4f48230c55df9f7f6161d" title="Convert a bytes like object to a str. " alt="" coords="1763,151,1877,177"/>
+<area shape="rect" id="node6" href="$namespaceXLM_1_1utils.html#a2bafce9973778ed6b2a535ea77effbc1" title="XLM.utils.strip_unprintable" alt="" coords="1967,41,2143,68"/>
+<area shape="rect" id="node7" href="$namespaceXLM.html#a22533810ad31ba740530f28ea17af932" title="Guess the sheet containing the XLM macros by finding the sheet with the most unresolved &quot;#NAME&quot; cells..." alt="" coords="399,151,561,177"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1color__print.html#afbf2e73f94a746cccb7d918968086ba5" title="Print colored text to stdout. " alt="" coords="1978,151,2131,177"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1color__print.html#a9633ab5687363a686edd20cb2f5f3d7c" title="Sometimes printing large strings when running in a Docker container triggers exceptions. " alt="" coords="2196,143,2339,185"/>
+<area shape="rect" id="node9" href="$namespaceXLM.html#a253daa00e3183e7b32d40078f0b4186f" title="Read in an Excel 2007+ workbook and the XLM macros in the workbook. " alt="" coords="821,244,1004,271"/>
+<area shape="rect" id="node10" href="$namespaceXLM_1_1excel2007.html#a2095b52bf8f9090be7e624ea93b8e99d" title="Read in the formula cells of each sheet in an Excel 2007+ file. " alt="" coords="1052,219,1193,261"/>
+<area shape="rect" id="node16" href="$namespaceXLM_1_1ms__stack__transformer.html#a08e867b6335fd375845957412696f18f" title="Parse a XLM expression in the real MS XLM format (not plugin_biff) to an XLM_Object. " alt="" coords="1460,294,1679,335"/>
+<area shape="rect" id="node11" href="$namespaceXLM_1_1utils.html#a31f428c5865fde7d3f23239a4af0d86b" title="Check to see if the given file is a 2007+ Excel file. " alt="" coords="1262,269,1391,310"/>
+<area shape="rect" id="node12" href="$namespaceXLM_1_1excel2007.html#a09a01c727e10bc7667b220480e0ecc1e" title="Unzip a zipped file into memory. " alt="" coords="1241,217,1412,244"/>
+<area shape="rect" id="node13" href="$namespaceXLM_1_1excel2007.html#af9fe48a8c9f618e3f2878c40e81865a4" title="Read in the formulas from a given 2007+ sheet file. " alt="" coords="1253,151,1401,193"/>
+<area shape="rect" id="node14" href="$namespaceXLM_1_1utils.html#aa6eb82e290f7b9a9737c599e39d8e157" title="Parse out a MS cell reference like &#39;AD234&#39; into an integer (row, column) tuple. " alt="" coords="1499,202,1639,243"/>
+<area shape="rect" id="node15" href="$namespaceXLM_1_1utils.html#ac76218be8fefa001e8fffe014dae5665" title="Convert a &#39;AH&#39;,&#39;C&#39;, etc. " alt="" coords="1752,202,1888,243"/>
+<area shape="rect" id="node17" href="$namespaceXLM_1_1ms__stack__transformer.html#a8b5d8e9be9df67c3fd759a72a464b802" title="Load the arguments of a function call onto the given stack. " alt="" coords="1727,319,1913,361"/>
+<area shape="rect" id="node18" href="$namespaceXLM_1_1ms__stack__transformer.html#a91ae7eb6c605a17506f9de291b2878c4" title="Work through a function call and its arguments and load them as stack_item objects onto a stack..." alt="" coords="1961,319,2148,361"/>
+<area shape="rect" id="node20" href="$namespaceXLM_1_1stack__transformer.html#a199f27c28631ab30c78edd9811081e40" title="plugin_biff.py does not escape some string characters that need escaping, so escape them..." alt="" coords="1732,34,1908,75"/>
+<area shape="rect" id="node22" href="$namespaceXLM_1_1utils.html#a6b7d072151bfe583bbe1996b7f57b536" title="Check to see if the given file is an Excel 97 file. " alt="" coords="415,421,545,462"/>
+</map>

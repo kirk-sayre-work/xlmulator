@@ -1,0 +1,4 @@
+<map id="XLM.utils.is_excel_file" name="XLM.utils.is_excel_file">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1utils.html#a6b7d072151bfe583bbe1996b7f57b536" title="Check to see if the given file is an Excel 97 file. " alt="" coords="207,5,336,47"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1utils.html#a31f428c5865fde7d3f23239a4af0d86b" title="Check to see if the given file is a 2007+ Excel file. " alt="" coords="207,71,336,112"/>
+</map>

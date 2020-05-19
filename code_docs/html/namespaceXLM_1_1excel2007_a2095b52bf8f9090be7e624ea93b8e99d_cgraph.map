@@ -1,0 +1,11 @@
+<map id="XLM.excel2007.read_excel_2007_XLM" name="XLM.excel2007.read_excel_2007_XLM">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1utils.html#a31f428c5865fde7d3f23239a4af0d86b" title="Check to see if the given file is a 2007+ Excel file. " alt="" coords="215,5,345,47"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1excel2007.html#a09a01c727e10bc7667b220480e0ecc1e" title="Unzip a zipped file into memory. " alt="" coords="195,71,365,98"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1excel2007.html#af9fe48a8c9f618e3f2878c40e81865a4" title="Read in the formulas from a given 2007+ sheet file. " alt="" coords="206,123,354,164"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1utils.html#a8cbe4329cdf4f48230c55df9f7f6161d" title="Convert a bytes like object to a str. " alt="" coords="612,101,727,127"/>
+<area shape="rect" id="node9" href="$namespaceXLM_1_1utils.html#aa6eb82e290f7b9a9737c599e39d8e157" title="Parse out a MS cell reference like &#39;AD234&#39; into an integer (row, column) tuple. " alt="" coords="413,152,553,193"/>
+<area shape="rect" id="node6" href="$namespaceXLM_1_1color__print.html#afbf2e73f94a746cccb7d918968086ba5" title="Print colored text to stdout. " alt="" coords="797,75,950,102"/>
+<area shape="rect" id="node8" href="$namespaceXLM_1_1utils.html#a2bafce9973778ed6b2a535ea77effbc1" title="XLM.utils.strip_unprintable" alt="" coords="785,126,961,153"/>
+<area shape="rect" id="node7" href="$namespaceXLM_1_1color__print.html#a9633ab5687363a686edd20cb2f5f3d7c" title="Sometimes printing large strings when running in a Docker container triggers exceptions. " alt="" coords="1009,68,1152,109"/>
+<area shape="rect" id="node10" href="$namespaceXLM_1_1utils.html#ac76218be8fefa001e8fffe014dae5665" title="Convert a &#39;AH&#39;,&#39;C&#39;, etc. " alt="" coords="601,152,737,193"/>
+</map>

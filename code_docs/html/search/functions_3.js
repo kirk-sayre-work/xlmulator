@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['call',['CALL',['../namespaceXLM_1_1xlm__library.html#ad36cf5c742e78312d73579353c97362b',1,'XLM::xlm_library']]],
+  ['cancel_5fcopy',['CANCEL_COPY',['../namespaceXLM_1_1xlm__library.html#a2a69b21a0f6eaefde033c6ff0cb05db2',1,'XLM::xlm_library']]],
+  ['cell',['cell',['../classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a466fa1e45ad5007015e4a965c48151cb',1,'XLM.ms_stack_transformer.MsStackTransformer.cell()'],['../classXLM_1_1stack__transformer_1_1StackTransformer.html#a4bcbb68e87cbfc372d80d777138c54dd',1,'XLM.stack_transformer.StackTransformer.cell()']]],
+  ['cell_5farea',['cell_area',['../classXLM_1_1stack__transformer_1_1StackTransformer.html#a2f635dca9bc1c965502596654c72c604',1,'XLM::stack_transformer::StackTransformer']]],
+  ['cell_5farea_5fcol',['cell_area_col',['../classXLM_1_1stack__transformer_1_1StackTransformer.html#a0ac586ea15aa771708cc5bec49ecfeb4',1,'XLM::stack_transformer::StackTransformer']]],
+  ['cell_5farea_5frow',['cell_area_row',['../classXLM_1_1stack__transformer_1_1StackTransformer.html#a84b02ff3708a64463437fdcc4348eef8',1,'XLM::stack_transformer::StackTransformer']]],
+  ['cell_5fformula',['cell_formula',['../classXLM_1_1stack__transformer_1_1StackTransformer.html#a125f09c565395fb7680e0afe79115055',1,'XLM::stack_transformer::StackTransformer']]],
+  ['cell_5fvalue',['cell_value',['../classXLM_1_1stack__transformer_1_1StackTransformer.html#ad1a90861597c6b6c52d46cf9c2ffba94',1,'XLM::stack_transformer::StackTransformer']]],
+  ['char',['CHAR',['../namespaceXLM_1_1xlm__library.html#a0fe4807f9d6823c97cc67b8d3ca44ca5',1,'XLM::xlm_library']]],
+  ['clear',['CLEAR',['../namespaceXLM_1_1xlm__library.html#a26f1e03881994cd99134d1007df8b96e',1,'XLM::xlm_library']]],
+  ['close',['CLOSE',['../namespaceXLM_1_1xlm__library.html#af9f0d5fc9285f3396deaa9793c17bb10',1,'XLM::xlm_library']]],
+  ['cmpop',['CMPOP',['../classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a446f2a2cc4470e0c21af578d8696eae7',1,'XLM::ms_stack_transformer::MsStackTransformer']]],
+  ['code',['CODE',['../namespaceXLM_1_1xlm__library.html#a6379354b4cd229f1b404ba0add4f8f65',1,'XLM::xlm_library']]],
+  ['col',['COL',['../classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a770e4853a69e7b8fe76fea63984cb5bf',1,'XLM::ms_stack_transformer::MsStackTransformer']]],
+  ['column_5fwidth',['COLUMN_WIDTH',['../namespaceXLM_1_1xlm__library.html#a0afc9e305c8c80644188ec203fc20dbd',1,'XLM::xlm_library']]],
+  ['concat_5fexpression',['concat_expression',['../classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#ac51050feac90c855c9fa5480fa6c174d',1,'XLM::ms_stack_transformer::MsStackTransformer']]],
+  ['concatenate',['CONCATENATE',['../namespaceXLM_1_1xlm__library.html#a5ff68eec5e6eda4075556723e78ea62e',1,'XLM::xlm_library']]],
+  ['concatop',['CONCATOP',['../classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#af672bc88ada8581304f32f7e2a05d4f3',1,'XLM::ms_stack_transformer::MsStackTransformer']]],
+  ['convert_5fnum',['convert_num',['../namespaceXLM_1_1utils.html#a24816ccbf6efa54e35a275ce4d430432',1,'XLM::utils']]],
+  ['copy',['COPY',['../namespaceXLM_1_1xlm__library.html#a54fc986a1fc4a31914440c464c258af6',1,'XLM::xlm_library']]],
+  ['counta',['COUNTA',['../namespaceXLM_1_1xlm__library.html#ab39d3e2e37091fb2594bbae7738f7595',1,'XLM::xlm_library']]]
+];

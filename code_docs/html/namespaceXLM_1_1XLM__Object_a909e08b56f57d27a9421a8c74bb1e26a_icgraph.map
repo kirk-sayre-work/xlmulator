@@ -1,0 +1,5 @@
+<map id="XLM.XLM_Object._eval_cell" name="XLM.XLM_Object._eval_cell">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1XLM__Object.html#abdad22bee250c4f56e21eade1c7c82c9" title="Evaluate XLM stack items. " alt="" coords="240,5,400,47"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1XLM__Object.html#a0c2b460828d619f5e32e478d3577e562" title="Emulate the behavior of cells running certain functions. " alt="" coords="240,71,400,112"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1XLM__Object.html#a3954f973e7e2bd13d078d06a37485005" title="Emulate the XLM behavior of an Excel sheet. " alt="" coords="448,78,601,105"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="XLM.ms_stack_transformer.MsStackTransformer.function_call" name="XLM.ms_stack_transformer.MsStackTransformer.function_call">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1ms__stack__transformer.html#a91ae7eb6c605a17506f9de291b2878c4" title="Work through a function call and its arguments and load them as stack_item objects onto a stack..." alt="" coords="275,5,461,47"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1ms__stack__transformer.html#a8b5d8e9be9df67c3fd759a72a464b802" title="Load the arguments of a function call onto the given stack. " alt="" coords="509,5,696,47"/>
+</map>

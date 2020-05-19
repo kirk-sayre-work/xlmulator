@@ -1,0 +1,15 @@
+<map id="XLM.utils.excel_col_letter_to_index" name="XLM.utils.excel_col_letter_to_index">
+<area shape="rect" id="node2" href="$classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#a5ecaf94a98acd9c5fad5860b10819dfc" title="XLM.ms_stack_transformer.\lMsStackTransformer.DOLLAR\l_CELL_REF" alt="" coords="189,27,391,83"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1utils.html#aa6eb82e290f7b9a9737c599e39d8e157" title="Parse out a MS cell reference like &#39;AD234&#39; into an integer (row, column) tuple. " alt="" coords="220,107,360,149"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1excel2007.html#af9fe48a8c9f618e3f2878c40e81865a4" title="Read in the formulas from a given 2007+ sheet file. " alt="" coords="486,74,634,115"/>
+<area shape="rect" id="node14" href="$classXLM_1_1ms__stack__transformer_1_1MsStackTransformer.html#ae62f964bc80503a02100487a498e2b4c" title="XLM.ms_stack_transformer.\lMsStackTransformer.a1_notation_cell" alt="" coords="439,139,681,181"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1excel2007.html#a2095b52bf8f9090be7e624ea93b8e99d" title="Read in the formula cells of each sheet in an Excel 2007+ file. " alt="" coords="729,74,871,115"/>
+<area shape="rect" id="node6" href="$namespaceXLM.html#a253daa00e3183e7b32d40078f0b4186f" title="Read in an Excel 2007+ workbook and the XLM macros in the workbook. " alt="" coords="919,81,1101,108"/>
+<area shape="rect" id="node7" href="$namespaceXLM.html#ae5e3b4bef01ad9ef33a76e0d4f8aff03" title="Merge the given XLM cells into the value cells read from the given Excel file. " alt="" coords="1149,56,1313,83"/>
+<area shape="rect" id="node13" href="$namespaceXLM.html#a90e3bc5b3ab17cedc9bbba0bc4bfb8b3" title="Emulate the behavior of a given Excel file containing XLM macros. " alt="" coords="1973,56,2071,83"/>
+<area shape="rect" id="node8" href="$namespaceXLM.html#a22533810ad31ba740530f28ea17af932" title="Guess the sheet containing the XLM macros by finding the sheet with the most unresolved &quot;#NAME&quot; cells..." alt="" coords="1361,5,1524,32"/>
+<area shape="rect" id="node12" href="$namespaceXLM.html#a553de08660d8207bd748076a6a6dd295" title="Read in an Excel 97 workbook and the XLM macros in the workbook. " alt="" coords="1748,56,1917,83"/>
+<area shape="rect" id="node9" href="$namespaceXLM.html#a07d912a8abf05f72f64b49d574e4c9ff" title="Run olevba on the given file and extract the XLM macro code lines. " alt="" coords="1572,5,1700,32"/>
+<area shape="rect" id="node10" href="$namespaceXLM.html#af964edc10a4bdd0b2605862cf6d9e908" title="Turn debugging on or off. " alt="" coords="1965,5,2079,32"/>
+<area shape="rect" id="node11" href="$namespacexlmulator.html#a4b155db2455be582a2e8d04d986e3abf" title="Emulate the behavior of the XLM macros in the given Excel file. " alt="" coords="2127,31,2285,57"/>
+</map>

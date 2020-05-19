@@ -1,0 +1,8 @@
+<map id="XLM.ms_stack_transformer.MsStackTransformer.a1_notation_cell" name="XLM.ms_stack_transformer.MsStackTransformer.a1_notation_cell">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1utils.html#aa6eb82e290f7b9a9737c599e39d8e157" title="Parse out a MS cell reference like &#39;AD234&#39; into an integer (row, column) tuple. " alt="" coords="296,60,436,101"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1utils.html#a8cbe4329cdf4f48230c55df9f7f6161d" title="Convert a bytes like object to a str. " alt="" coords="495,38,609,65"/>
+<area shape="rect" id="node7" href="$namespaceXLM_1_1utils.html#ac76218be8fefa001e8fffe014dae5665" title="Convert a &#39;AH&#39;,&#39;C&#39;, etc. " alt="" coords="484,89,620,131"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1color__print.html#afbf2e73f94a746cccb7d918968086ba5" title="Print colored text to stdout. " alt="" coords="679,13,833,39"/>
+<area shape="rect" id="node6" href="$namespaceXLM_1_1utils.html#a2bafce9973778ed6b2a535ea77effbc1" title="XLM.utils.strip_unprintable" alt="" coords="668,63,844,90"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1color__print.html#a9633ab5687363a686edd20cb2f5f3d7c" title="Sometimes printing large strings when running in a Docker container triggers exceptions. " alt="" coords="892,5,1035,47"/>
+</map>

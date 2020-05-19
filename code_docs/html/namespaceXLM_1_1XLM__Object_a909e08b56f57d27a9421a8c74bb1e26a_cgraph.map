@@ -1,0 +1,13 @@
+<map id="XLM.XLM_Object._eval_cell" name="XLM.XLM_Object._eval_cell">
+<area shape="rect" id="node2" href="$namespaceXLM_1_1xlm__library.html#a961206ca0bc22f15663048b173c1678b" title="Check to see if a given XLM cell runs something that we want to track in the actions. " alt="" coords="241,5,399,47"/>
+<area shape="rect" id="node3" href="$namespaceXLM_1_1color__print.html#afbf2e73f94a746cccb7d918968086ba5" title="Print colored text to stdout. " alt="" coords="1158,122,1311,149"/>
+<area shape="rect" id="node5" href="$namespaceXLM_1_1XLM__Object.html#abdad22bee250c4f56e21eade1c7c82c9" title="Evaluate XLM stack items. " alt="" coords="240,123,400,164"/>
+<area shape="rect" id="node4" href="$namespaceXLM_1_1color__print.html#a9633ab5687363a686edd20cb2f5f3d7c" title="Sometimes printing large strings when running in a Docker container triggers exceptions. " alt="" coords="1376,115,1519,156"/>
+<area shape="rect" id="node6" href="$namespaceXLM_1_1xlm__library.html#a797319c5e3789390dd2942b647623932" title="Emulate the behavior of a given XLM function. " alt="" coords="448,151,592,178"/>
+<area shape="rect" id="node7" href="$namespaceXLM_1_1ms__stack__transformer.html#a08e867b6335fd375845957412696f18f" title="Parse a XLM expression in the real MS XLM format (not plugin_biff) to an XLM_Object. " alt="" coords="640,144,859,185"/>
+<area shape="rect" id="node12" href="$namespaceXLM_1_1xlm__library.html#acb55a997f4a858f7abfcfee0f3a70484" title="See if a cell value looks interesting. " alt="" coords="681,209,818,251"/>
+<area shape="rect" id="node8" href="$namespaceXLM_1_1utils.html#a8cbe4329cdf4f48230c55df9f7f6161d" title="Convert a bytes like object to a str. " alt="" coords="943,173,1057,199"/>
+<area shape="rect" id="node10" href="$namespaceXLM_1_1ms__stack__transformer.html#a8b5d8e9be9df67c3fd759a72a464b802" title="Load the arguments of a function call onto the given stack. " alt="" coords="907,224,1093,265"/>
+<area shape="rect" id="node9" href="$namespaceXLM_1_1utils.html#a2bafce9973778ed6b2a535ea77effbc1" title="XLM.utils.strip_unprintable" alt="" coords="1147,173,1323,199"/>
+<area shape="rect" id="node11" href="$namespaceXLM_1_1ms__stack__transformer.html#a91ae7eb6c605a17506f9de291b2878c4" title="Work through a function call and its arguments and load them as stack_item objects onto a stack..." alt="" coords="1141,224,1328,265"/>
+</map>
