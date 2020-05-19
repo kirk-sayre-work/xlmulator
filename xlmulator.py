@@ -45,11 +45,12 @@ def emulate_XLM(maldoc, debug=False, out_file_name=None):
     # Emulate the XLM macros.
     XLM.set_debug(debug)
     r = XLM.emulate(maldoc)
-
+    
     # Save analysis to a JSON file?
     if (out_file_name is not None):
+        json_report = r + ({"FuncHash": get_funchash(r[0])},)
         with open(out_file_name, 'w') as outfile:
-            json.dump(r, outfile)
+            json.dump(json_report, outfile)
         
     # Done.
     return r
@@ -75,6 +76,20 @@ def dump_actions(actions):
             action = (action[0], new_params, action[2])
         t.add_row(action)
     return t
+
+###########################################################################
+def get_funchash(actions):
+    """
+    return an alpha-sorted set of DLLs and function calls
+    """
+
+    function_set = set()
+    for action in actions:
+        if action[0] == 'CALL':
+            function_set.add(str(action[2].split("'")[1] + "." + action[1].split("(")[0]))
+
+    return ":".join(sorted(function_set))
+
 
 ###########################################################################
 # Main Program
@@ -119,5 +134,9 @@ if __name__ == '__main__':
         print('\nRecorded Actions:')
         print(dump_actions(actions))
     
+    if (len(actions) > 0):
+        print('\nFunction Hash:')
+        print(get_funchash(actions))
+
     if (args.out_file is not None):
         XLM.color_print.output('g', "Saved analysis results to " + str(args.out_file) + " .")
