@@ -68,8 +68,11 @@ XLMulator needs the most recent version of oletools, not what is
 installed via pip. Do the following to install the current version of
 oletools:
 
+**Note: For now XLMulator requires a forked version of oletools. In
+  the future XLMulator will use the master oletools fork. **
+
 ```
-git clone https://github.com/decalage2/oletools.git
+git clone https://github.com/kirk-sayre-work/oletools.git
 cd oletools
 sudo python3 ./setup.py
 ```
