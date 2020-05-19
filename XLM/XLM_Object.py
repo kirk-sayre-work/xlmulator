@@ -13,6 +13,7 @@ import excel
 from XLM.stack_item import *
 import XLM.xlm_library
 import XLM.color_print
+import XLM.compute_decode_keys
 
 debug = False
 
@@ -350,8 +351,13 @@ def eval(sheet):
     # assumes that the XLM macros do not modify the program state, where program state is tracked
     # by updating constant values stored in cells.
 
-    # Evaluate all the FORMULA() and SET.VALUE() cells first since they can modify cell values.
+    # Evaluate all the SET.VALUE() cells first since they can modify cell values.
     done_cells = _eval_certain_cells(result_sheet, set(["SET.VALUE"]), set())
+
+    # Compute the decode keys used to decode characters so we can build FORMULAs.
+    #XLM.compute_decode_keys.resolve_char_keys(result_sheet)
+
+    # Now decode the FORMULAs.
     done_cells = _eval_certain_cells(result_sheet, set(["FORMULA"]), done_cells)
 
     # Emulate each remaining XLM cell.

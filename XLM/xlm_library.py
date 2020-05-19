@@ -375,7 +375,7 @@ def MATCH(params, sheet):
 func_lookup["MATCH"] = MATCH
 
 def GET_CELL(params, sheet):
-    
+
     # This gets information about a cell. For now this will just return hardcoded
     # values.
 

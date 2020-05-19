@@ -148,6 +148,10 @@ def to_str(s):
 
     # Needs conversion?
     if (isinstance(s, bytes)):
-        return s.decode()
+        try:
+            return s.decode()
+        except UnicodeDecodeError:
+            XLM.color_print.output('y', "WARNING: Cannot convert string to ASCII. Stripping unprintable characters.")
+            return strip_unprintable(s)
     return s
 
