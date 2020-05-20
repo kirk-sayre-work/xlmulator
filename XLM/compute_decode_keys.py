@@ -1,6 +1,8 @@
 import re
 import sys
 
+from constraint import *
+
 import XLM.color_print
 
 var_map = {}
@@ -120,7 +122,8 @@ def _gen_single_constraint(decode_key, exp, constraint_str, data_map):
     range_hint = None
     if (lhs in data_map):
 
-        # For later safety ensure that this is a number.
+        # For later safety ensure that this is a number. This is done since the constraint functions
+        # are going to be exec'ed later and we don't want malicious content getting exec'ed.
         tmp_lhs = data_map[lhs.strip()]
         if (re.match(num_pat, tmp_lhs) is None):
             XLM.color_print.output('y', "WARNING: CHAR() expression item " + str(tmp_lhs) + " is not a number. Not using.")
@@ -129,7 +132,8 @@ def _gen_single_constraint(decode_key, exp, constraint_str, data_map):
             range_hint = XLM.utils.convert_num(lhs)
     if (rhs in data_map):
 
-        # For later safety ensure that this is a number.
+        # For later safety ensure that this is a number. This is done since the constraint functions
+        # are going to be exec'ed later and we don't want malicious content getting exec'ed.
         tmp_rhs = data_map[rhs.strip()]
         if (re.match(num_pat, tmp_rhs) is None):
             XLM.color_print.output('y', "WARNING: CHAR() expression item " + str(tmp_rhs) + " is not a number. Not using.")
@@ -193,7 +197,34 @@ def _gen_constraint_funcs(grouped_exprs, first_exprs, data_map):
 
     # Done.
     return r
-                
+
+def _compute_decode_keys(constraint_funcs):
+
+    # Loop through each decode key.
+    r = {}
+    for decode_key in constraint_funcs.keys():
+
+        # Get the range of possible decode key values and constraint function for the key.
+        constraint_func = constraint_funcs[decode_key][0]
+        key_range = constraint_funcs[decode_key][1]
+
+        # Exec the constraint function definition to define the constraint function.
+        # We checked earlier that all input values used to create this function are
+        # numbers so we won't have malicious side effects by exec'ing this code.
+        exec(constraint_func)
+
+        # Use the constraint solver to get possible CHAR() values.
+        problem = Problem()
+        problem.addVariable(decode_key, range(key_range[0], key_range[1]))
+        problem.addConstraint(ascii_constraint)
+        solution = problem.getSolutions()
+
+        # Save the possible decode key values.
+        r[decode_key] = solution
+
+    # Done.
+    return r
+
 def resolve_char_keys(sheet):
 
     # Find all the dynamically created FORMULA() and FORMULA.FILL() cells in the
@@ -234,6 +265,14 @@ def resolve_char_keys(sheet):
         print(constraint_funcs[k][0])
         print(constraint_funcs[k][1])
         print("\n")
-            
+
+    # Compute the possible values for each decode key.
+    poss_vals = _compute_decode_keys(constraint_funcs)
+    print("POSSIBLE VALS:")
+    for k in poss_vals.keys():
+        print(k)
+        print(poss_vals[k])
+        print("\n")
+    
     sys.exit(0)
-        
+    
