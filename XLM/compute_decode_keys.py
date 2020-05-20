@@ -229,9 +229,40 @@ def _compute_decode_keys(constraint_funcs):
     # Done.
     return r
 
-def _get_equation(expr):
+def _get_equation(expr, decode_key, data_map):
 
-    
+    # Build up a new expression with constants resolved and the
+    # decode key renamed to 'x'.
+    new_expr = [None, expr[1], None]    
+    if (expr[0] == decode_key):
+        new_expr[0] = sympy.Symbol('x')
+        new_expr[2] = sympy.sympify(data_map[expr[2]])
+    if (expr[2] == decode_key):
+        new_expr[2] = sympy.Symbol('x')
+        new_expr[0] = sympy.sympify(data_map[expr[0]])
+    print("NEW EXPR:")
+    print(new_expr)
+
+    # Build the sympy expression.
+    sym_expr = None
+    if (new_expr[1] == "/"):
+        new_expr[2] = sympy.Pow(new_expr[2], -1)
+        new_expr[1] = "*"
+    if (new_expr[1] == "-"):
+        new_expr[2] = sympy.Mul(new_expr[2], -1)
+        new_expr[1] = "+"
+    if (new_expr[1] == "*"):
+        sym_expr = sympy.Mul(new_expr[0], new_expr[2])
+    if (new_expr[1] == "+"):
+        sym_expr = sympy.Add(new_expr[0], new_expr[2])
+
+    # Build the equation to solve. We want this to be equal to the ASCII
+    # code for '='.
+    r = sympy.Eq(sym_expr, 61)
+    print("SYMPY EQ:")
+    print(r)
+    print("")
+    return r
     
 def _handle_missing_keys(poss_vals, first_exprs, data_map):
 
@@ -256,7 +287,7 @@ def _handle_missing_keys(poss_vals, first_exprs, data_map):
             return None
 
         # Convert the decode key expression to a sympy equation.
-        eq = _get_equation(expr)
+        eq = _get_equation(expr, decode_key, data_map)
 
         # Solve for the decode key.
         key_val = sympy.solve(eq)[0]
@@ -313,7 +344,7 @@ def resolve_char_keys(sheet):
 
     # Try to directly compute decode keys that we did not get values for from
     # the constraint solver.
-    poss_vals = _handle_missing_keys(poss_vals, first_exprs)
+    poss_vals = _handle_missing_keys(poss_vals, first_exprs, data_map)
     if (poss_vals is None):
         return None
     print("POSSIBLE VALS:")
