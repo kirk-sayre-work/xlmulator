@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import re
+from collections import Counter
 
 import prettytable
 
@@ -46,9 +48,11 @@ def emulate_XLM(maldoc, debug=False, out_file_name=None):
     XLM.set_debug(debug)
     r = XLM.emulate(maldoc)
     
+    print(':'.join(get_xlmfuncset(r[1])))
+
     # Save analysis to a JSON file?
     if (out_file_name is not None):
-        json_report = r + ({"FuncHash": get_funchash(r[0])},)
+        json_report = r + ({"DllFuncSetAlpha": get_dllfuncset(r[0])}, {"XLMFuncSetAlpha": get_xlmfuncset(r[1])}, {"XLMFuncSetFreq": get_xlmfuncset_frequency(r[1])},)
         with open(out_file_name, 'w') as outfile:
             json.dump(json_report, outfile)
         
@@ -78,7 +82,7 @@ def dump_actions(actions):
     return t
 
 ###########################################################################
-def get_funchash(actions):
+def get_dllfuncset(actions):
     """
     return an alpha-sorted set of DLLs and function calls
     """
@@ -89,6 +93,51 @@ def get_funchash(actions):
             function_set.add(str(action[2].split("'")[1] + "." + action[1].split("(")[0]))
 
     return ":".join(sorted(function_set))
+
+###########################################################################
+def get_xlmfuncset(xlm_execution_report):
+    """
+    return an alpha-sorted set of XLM function calls
+    """
+    
+    xlm_funcset = set()
+
+    xlm_func_patterns = (
+            r'---> ([A-Z]{1,25})\(',
+            r'\(([A-Z]{1,25})\('
+            )
+
+    for xlm_func_pattern in xlm_func_patterns:
+        results = re.findall(xlm_func_pattern, xlm_execution_report)
+        for result in results:
+            xlm_funcset.add(result)
+    return ":".join(sorted(xlm_funcset))
+
+###########################################################################
+def get_xlmfuncset_frequency(xlm_execution_report):
+    """
+    return an frequency-sorted set of XLM function calls
+    """
+
+    xlm_funclist = list()
+
+    xlm_func_patterns = (
+            r'---> ([A-Z]{1,25})\(',
+            r'\(([A-Z]{1,25})\('
+            )
+
+    for xlm_func_pattern in xlm_func_patterns:
+        results = re.findall(xlm_func_pattern, xlm_execution_report)
+        xlm_funclist = xlm_funclist + results
+
+    result = [item for items, c in Counter(xlm_funclist).most_common()
+                                      for item in [items] * c]
+
+    xlmfuncset_freq = list()
+    for func in result:
+        if not func in xlmfuncset_freq:
+            xlmfuncset_freq.append(func)
+    return ":".join(xlmfuncset_freq)
 
 
 ###########################################################################
@@ -135,8 +184,10 @@ if __name__ == '__main__':
         print(dump_actions(actions))
     
     if (len(actions) > 0):
-        print('\nFunction Hash:')
-        print(get_funchash(actions))
+        print('\nFunction Sets:')
+        print(str("\nDLL Function Calls: " + get_dllfuncset(actions)))
+        print(str("\nAlpha sorted XLM Functions: " + get_xlmfuncset(xlm_code)))
+        print(str("\nFrequency sorted XLM functions: " + get_xlmfuncset_frequency(xlm_code)))
 
     if (args.out_file is not None):
         XLM.color_print.output('g', "Saved analysis results to " + str(args.out_file) + " .")
