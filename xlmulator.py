@@ -48,7 +48,7 @@ def emulate_XLM(maldoc, debug=False, out_file_name=None):
     
     # Save analysis to a JSON file?
     if (out_file_name is not None):
-        json_report = r + ({"FuncHash": get_funchash(r[0])},)
+        json_report = r + ({"FuncSet": get_funcset(r[0])},)
         with open(out_file_name, 'w') as outfile:
             json.dump(json_report, outfile)
         
@@ -78,7 +78,7 @@ def dump_actions(actions):
     return t
 
 ###########################################################################
-def get_funchash(actions):
+def get_funcset(actions):
     """
     return an alpha-sorted set of DLLs and function calls
     """
@@ -135,8 +135,8 @@ if __name__ == '__main__':
         print(dump_actions(actions))
     
     if (len(actions) > 0):
-        print('\nFunction Hash:')
-        print(get_funchash(actions))
+        print('\nFunction Set:')
+        print(get_funcset(actions))
 
     if (args.out_file is not None):
         XLM.color_print.output('g', "Saved analysis results to " + str(args.out_file) + " .")
