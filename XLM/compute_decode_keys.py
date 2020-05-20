@@ -2,6 +2,7 @@ import re
 import sys
 
 from constraint import *
+import sympy
 
 import XLM.color_print
 
@@ -228,6 +229,44 @@ def _compute_decode_keys(constraint_funcs):
     # Done.
     return r
 
+def _get_equation(expr):
+
+    
+    
+def _handle_missing_keys(poss_vals, first_exprs, data_map):
+
+    # Look for decode keys with no possible values.
+    for decode_key in poss_vals.keys():
+
+        # Got values?
+        if (len(poss_vals[decode_key]) > 0):
+            continue
+
+        # This one has 0 values. Is it a decode key that is supposed to resolve
+        # a CHAR() to '='?
+        expr = None
+        for curr_expr in first_exprs:
+            if ((decode_key == curr_expr[0]) or (decode_key == curr_expr[2])):
+                expr = curr_expr
+                break
+
+        # Do we have an expression we can use to manually compute the decode key?
+        if (expr is None):
+            XLM.color_print.output('r', "ERROR: Cannot compute CHAR() decode key " + decode_key + ".")
+            return None
+
+        # Convert the decode key expression to a sympy equation.
+        eq = _get_equation(expr)
+
+        # Solve for the decode key.
+        key_val = sympy.solve(eq)[0]
+
+        # Save the decode key.
+        poss_vals[decode_key] = {decode_key : key_val}
+
+    # Return the updated decode keys.
+    return poss_vals
+    
 def resolve_char_keys(sheet):
 
     # Find all the dynamically created FORMULA() and FORMULA.FILL() cells in the
@@ -271,6 +310,12 @@ def resolve_char_keys(sheet):
 
     # Compute the possible values for each decode key.
     poss_vals = _compute_decode_keys(constraint_funcs)
+
+    # Try to directly compute decode keys that we did not get values for from
+    # the constraint solver.
+    poss_vals = _handle_missing_keys(poss_vals, first_exprs)
+    if (poss_vals is None):
+        return None
     print("POSSIBLE VALS:")
     for k in poss_vals.keys():
         print(k)
