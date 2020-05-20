@@ -1,5 +1,6 @@
 import re
 import sys
+import itertools
 
 from constraint import *
 import sympy
@@ -293,17 +294,55 @@ def _handle_missing_keys(poss_vals, first_exprs, data_map):
         key_val = sympy.solve(eq)[0]
 
         # Save the decode key.
-        poss_vals[decode_key] = {decode_key : key_val}
+        poss_vals[decode_key] = [{decode_key : key_val}]
 
     # Return the updated decode keys.
     return poss_vals
-    
+
+def _resolve_formulas(sheet, formula_cells, poss_vals):
+
+    # Resolve each formula cell.
+    for cell_index in formula_cells.keys():
+
+        # Pull out the CHAR() expressions for the cell.
+        char_exprs = formula_cells[cell_index]
+
+        # Get the possible values for each decode key used in the current
+        # dynamic formula.
+        key_val_list = []
+        added_keys = set()
+        for curr_expr in char_exprs:
+
+            # Figure out the decode key.
+            decode_key = None
+            if (curr_expr[0] in poss_vals):
+                decode_key = curr_expr[0]
+            if (curr_expr[2] in poss_vals):
+                decode_key = curr_expr[2]
+
+            # Save all the possible values for this key.
+            if (decode_key not in added_keys):
+                curr_vals = []
+                for val in poss_vals[decode_key]:
+                    print(decode_key)
+                    print(val)
+                    print(type(val))
+                    curr_vals.append((decode_key, val[decode_key]))
+                key_val_list.append(curr_vals)
+                added_keys.add(decode_key)
+
+        # Get all possible combinations of decode keys.
+        print("KEY COMBOS:")
+        for key_val_combo in itertools.product(*key_val_list):
+            print(key_val_combo)            
+
 def resolve_char_keys(sheet):
 
     # Find all the dynamically created FORMULA() and FORMULA.FILL() cells in the
     # sheet.
     first_exprs = set()
     other_exprs = set()
+    formula_cells = {}
     for cell_index in sheet.xlm_cell_indices:
 
         # Is the current cell a FORMULA cell?
@@ -321,6 +360,7 @@ def resolve_char_keys(sheet):
         first_expr, curr_other_exprs = _extract_char_computations(xlm_cell)
         first_exprs.add(first_expr)
         other_exprs = other_exprs.union(set(curr_other_exprs))
+        formula_cells[cell_index] = [first_expr] + curr_other_exprs
 
     # Get the cell references that are variables to compute and cell references that
     # are data (constant values)
@@ -352,6 +392,9 @@ def resolve_char_keys(sheet):
         print(k)
         print(poss_vals[k])
         print("\n")
-    
+
+    # Resolve the formulas in each formula cell using the computed decode keys.
+    _resolve_formulas(sheet, formula_cells, poss_vals)
+        
     sys.exit(0)
     
