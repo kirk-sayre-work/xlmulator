@@ -105,7 +105,7 @@ def _group_by_decode_key(decode_key_cells, compute_exprs):
     # Done.
     return grouped_exprs
 
-def _gen_single_constraint(decode_key, exp, constraint_str, data_map):
+def _gen_single_constraint(decode_key, exp, constraint_str, data_map, int_vals):
 
     # TODO: Generalize this beyond simple expressions like 'a+1'.
     
@@ -142,7 +142,10 @@ def _gen_single_constraint(decode_key, exp, constraint_str, data_map):
             range_hint = XLM.utils.convert_num(rhs)
             
     # Make the expression string to which to apply a constraint.
-    expr_str = lhs + exp[1] + rhs
+    if int_vals:
+        expr_str = "int(" + lhs + exp[1] + rhs + ")"
+    else:
+        expr_str = "round(" + lhs + exp[1] + rhs + ")"
 
     # Figure out the range of values the decode key can take, if possible.
     op = exp[1]
@@ -172,7 +175,7 @@ def _gen_constraint_funcs(grouped_exprs, first_exprs, data_map):
 
                 # Make a constraint that this value must decode to the ASCII for '='.
                 first = False
-                tmp = _gen_single_constraint(decode_key, curr_exp, "((%s) == 61)", data_map)
+                tmp = _gen_single_constraint(decode_key, curr_exp, "((%s) == 61)", data_map, True)
                 constraint_exp += tmp[0]
                 break
 
@@ -186,7 +189,7 @@ def _gen_constraint_funcs(grouped_exprs, first_exprs, data_map):
             if (not first):
                 constraint_exp += " and "
             first = False
-            tmp = _gen_single_constraint(decode_key, curr_exp, "(32 <= (%s) <= 126)", data_map)
+            tmp = _gen_single_constraint(decode_key, curr_exp, "(32 <= (%s) <= 126)", data_map, False)
             constraint_exp += tmp[0]
             if key_range is None:
                 key_range = tmp[1]
