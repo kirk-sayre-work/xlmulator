@@ -324,9 +324,6 @@ def _resolve_formulas(sheet, formula_cells, poss_vals):
             if (decode_key not in added_keys):
                 curr_vals = []
                 for val in poss_vals[decode_key]:
-                    print(decode_key)
-                    print(val)
-                    print(type(val))
                     curr_vals.append((decode_key, val[decode_key]))
                 key_val_list.append(curr_vals)
                 added_keys.add(decode_key)
