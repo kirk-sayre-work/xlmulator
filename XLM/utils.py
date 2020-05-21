@@ -9,11 +9,14 @@ from functools import reduce
 import XLM.color_print
 
 ####################################################################
-def convert_num(num_str):
+def convert_num(num_str, no_error=False):
     """
     Convert a float or int string to a float or int.
 
     @param num_str (str) The numeric string.
+
+    @param no_errors (boolean) If True return the original string if it cannot
+    be converted. If False display an error and return 0.
 
     @return (int or float) The converted number.
     """
@@ -29,6 +32,8 @@ def convert_num(num_str):
     try:
         return float(num_str)
     except ValueError:
+        if no_error:
+            return num_str
         XLM.color_print.output('r', "ERROR: Cannot convert '" + num_str + "' to a number. Returning 0.")
         return 0
 
