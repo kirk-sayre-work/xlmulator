@@ -52,13 +52,13 @@ def _get_vars_and_constants(compute_exprs, sheet):
     #print(data_cells)
 
     # Read in the values of the data cells.
-    #print("DATA VALS:")
+    print("DATA VALS:")
     data_map = {}
     for cell_ref in data_cells:
         cell_index = _parse_cell_index(cell_ref)
         data_map[cell_ref] = sheet.cell(cell_index[0], cell_index[1])
-        #print(cell_ref)
-        #print(data_map[cell_ref])
+        print(cell_ref)
+        print(data_map[cell_ref])
 
     # Done.
     return (decode_key_cells, data_map)
@@ -139,10 +139,13 @@ def _gen_single_constraint(decode_key, exp, constraint_str, data_map, int_vals):
             range_hint = XLM.utils.convert_num(rhs)
             
     # Make the expression string to which to apply a constraint.
+    expr_str = "int(" + lhs + exp[1] + rhs + ")"
+    """
     if int_vals:
         expr_str = "int(" + lhs + exp[1] + rhs + ")"
     else:
         expr_str = "round(" + lhs + exp[1] + rhs + ")"
+    """
     print(expr_str)
         
     # Figure out the range of values the decode key can take, if possible.
@@ -157,7 +160,7 @@ def _gen_single_constraint(decode_key, exp, constraint_str, data_map, int_vals):
             key_range = (int(32 + range_hint), int(126 + range_hint))
 
     # Figure out if this decode key should be a float.
-    float_decode_keys = set()
+    float_decode_keys = set()    
     if ((((lhs != "a") and isinstance(XLM.utils.convert_num(lhs), float)) or
          ((rhs != "a") and isinstance(XLM.utils.convert_num(rhs), float))) and
         ((exp[1] == "*") or (exp[1] == "/"))):
@@ -172,12 +175,12 @@ def _gen_constraint_funcs(grouped_exprs, first_exprs, data_map):
 
     # Look through each decode key.
     r = {}
+    float_decode_keys = set()
     for decode_key in grouped_exprs.keys():
 
         # Is this key used to decode an initial '=' in a FORMULA()?
         constraint_exp = ""
         first = True
-        float_decode_keys = set()
         for curr_exp in first_exprs:
             if ((decode_key == curr_exp[0]) or (decode_key == curr_exp[2])):
 
@@ -273,15 +276,47 @@ def _get_equation(expr, decode_key, data_map):
     #print("")
     return r
 
+def _approx_set_member(the_set, val):
+    if (not isinstance(val, float)):
+        return False
+    for set_val in the_set:
+        diff = abs(set_val - val)
+        if (diff < 1.0):
+            return True
+    print("SKIPPING " + str(val))
+    return False
+
+def _is_ascii_decode_key(val, float_expr):
+
+    # Get the LHS and RHS of the expression.
+    lhs = float_expr[0]
+    if (lhs == "a"):
+        lhs = val
+    op = float_expr[1]
+    rhs = float_expr[2]
+    if (rhs == "a"):
+        rhs = val
+
+    # Evaluate the expression.
+    resolved_val = None
+    if (op == "*"):
+        resolved_val = lhs * rhs
+    if (op == "/"):
+        resolved_val = lhs / rhs
+
+    # Return whether this is the code for a printable ASCII character.
+    return (32 <= resolved_val <= 126)
+    
 def _add_slop(poss_vals, float_decode_keys):
 
-    # Pick out the expressions we will use for each decode key to introduce slop.
+    # Make a map from decode keys to float expression lists.
     slop_exprs = {}
     for float_info in float_decode_keys:
         decode_key = float_info[0]
         float_expr = float_info[1]
         if (decode_key not in slop_exprs):
-            slop_exprs[decode_key] = float_expr
+            slop_exprs[decode_key] = []
+        slop_exprs[decode_key].append(float_expr)
     
     # Add possible values for float decode keys so they will resolve 1 higher and
     # 1 lower.
@@ -294,28 +329,37 @@ def _add_slop(poss_vals, float_decode_keys):
             r[decode_key] = curr_vals
             continue
 
-        # Get the float value from the expression.
-        float_expr = slop_exprs[decode_key]
-        float_val = None
-        if (isinstance(float_expr[0], float)):
-            float_val = float_expr[0]
-        else:
-            float_val = float_expr[2]
-
-        # Compute the change offset.
-        slop_val = None
-        if (float_expr[1] == "*"):
-            slop_val = 1/float_val
-        if (float_expr[1] == "/"):
-            slop_val = float_val
-        
-        # Get new wider range of values.
+        # Add slop for each expression.
         new_vals = set()
-        for v in curr_vals:
-            curr_val = v[decode_key]
-            new_vals.add(curr_val)
-            new_vals.add(curr_val + slop_val)
-            new_vals.add(curr_val - slop_val)
+        print("ADD SLOP FOR " + decode_key)
+        prev_vals = set()
+        for float_expr in slop_exprs[decode_key]:
+
+            # Get the float value from the expression.
+            float_val = None
+            if (isinstance(float_expr[0], float)):
+                float_val = float_expr[0]
+            else:
+                float_val = float_expr[2]
+
+            # Compute the change offset. This slop value will be used to
+            # make decode keys that resolve to +1 and -1 of the current
+            # decode key decoding.
+            slop_val = None
+            op = float_expr[1]
+            if (op == "*"):
+                slop_val = 1/float_val
+            if (op == "/"):
+                slop_val = float_val
+        
+            # Get new wider range of values.
+            for v in curr_vals:
+                curr_val = v[decode_key]
+                poss_new_vals = [curr_val - slop_val, curr_val, curr_val + slop_val]
+                for new_val in poss_new_vals:
+                    if ((not _approx_set_member(new_vals, new_val)) and
+                        _is_ascii_decode_key(new_val, float_expr)):
+                        new_vals.add(new_val)
 
         # Package up the expanded range of decode key values.
         final_new_vals = []
@@ -387,42 +431,83 @@ def _get_all_decode_key_combos(cell_index, formula_cells, poss_vals):
             added_keys.add(decode_key)
 
     # Get all possible combinations of decode keys.
-    r = []
-    print("ALL COMBOS RAW:")
-    for key_combo in itertools.product(*key_val_list):
-        print(key_combo)
-        curr_key_map = {}
-        for key_pair in key_combo:
-            curr_key_map[key_pair[0]] = key_pair[1]
-        r.append(curr_key_map)
-            
-    # Done
-    print("ALL COMBOS MAP:")
-    print(r)
+    r = itertools.product(*key_val_list)
     return r
 
 def _resolve_char_expr(char_expr, sheet, decode_keys):
 
     # Resolve decode keys and data cell references.
-    r = [None, char_expr[1], None]
+    resolved_expr = [None, char_expr[1], None]
     if (char_expr[0] in decode_keys):
-        r[0] = decode_keys[char_expr[0]]
+        resolved_expr[0] = decode_keys[char_expr[0]]
         cell_index = _parse_cell_index(char_expr[2])
-        r[2] = XLM.utils.convert_num(sheet.cell(cell_index[0], cell_index[1]))
+        resolved_expr[2] = XLM.utils.convert_num(sheet.cell(cell_index[0], cell_index[1]))
     if (char_expr[2] in decode_keys):
-        r[2] = decode_keys[char_expr[2]]
+        resolved_expr[2] = decode_keys[char_expr[2]]
         cell_index = _parse_cell_index(char_expr[0])
-        r[0] = XLM.utils.convert_num(sheet.cell(cell_index[0], cell_index[1]))
+        resolved_expr[0] = XLM.utils.convert_num(sheet.cell(cell_index[0], cell_index[1]))
 
-    return r
+    char_ord = None
+    if (resolved_expr[1] == "+"):
+        char_ord = resolved_expr[0] + resolved_expr[2]
+    if (resolved_expr[1] == "-"):
+        char_ord = resolved_expr[0] - resolved_expr[2]
+    if (resolved_expr[1] == "*"):
+        char_ord = resolved_expr[0] * resolved_expr[2]
+    if (resolved_expr[1] == "/"):
+        char_ord = resolved_expr[0] / resolved_expr[2]
+    #char_ord = int(round(char_ord))
+    char_ord = int(char_ord)
+        
+    return char_ord
+
+def _strip_invalid_decode_keys(sheet, char_exprs, poss_vals):
+
+    # Find decode key values that don't resolve to a printable ASCII value.
+    bad_vals = {}
+    for char_expr in char_exprs:
+
+        # Get the decode key in the current expression.
+        lhs = char_expr[0]
+        rhs = char_expr[2]
+        decode_key = None
+        if (lhs in poss_vals):
+            decode_key = lhs
+        if (rhs in poss_vals):
+            decode_key = rhs
+
+        # Find bad possible values for this decode key.
+        for decode_val in poss_vals[decode_key]:
+            char_ord = _resolve_char_expr(char_expr, sheet, decode_val)
+            if (not (32 <= char_ord <= 126)):
+                if (decode_key not in bad_vals):
+                    bad_vals[decode_key] = set()
+                bad_vals[decode_key].add(str(decode_val))
+                print("BAD VAL: " + str(decode_val) + " : " + str(char_expr) + " : " + str(char_ord))
+
+    # Strip the bad values.
+    new_poss_vals = {}
+    for decode_key in poss_vals:
+
+        # No bad values for this decode key?
+        if (decode_key not in bad_vals):
+            new_poss_vals[decode_key] = poss_vals[decode_key]
+            continue
+
+        # Strip out the bad values for this decode key.
+        curr_bad_vals = bad_vals[decode_key]
+        new_poss_vals[decode_key] = []
+        for poss_val in poss_vals[decode_key]:
+            if (str(poss_val) not in curr_bad_vals):
+                new_poss_vals[decode_key].append(poss_val)
+
+    # Done.
+    return new_poss_vals
 
 def _resolve_formulas(sheet, formula_cells, poss_vals):
 
     # Resolve each formula cell.
     for cell_index in formula_cells.keys():
-
-        # Get all possible combinations of decode keys.
-        key_combos = _get_all_decode_key_combos(cell_index, formula_cells, poss_vals)
 
         # Get the formula as a string.
         formula_cell = sheet.cell(cell_index[0], cell_index[1])
@@ -430,34 +515,37 @@ def _resolve_formulas(sheet, formula_cells, poss_vals):
         print("\nFORMULA CELL:")
         print(formula_str)
 
+        # Get raw CHAR() argument expressions.
+        first_expr, char_exprs = _extract_char_computations(formula_cell)
+        char_exprs.append(first_expr)
+
+        # Strip invalid decode key values.
+        poss_vals = _strip_invalid_decode_keys(sheet, char_exprs, poss_vals)
+        
+        # Get all possible combinations of decode keys.
+        key_combos = _get_all_decode_key_combos(cell_index, formula_cells, poss_vals)
+        
         # Try all the decode key combos.
-        print("NUM COMBOS: " + str(len(key_combos)))
-        for key_combo in key_combos:
+        for curr_key_info in key_combos:
+
+            # Pull out the decode key values into a map.
+            key_combo = {}
+            for key_pair in curr_key_info:
+                key_combo[key_pair[0]] = key_pair[1]
             print("KEY COMBO:")
             print(key_combo)
-
-            # Get raw CHAR() argument expressions.
-            first_expr, char_exprs = _extract_char_computations(formula_cell)
-            char_exprs.append(first_expr)
 
             # Resolve the CHAR() expressions in the formula string.
             curr_formula_str = formula_str
             for char_expr in char_exprs:
 
                 # Resolve cell references in the expression
-                resolved_char_expr = _resolve_char_expr(char_expr, sheet, key_combo)
-
+                char_ord = _resolve_char_expr(char_expr, sheet, key_combo)
+                if (not (32 <= char_ord <= 126)):
+                    print("MISSED BAD KEY: '" + str(char_expr) + "' : " + str(char_ord))
+                    raise ValueError("Bad char code.")
+                
                 # Compute the CHAR value.
-                char_ord = None
-                if (resolved_char_expr[1] == "+"):
-                    char_ord = resolved_char_expr[0] + resolved_char_expr[2]
-                if (resolved_char_expr[1] == "-"):
-                    char_ord = resolved_char_expr[0] - resolved_char_expr[2]
-                if (resolved_char_expr[1] == "*"):
-                    char_ord = resolved_char_expr[0] * resolved_char_expr[2]
-                if (resolved_char_expr[1] == "/"):
-                    char_ord = resolved_char_expr[0] / resolved_char_expr[2]
-                char_ord = int(round(char_ord))
                 char = chr(char_ord)
 
                 # Replace CHAR() in formula.
@@ -515,7 +603,7 @@ def resolve_char_keys(sheet):
     poss_vals = _compute_decode_keys(constraint_funcs)
 
     # Add some slop around the decode keys that should be floating point values.
-    poss_vals = _add_slop(poss_vals, float_decode_keys)
+    #poss_vals = _add_slop(poss_vals, float_decode_keys)
     
     # Try to directly compute decode keys that we did not get values for from
     # the constraint solver.
@@ -523,11 +611,11 @@ def resolve_char_keys(sheet):
     if (poss_vals is None):
         return None
 
-    print("POSSIBLE VALS:")
-    for k in poss_vals.keys():
-        print(k)
-        print(poss_vals[k])
-        print("\n")
+    #print("POSSIBLE VALS:")
+    #for k in poss_vals.keys():
+    #    print(k)
+    #    print(poss_vals[k])
+    #    print("\n")
 
     # Resolve the formulas in each formula cell using the computed decode keys.
     _resolve_formulas(sheet, formula_cells, poss_vals)
