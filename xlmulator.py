@@ -103,8 +103,8 @@ def get_xlmfuncset(xlm_execution_report):
     xlm_funcset = set()
 
     xlm_func_patterns = (
-            r'---> ([A-Z]{1,25})\(',
-            r'\(([A-Z]{1,25})\('
+            r'---> ([A-Z\.]{1,25})\(',
+            r'\(([A-Z\.]{1,25})\('
             )
 
     for xlm_func_pattern in xlm_func_patterns:
@@ -122,8 +122,8 @@ def get_xlmfuncset_frequency(xlm_execution_report):
     xlm_funclist = list()
 
     xlm_func_patterns = (
-            r'---> ([A-Z]{1,25})\(',
-            r'\(([A-Z]{1,25})\('
+            r'---> ([A-Z\.]{1,25})\(',
+            r'\(([A-Z\.]{1,25})\('
             )
 
     for xlm_func_pattern in xlm_func_patterns:
